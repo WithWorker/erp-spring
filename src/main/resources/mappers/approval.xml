@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.ApprovalMapper">
+	
+  <!-- 결재 목록 -->
+  <select id="approvalList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT ap.*, type.type_name
+		FROM approval ap 
+    INNER JOIN approval_type type ON ap.type_id = type.type_id
+    <!-- 결재대기/결재완료/반려 목록만 보기 -->
+    <where>
+      <if test = "status != null and status != ''">
+        ap.status = #{status}
+      </if>
+    </where>
+	</select>
+
+  <!-- 결재신청 -->
+  <insert id="approvalInsert" parameterType="com.erp.backend.model.Approval">
+		INSERT INTO approval (type_id, start_date, end_date, title, content, applicant_id, approver_id, status)
+    VALUES (#{type_id}, #{start_date}, #{end_date}, #{title}, #{content}, #{applicant_id}, #{approver_id}, "결재대기")
+  </insert> 
+
+  <!-- 결재수정 -->
+  <update id="approvalUpdate" parameterType="map">
+    UPDATE approval
+    SET status = #{status}
+    WHERE approval_id = #{approval_id}
+  </update>
+
+  <!-- 결재삭제 -->
+    <delete id="approvalDelete" parameterType="map">
+        DELETE FROM approval WHERE approval_id = #{approval_id}
+    </delete>
+
+</mapper>
