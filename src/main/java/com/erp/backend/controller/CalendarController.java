@@ -11,7 +11,6 @@ import java.util.List;
 
 @Log4j2
 @RestController
-
 public class CalendarController {
 
     @Autowired
