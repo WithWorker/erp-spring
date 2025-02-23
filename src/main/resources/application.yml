@@ -1,18 +1,17 @@
 server:
   port: 7777
-  tomcat:    
-    additional-tld-skip-patterns: "*.jar"
+
 spring:
   output:
     ansi:
       enabled: always
-  datasource:
-    url: jdbc:mysql://localhost:3306/board_db?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
+  datasource:
     hikari:
+      jdbc-url: jdbc:mysql://localhost:3306/erp_db?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+      driver-class-name: com.mysql.cj.jdbc.Driver
       minimum-idle: 5
       maximum-pool-size: 20
       idle-timeout: 60000
@@ -22,8 +21,8 @@ spring:
       auto-commit: true
       connection-test-query: SELECT 1
 
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
-    com.zaxxer.hikari.HikariDataSource: debug
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mappers/**/*.xml
+  config-location: classpath:/mybatis-config.xml
