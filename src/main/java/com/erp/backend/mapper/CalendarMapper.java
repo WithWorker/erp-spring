@@ -8,4 +8,5 @@ import java.util.List;
 @Mapper
 public interface CalendarMapper {
     List<CalendarDto> getAllCalendars();
+    int addCalendar(CalendarDto calendarDto);
 }

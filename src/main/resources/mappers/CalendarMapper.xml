@@ -4,4 +4,8 @@
   <select id="getAllCalendars" resultType="com.erp.backend.dto.CalendarDto">
     SELECT calendar_id, start_date, end_date, title, content, applicant_id FROM calendar;
   </select>
+  <insert id="addCalendar" parameterType="com.erp.backend.dto.CalendarDto">
+    INSERT INTO calendar(start_date, end_date, title, content, applicant_id)
+    VALUES #{start_date}, #{end_date}, #{title}, #{content}, #{applicant_id}
+  </insert>
 </mapper>

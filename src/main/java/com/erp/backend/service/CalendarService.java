@@ -19,4 +19,12 @@ public class CalendarService {
         log.info("service 호출 성공");
         return calendarMapper.getAllCalendars();
     }
+
+    public int addCalendar(CalendarDto calendarDto) {
+        int result = -1;
+        log.info("service-등록 성공");
+        result = calendarMapper.addCalendar(calendarDto);
+        return result;
+    }   
+
 }
