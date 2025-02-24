@@ -6,7 +6,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,11 +17,16 @@ import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
-@RequiredArgsConstructor
-public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+//@RequiredArgsConstructor
+public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private ObjectMapper objectMapper = new ObjectMapper();
-    private final AuthenticationManager authenticationManager;
-
+    //private final AuthenticationManager authenticationManager;
+    // AuthenticationManager를 생성자에서 주입받습니다.
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+        super.setAuthenticationManager(authenticationManager);
+        // 기본 로그인 URL("/login") 대신 커스텀 URL("/custom-login")로 설정 (필요에 따라 변경)
+        setFilterProcessesUrl("/custom-login");
+    }
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response
     ) throws AuthenticationException {
@@ -34,7 +38,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             String password = requestBody.get("password");
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password);
-            return authenticationManager.authenticate(authToken);
+            //return authenticationManager.authenticate(authToken);
+            return this.getAuthenticationManager().authenticate(authToken);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse requestBody", e);

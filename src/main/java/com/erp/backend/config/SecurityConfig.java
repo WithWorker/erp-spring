@@ -1,6 +1,7 @@
 package com.erp.backend.config;
 
 import com.erp.backend.dto.MemberRole;
+import com.erp.backend.filter.CustomAuthenticationFilter;
 import com.erp.backend.service.MemberDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -38,8 +40,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
-        AuthenticationFilter authFilter = new AuthenticationFilter(authManager);
+    protected SecurityFilterChain filterChain(HttpSecurity http, AuthenticationConfiguration config) throws Exception {
+        AuthenticationManager authenticationManager = config.getAuthenticationManager();
+        CustomAuthenticationFilter authFilter = new CustomAuthenticationFilter(authenticationManager);
         authFilter.setFilterProcessesUrl("/login");
         http
                 .csrf(AbstractHttpConfigurer::disable)
