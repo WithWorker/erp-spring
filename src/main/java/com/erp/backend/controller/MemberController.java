@@ -15,7 +15,7 @@ public class MemberController {
 
     //사원등록
     @ResponseBody
-    @PostMapping(value = "/insert")
+    @PostMapping(value = "/add")
     public String insertMember(@RequestBody MemberDto memberDto) {
         memberService.insertMember(memberDto);
         return "success";
