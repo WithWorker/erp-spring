@@ -26,3 +26,4 @@ mybatis:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:/mappers/**/*.xml
   config-location: classpath:/mybatis-config.xml
+  type-aliases-package: com.erp.backend.model
