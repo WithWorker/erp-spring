@@ -28,10 +28,15 @@ public class CalendarController {
 			return calendarService.getAllCalendars();
 	}
 	// 개인 일정 목록
-	@GetMapping("/calendar/{applicantId}")
+	@GetMapping("/calendar/my/{applicantId}")
 	public List<CalendarDto> getMyCalendars(@PathVariable Integer applicantId) {
 			return calendarService.getMyCalendars(applicantId);
 	}    
+	// 일정 상세보기
+		@GetMapping("/calendar/{calendarId}")
+		public CalendarDto readCalendar(@PathVariable Integer calendarId) {
+				return calendarService.readCalendar(calendarId);
+		}  
 	// 일정 등록
 	@PostMapping("/calendar/add")
 	public void addCalendar(@RequestBody CalendarDto calendarDto) {
@@ -48,8 +53,16 @@ public class CalendarController {
 	// 일정 삭제
 	@DeleteMapping("/calendar/delete/{calendarId}")
 	public void deleteCalendar(@PathVariable Integer calendarId) {
-			// 받은 calendarId를 DTO에 설정
-			calendarService.deleteCalendar(calendarId);
+		// 받은 calendarId를 DTO에 설정
+		calendarService.deleteCalendar(calendarId);
 	}
+
+
+	// 부서 일정 목록
+	@GetMapping("/calendar/dept/{dept}")
+	public List<CalendarDto> getDeptCalendars(@PathVariable String dept) {
+			return calendarService.getDeptCalendars(dept);  // 부서별 일정 조회
+	}
+
 
 }

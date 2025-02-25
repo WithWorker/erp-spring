@@ -29,4 +29,5 @@ public class CalendarDto {
   @JsonProperty("applicant_id")
   private Integer applicantId;
 
+  private MemberDto memberDto;
 }

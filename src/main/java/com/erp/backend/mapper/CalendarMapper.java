@@ -9,7 +9,9 @@ import java.util.List;
 public interface CalendarMapper {
     List<CalendarDto> getAllCalendars();
     List<CalendarDto> getMyCalendars(Integer applicantId);
+    CalendarDto readCalendar(Integer calendarId);
     int addCalendar(CalendarDto calendarDto);
     int updateCalendar(CalendarDto calendarDto);
     int deleteCalendar(Integer calendarId);
+    List<CalendarDto> getDeptCalendars(String dept);
 }

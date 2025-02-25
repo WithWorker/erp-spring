@@ -16,13 +16,18 @@ public class CalendarService {
     private final CalendarMapper calendarMapper;
 
     public List<CalendarDto> getAllCalendars() {
-        log.info("service 호출 성공");
+        log.info("service-전체조회 성공");
         return calendarMapper.getAllCalendars();
     }
 
     public List<CalendarDto> getMyCalendars(Integer applicantId) {
-        log.info("service 호출 성공");
+        log.info("service-개인조회 성공");
         return calendarMapper.getMyCalendars(applicantId);
+    }
+
+    public CalendarDto readCalendar(Integer calendarId) {
+        log.info("service-상세보기 성공");
+        return calendarMapper.readCalendar(calendarId);
     }
 
     public int addCalendar(CalendarDto calendarDto) {
@@ -45,5 +50,10 @@ public class CalendarService {
         result = calendarMapper.deleteCalendar(calendarId);
         return result;
     }
+
+    public List<CalendarDto> getDeptCalendars(String dept) {
+        return calendarMapper.getDeptCalendars(dept);  // Mapper에서 부서별 일정 조회
+    }
+
 
 }
