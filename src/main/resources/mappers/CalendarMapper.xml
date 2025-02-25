@@ -1,11 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.erp.backend.mapper.CalendarMapper">  
+  <!-- 사원 전체 일정 목록 -->
   <select id="getAllCalendars" resultType="com.erp.backend.dto.CalendarDto">
-    SELECT calendar_id, start_date, end_date, title, content, applicant_id FROM calendar;
+    SELECT calendar_id, start_date, end_date, title, content, applicant_id
+    FROM calendar 
   </select>
+  <!-- 개인 일정 목록 -->
+  <select id="getMyCalendars" resultType="com.erp.backend.dto.CalendarDto">
+    SELECT calendar_id, start_date, end_date, title, content, applicant_id
+    FROM calendar 
+    WHERE applicant_id = #{applicantId}
+  </select>
+  <!-- 일정 상세 조회 -->
+  <select id="readCalendar" resultType="com.erp.backend.dto.CalendarDto">
+    SELECT calendar_id, start_date, end_date, title, content, applicant_id 
+    FROM calendar
+    WHERE calendar_id = #{calendarId}
+  </select>
+  <!-- 일정 등록 -->
   <insert id="addCalendar" parameterType="com.erp.backend.dto.CalendarDto">
     INSERT INTO calendar(start_date, end_date, title, content, applicant_id)
-    VALUES #{start_date}, #{end_date}, #{title}, #{content}, #{applicant_id}
+    VALUES (#{startDate}, #{endDate}, #{title}, #{content}, #{applicantId})
   </insert>
+  <!-- 일정 수정 -->
+  <update id = "updateCalendar" parameterType="com.erp.backend.dto.CalendarDto">
+    UPDATE calendar
+    SET start_date = #{startDate}, 
+      end_date = #{endDate}, 
+      title = #{title}, 
+      content = #{content}
+    WHERE calendar_id = #{calendarId}
+  </update>
+  <!-- 일정 삭제 -->
+  <delete id = "deleteCalendar" parameterType="Integer" >
+    DELETE FROM calendar
+    WHERE calendar_id = #{calendarId}
+  </delete>
 </mapper>

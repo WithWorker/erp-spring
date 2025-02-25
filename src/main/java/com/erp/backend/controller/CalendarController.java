@@ -5,8 +5,13 @@ import com.erp.backend.service.CalendarService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -16,17 +21,35 @@ import java.util.List;
 @RestController
 public class CalendarController {
 
-    private final CalendarService calendarService;
-
-    @GetMapping("/calendar/all")
-    public List<CalendarDto> getAllCalendars() {
-        return calendarService.getAllCalendars();
-    }
-    
-    @PostMapping("/calendar/add")
-    public void addCalendar(CalendarDto calendarDto) {
-        log.info("Controller-등록");
-        calendarService.addCalendar(calendarDto);
-    }
+	private final CalendarService calendarService;
+	// 사원 전체 일정 목록 
+	@GetMapping("/calendar/all")
+	public List<CalendarDto> getAllCalendars() {
+			return calendarService.getAllCalendars();
+	}
+	// 개인 일정 목록
+	@GetMapping("/calendar/{applicantId}")
+	public List<CalendarDto> getMyCalendars(@PathVariable Integer applicantId) {
+			return calendarService.getMyCalendars(applicantId);
+	}    
+	// 일정 등록
+	@PostMapping("/calendar/add")
+	public void addCalendar(@RequestBody CalendarDto calendarDto) {
+			log.info("Received CalendarDto: {}", calendarDto);
+			calendarService.addCalendar(calendarDto);
+	}
+	// 일정 수정
+	@PutMapping("/calendar/update/{calendarId}")
+	public void updateCalendar(@PathVariable Integer calendarId, @RequestBody CalendarDto calendarDto) {
+		// 받은 calendarId를 DTO에 설정
+		calendarDto.setCalendarId(calendarId);
+		calendarService.updateCalendar(calendarDto);
+	}
+	// 일정 삭제
+	@DeleteMapping("/calendar/delete/{calendarId}")
+	public void deleteCalendar(@PathVariable Integer calendarId) {
+			// 받은 calendarId를 DTO에 설정
+			calendarService.deleteCalendar(calendarId);
+	}
 
 }

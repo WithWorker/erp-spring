@@ -20,11 +20,30 @@ public class CalendarService {
         return calendarMapper.getAllCalendars();
     }
 
+    public List<CalendarDto> getMyCalendars(Integer applicantId) {
+        log.info("service 호출 성공");
+        return calendarMapper.getMyCalendars(applicantId);
+    }
+
     public int addCalendar(CalendarDto calendarDto) {
         int result = -1;
         log.info("service-등록 성공");
         result = calendarMapper.addCalendar(calendarDto);
         return result;
     }   
+
+    public int updateCalendar(CalendarDto calendarDto) {
+        int result = -1;
+        log.info("service-수정 성공");
+        result = calendarMapper.updateCalendar(calendarDto);
+        return result;
+    }
+
+    public int deleteCalendar(Integer calendarId) {
+        int result = -1;
+        log.info("service-삭제 성공");
+        result = calendarMapper.deleteCalendar(calendarId);
+        return result;
+    }
 
 }
