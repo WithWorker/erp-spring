@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.erp.backend.mapper.MemberMapper">
+
+    <resultMap id="memberResult" type="com.erp.backend.dto.MemberDto">
+        <result property="empId" column="emp_id"/>
+    </resultMap>
+    <select id="findAll" resultMap="memberResult">
+        SELECT emp_id, name, email, phone FROM employee
+    </select>
+
+    <select id="findByEmail" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
+        SELECT * FROM employee WHERE email = #{email}
+    </select>
 
     <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
         INSERT INTO employee (emp_id, name, email, password, phone, img_url, dept, position, member_role)
         VALUES (#{empId}, #{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{dept}, #{position}, #{memberRole})
     </insert>
+
+    <update id="updateMember" parameterType="com.erp.backend.dto.MemberDto">
+        UPDATE employee SET
+                            emp_id = #{empId},
+                            name = #{name}
+        WHERE emp_id = #{empId}
+    </update>
+
+    <delete id="deleteMember" parameterType="java.lang.Long">
+        DELETE FROM employee WHERE emp_id = #{empId}
+    </delete>
 
 </mapper>

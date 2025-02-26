@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,29 +18,20 @@ import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
-//@RequiredArgsConstructor
-public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+@RequiredArgsConstructor
+public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private ObjectMapper objectMapper = new ObjectMapper();
-    //private final AuthenticationManager authenticationManager;
-    // AuthenticationManager를 생성자에서 주입받습니다.
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
-        super.setAuthenticationManager(authenticationManager);
-        // 기본 로그인 URL("/login") 대신 커스텀 URL("/custom-login")로 설정 (필요에 따라 변경)
-        setFilterProcessesUrl("/custom-login");
-    }
+    private final AuthenticationManager authenticationManager;
+
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response
-    ) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            Map<String, String> requestBody = objectMapper.readValue(
-                    request.getInputStream(), new TypeReference<Map<String, String>>() {}
-            );
+            Map<String, String> requestBody = objectMapper.readValue(request.getInputStream(), new TypeReference<Map<String, String>>() {});
             String email = requestBody.get("email");
             String password = requestBody.get("password");
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password);
-            //return authenticationManager.authenticate(authToken);
-            return this.getAuthenticationManager().authenticate(authToken);
+            return authenticationManager.authenticate(authToken);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse requestBody", e);
