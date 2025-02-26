@@ -33,6 +33,15 @@
     JOIN employee e ON c.applicant_id = e.emp_id
     WHERE c.applicant_id = #{applicantId}
   </select>
+  <!-- 부서 일정 목록 -->
+  <select id="getDeptCalendars" resultMap="calendarResultMap">
+    SELECT
+    c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
+    e.name, e.dept
+    FROM calendar c
+    JOIN employee e ON c.applicant_id = e.emp_id
+    WHERE e.dept = #{dept}
+  </select>
   <!-- 일정 상세 조회 -->
   <select id="readCalendar" resultMap="calendarResultMap">
     SELECT c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id
@@ -59,15 +68,4 @@
     DELETE FROM calendar
     WHERE calendar_id = #{calendarId}
   </delete>
-
-  <!-- 부서 일정 목록 -->
-  <select id="getDeptCalendars" resultMap="calendarResultMap">
-    SELECT
-    c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.name, e.dept
-    FROM calendar c
-    JOIN employee e ON c.applicant_id = e.emp_id
-    WHERE e.dept = #{dept}
-  </select>
-
 </mapper>
