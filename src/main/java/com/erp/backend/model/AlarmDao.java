@@ -1,6 +1,8 @@
 package com.erp.backend.model;
 
 import java.util.List;
+import java.util.Map;
+
 import jakarta.annotation.Resource;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,6 +12,16 @@ public class AlarmDao implements InterAlarmDao {
 
     @Resource
     private SqlSessionTemplate sqlsession;
+
+    @Override
+    public String getAlarmOwnerId(String empId) {
+        return sqlsession.selectOne("selectAlarmOwnerId", empId);
+    }
+
+    @Override
+    public int readAlarm(String alarmId, String empId) {
+        return sqlsession.update("updateAlarmReadStatus", Map.of("alarmId", alarmId, "empId", empId));
+    }
 
     // AOP 알람추가하기
     @Override
@@ -29,12 +41,6 @@ public class AlarmDao implements InterAlarmDao {
     public List<AlarmVO> getPastAlarmList(String empId) {
         List<AlarmVO> alarmList = sqlsession.selectList("selectPastAlarm", empId);
         return alarmList;
-    }
-
-    // 알람 읽기
-    @Override
-    public void readAlarm(String alarmId) {
-        sqlsession.update("updateAlarm", alarmId);
     }
 
     // 모든 알람 읽기

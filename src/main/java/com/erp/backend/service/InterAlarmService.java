@@ -16,7 +16,7 @@ public interface InterAlarmService {
     List<AlarmVO> getPastAlarmList(String empId);
 
     // 알람 읽기
-    void readAlarm(String alarmId);
+    boolean readAlarm(String alarmId, String empId);
 
     // 모든 알람 읽기
     void readAllAlarm(String empId);

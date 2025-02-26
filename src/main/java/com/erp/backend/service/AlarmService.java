@@ -82,8 +82,9 @@ public class AlarmService implements InterAlarmService {
 
     // 알람 읽기
     @Override
-    public void readAlarm(String alarmId) {
-        alarmDao.readAlarm(alarmId);
+    public boolean readAlarm(String alarmId, String empId) {
+        int count = alarmDao.readAlarm(alarmId, empId);
+        return count > 0;
     }
 
     // 모든 알람 읽기
