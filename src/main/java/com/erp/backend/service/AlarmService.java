@@ -34,13 +34,13 @@ public class AlarmService implements InterAlarmService {
 
         String alarmType = "";
 
-        // alarmType 색상 관련
-        if( "1".equals(map.get("alarm_type"))) alarmType = "";
-        if( "2".equals(map.get("alarm_type"))) alarmType = "";
-        if( "3".equals(map.get("alarm_type"))) alarmType = "";
-        if( "4".equals(map.get("alarm_type"))) alarmType = "";
-        if( "5".equals(map.get("alarm_type"))) alarmType = "";
-        if( "6".equals(map.get("alarm_type"))) alarmType = "";
+        // 알람 유형
+        if( "1".equals(map.get("alarm_type"))) alarmType = ""; // 중요 알림
+        if( "2".equals(map.get("alarm_type"))) alarmType = ""; // 휴가 관련
+        if( "3".equals(map.get("alarm_type"))) alarmType = ""; // 메신저
+        if( "4".equals(map.get("alarm_type"))) alarmType = ""; // 캘린더
+        if( "5".equals(map.get("alarm_type"))) alarmType = ""; // 출근 (로그인)
+        if( "6".equals(map.get("alarm_type"))) alarmType = ""; // 퇴근 (로그아웃)
 
         StringBuilder sb = new StringBuilder();
         sb.append(" insert all ");

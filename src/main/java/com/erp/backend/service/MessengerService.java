@@ -47,30 +47,30 @@ public class MessengerService implements InterMessengerService {
 
     // 메신저 보내기
     @Override
-    public String sendMessage(MessengerVO msgvo) {
+    public String sendMessage(MessengerVO mvo) {
 
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
         String time = sdf.format(calendar.getTime());
 
-        String receiverId = msgvo.getReceiverId();
+        String receiverId = mvo.getReceiverId();
         String[] arr_receiverId = receiverId.split(",");
 
         StringBuilder sb = new StringBuilder();
         sb.append("insert all");
 
-        if(msgvo.getMessengerId() == "" || msgvo.getMessengerId() == null) {
-            msgvo.setReceiverId("null");
+        if(mvo.getMessengerId() == "" || mvo.getMessengerId() == null) {
+            mvo.setReceiverId("null");
         }
 
-        String start = " into messenger(group_id, filepath, messenger_id, sender_id, receiver_id, content) values("+ time + ", " + msgvo.getFilePath();
-        String end = ", '" + msgvo.getMessengerId() + "', '" + msgvo.getContent() + "')";
+        String start = " into messenger(group_id, filepath, messenger_id, sender_id, receiver_id, content) values("+ time + ", " + mvo.getFilePath();
+        String end = ", '" + mvo.getMessengerId() + "', '" + mvo.getContent() + "')";
         // messenger table에 filepath 추가
 
         for(int i = 0; i < arr_receiverId.length; i++) {
             sb.append(start);
-            sb.append(time + i + ", " + msgvo.getSenderId() + ", " + arr_receiverId[i]);
+            sb.append(time + i + ", " + mvo.getSenderId() + ", " + arr_receiverId[i]);
             sb.append(end);
         }
 
