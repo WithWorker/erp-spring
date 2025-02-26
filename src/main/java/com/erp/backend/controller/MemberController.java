@@ -3,6 +3,7 @@ package com.erp.backend.controller;
 import com.erp.backend.dto.MemberDto;
 import com.erp.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +30,15 @@ public class MemberController {
     }
 
     //사원등록
-    @ResponseBody
     @PostMapping("/join")
-    public String insertMember(@RequestBody MemberDto memberDto) {
-        memberService.insertMember(memberDto);
-        return "success";
+    @ResponseBody
+    public ResponseEntity<String> insertMember(@RequestBody MemberDto memberDto) {
+        try {
+            memberService.insertMember(memberDto);
+            return ResponseEntity.ok("success");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     //사원수정

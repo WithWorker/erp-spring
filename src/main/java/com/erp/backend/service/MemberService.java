@@ -32,9 +32,14 @@ public class MemberService {
 
     //사원등록
     public void insertMember(MemberDto memberDto) {
+        if (memberMapper.findByEmail(memberDto.getEmail()) != null) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+
         String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
         memberDto.setPassword(encodedPassword);
         memberDto.setMemberRole(MemberRole.USER);
+
         memberMapper.insertMember(memberDto);
     }
 
