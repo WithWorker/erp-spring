@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.erp.backend.mapper.CalendarMapper">
+<mapper namespace="com.erp.backend.mapper.CalendarMapper">  
   <resultMap id="calendarResultMap" type="com.erp.backend.dto.CalendarDto">
-    <id property="calendarId" column="calendar_id" />
-    <result property="startDate" column="start_date" />
-    <result property="endDate" column="end_date" />
-    <result property="title" column="title" />
-    <result property="content" column="content" />
-    <result property="applicantId" column="applicant_id" />
-
-    <association property="memberDto" javaType="com.erp.backend.dto.MemberDto">
-      <id property="empId" column="emp_id" />
-      <result property="name" column="name" />
-      <result property="dept" column="dept" />
-    </association>
+      <id property="calendarId" column="calendar_id" />
+      <result property="startDate" column="start_date" />
+      <result property="endDate" column="end_date" />
+      <result property="title" column="title" />
+      <result property="content" column="content" />
+      <result property="applicantId" column="applicant_id" />
+      <association property="memberDto" javaType="com.erp.backend.dto.MemberDto">
+        <id property="empId" column="emp_id" />
+        <result property="name" column="name" />
+          <result property="dept" column="dept" />
+      </association>
   </resultMap>
 
   <!-- 사원 전체 일정 목록 -->

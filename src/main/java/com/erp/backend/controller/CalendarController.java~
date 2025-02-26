@@ -33,13 +33,7 @@ public class CalendarController {
 	@GetMapping("/calendar/my/{applicantId}")
 	public List<CalendarDto> getMyCalendars(@PathVariable Integer applicantId) {
 		return calendarService.getMyCalendars(applicantId);
-	}
-	// 부서 일정 목록
-	@GetMapping("/calendar/dept/{dept}")
-	public List<CalendarDto> getDeptCalendars(@PathVariable("dept") String dept) {
-		String decodedDept = URLDecoder.decode(dept, StandardCharsets.UTF_8);
-		return calendarService.getDeptCalendars(decodedDept);
-	}
+	}    
 	// 일정 상세보기
 	@GetMapping("/calendar/{calendarId}")
 	public CalendarDto readCalendar(@PathVariable Integer calendarId) {
@@ -63,5 +57,12 @@ public class CalendarController {
 	public void deleteCalendar(@PathVariable Integer calendarId) {
 		// 받은 calendarId를 DTO에 설정
 		calendarService.deleteCalendar(calendarId);
+	}
+
+	// 부서 일정 목록
+	@GetMapping("/calendar/dept/{dept}")
+	public List<CalendarDto> getDeptCalendars(@PathVariable("dept") String dept) {
+		String decodedDept = URLDecoder.decode(dept, StandardCharsets.UTF_8);
+		return calendarService.getDeptCalendars(decodedDept);
 	}
 }

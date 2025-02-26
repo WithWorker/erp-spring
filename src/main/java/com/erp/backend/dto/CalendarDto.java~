@@ -31,6 +31,5 @@ public class CalendarDto {
 
   private MemberDto memberDto;
 
-  // 기본 생성자 필수
   public CalendarDto() {}
 }
