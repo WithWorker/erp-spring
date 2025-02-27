@@ -169,8 +169,8 @@ public class MessengerService implements InterMessengerService {
 
     // 안읽은 메신저 개수
     @Override
-    public String getUnreadMsg(String empId) {
-        String unreadMsg = imDao.getUnreadMsg(empId);
+    public int getUnreadMsg(String empId) {
+        int unreadMsg = imDao.getUnreadMsg(empId);
         return unreadMsg;
     }
 }

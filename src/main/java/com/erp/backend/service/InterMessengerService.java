@@ -52,5 +52,5 @@ public interface InterMessengerService {
     String getEmpName(String empId);
 
     // 안읽은 메신저 개수 조회
-    String getUnreadMsg(String empId);
+    int getUnreadMsg(String empId);
 }

@@ -111,8 +111,8 @@ public class MessengerDao implements InterMessengerDao {
 
     // 안읽은 메신저 개수 조회
     @Override
-    public String getUnreadMsg(String empId) {
-        String unreadMsg = sqlsession.selectOne("selectUnreadMsg", empId);
+    public int getUnreadMsg(String empId) {
+        int unreadMsg = sqlsession.selectOne("selectUnreadMsg", empId);
         return unreadMsg;
     }
 
