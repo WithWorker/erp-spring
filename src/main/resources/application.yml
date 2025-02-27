@@ -5,6 +5,9 @@ spring:
   output:
     ansi:
       enabled: always
+  jwt:
+    secret: bWluc2Vva21pbnNlb2ttaW5zZW9rbWluc2Vva21pbnNlb2s=
+    expiration: 3600000
 
   datasource:
     hikari:

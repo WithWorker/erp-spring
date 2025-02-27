@@ -2,7 +2,9 @@ package com.erp.backend.config;
 
 import com.erp.backend.dto.MemberRole;
 import com.erp.backend.filter.AuthenticationFilter;
+import com.erp.backend.filter.JwtFilter;
 import com.erp.backend.service.MemberDetailsService;
+import com.erp.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +13,6 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final MemberDetailsService memberDetailsService;
+    private final JwtUtil jwtUtil;
 
     @Bean
     protected PasswordEncoder passwordEncoder() {
@@ -43,14 +45,20 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
-        AuthenticationFilter authFilter = new AuthenticationFilter(authManager);
+        AuthenticationFilter authFilter = new AuthenticationFilter(authManager, jwtUtil);
         authFilter.setFilterProcessesUrl("/login");
-        http.csrf(AbstractHttpConfigurer::disable)
+
+        http.csrf((auth) -> auth.disable())
                 .cors(cors -> cors.configurationSource(corsSource()))
+                .formLogin((auth) -> auth.disable())
+                .httpBasic((auth) -> auth.disable())
+
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.toString())
                         .anyRequest().permitAll())
+
+                .addFilterBefore(new JwtFilter(jwtUtil), AuthenticationFilter.class)
                 .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
