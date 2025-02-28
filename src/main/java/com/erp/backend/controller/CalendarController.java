@@ -6,6 +6,7 @@ import com.erp.backend.service.CalendarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,21 +48,22 @@ public class CalendarController {
 	}
 	// 일정 등록
 	@PostMapping("/calendar/add")
-	public void addCalendar(@RequestBody CalendarDto calendarDto) {
-		log.info("Received CalendarDto: {}", calendarDto);
-		calendarService.addCalendar(calendarDto);
-	}
+	public ResponseEntity<String> addCalendar(@RequestBody CalendarDto calendarDto) {
+    log.info("Received CalendarDto: {}", calendarDto);
+    calendarService.addCalendar(calendarDto);
+    return ResponseEntity.ok("일정 등록 성공");
+}
 	// 일정 수정
-	@PutMapping("/calendar/update/{calendarId}")
-	public void updateCalendar(@PathVariable Integer calendarId, @RequestBody CalendarDto calendarDto) {
-		// 받은 calendarId를 DTO에 설정
-		calendarDto.setCalendarId(calendarId);
-		calendarService.updateCalendar(calendarDto);
+	@PutMapping("/calendar/edit/{calendarId}")
+	public ResponseEntity<String> updateCalendar(@PathVariable Integer calendarId, @RequestBody CalendarDto calendarDto) {
+    calendarDto.setCalendarId(calendarId);
+    calendarService.updateCalendar(calendarDto);
+    return ResponseEntity.ok("일정 수정 성공");
 	}
 	// 일정 삭제
-	@DeleteMapping("/calendar/delete/{calendarId}")
-	public void deleteCalendar(@PathVariable Integer calendarId) {
-		// 받은 calendarId를 DTO에 설정
+	@DeleteMapping("/calendar/{calendarId}")
+	public ResponseEntity<String> deleteCalendar(@PathVariable Integer calendarId) {
 		calendarService.deleteCalendar(calendarId);
+		return ResponseEntity.ok("일정 삭제 성공");
 	}
 }
