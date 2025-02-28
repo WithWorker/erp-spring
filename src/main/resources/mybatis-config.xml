@@ -7,6 +7,6 @@
     </settings>
     <mappers>
         <mapper resource="mappers/Calendarmapper.xml"/>
-        <mapper resource="mappers/ApprovalMapper.xml"/>
+        <!-- <mapper resource="mappers/ApprovalMapper.xml"/> -->
     </mappers>
 </configuration>

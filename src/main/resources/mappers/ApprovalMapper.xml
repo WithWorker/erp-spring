@@ -1,48 +1,80 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.erp.backend.mapper.CalendarMapper">
+<mapper namespace="com.erp.backend.mapper.approvalMapper">
+  <resultMap id="approvalResultMap" type="com.erp.backend.dto.approvalDto">
+    <id property="approvalId" column="approval_id" />
+    <id property="typeId" column="type_id" />
+    <result property="startDate" column="start_date" />
+    <result property="endDate" column="end_date" />
+    <result property="title" column="title" />
+    <result property="content" column="content" />
+    <result property="applicantId" column="applicant_id" />
+    <result property="approverId" column="approver_id" />
+    <result property="statusId" column="status_id" />
+    <result property="calendarId" column="calendar_id" />
 
-  <!-- 결재 신청 목록 -->
-  <select id="getAllCalendars" resultMap="calendarResultMap">
+    <association property="memberDto" javaType="com.erp.backend.dto.MemberDto">
+      <id property="empId" column="emp_id" />
+      <result property="name" column="name" />
+      <result property="dept" column="dept" />
+    </association>
+  </resultMap>
+
+  <!-- 결재 목록 : 신청자 -->
+  <select id="getApplicant" resultMap="approvalResultMap">
     SELECT
-    a.approval_id, a.type_id, a.start_date, a.end_date, a.title, a.content, a.applicant_id, a.approver_id, a.status
-    e.emp_id, e.name, e.dept
+    a.approval_id, a.type_id, a.start_date, a.end_date, a.title, a.content, a.applicant_id, a.approver_id,
+    e.emp_id, e.name, e.dept,
+    t.type_name,s.status_name
     FROM approval a
-    JOIN employee e ON c.applicant_id = e.emp_id
+    JOIN employee e ON a.applicant_id = e.emp_id
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approval_status s ON a.status_id = s.status_id
+    WHERE a.applicant_id={#applicantId}
   </select>
-  <!-- 결재 확인 목록 -->
-  <select id="getMyCalendars" resultMap="calendarResultMap">
+  <!-- 결재 목록 : 승인자 -->
+  <select id="getApprover" resultMap="approvalResultMap">
     SELECT
-    c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.name, e.dept
-    FROM calendar c
+    c.approval_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
+    e.emp_id, e.name, e.dept
+    FROM approval c
     JOIN employee e ON c.applicant_id = e.emp_id
     WHERE c.applicant_id = #{applicantId}
   </select>
-  <!-- 결재 상세 조회 -->
-  <select id="readCalendar" resultMap="calendarResultMap">
-    SELECT c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id
-    FROM calendar c
-    LEFT JOIN employee e ON c.applicant_id = e.emp_id
-    WHERE c.calendar_id = #{calendarId}
+  <!-- 결재 승인 목록 -->
+  <select id="getApproval" resultMap="approvalResultMap">
+    SELECT
+    c.approval_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
+    e.emp_id, e.name, e.dept
+    FROM approval c
+    JOIN employee e ON c.applicant_id = e.emp_id
+    WHERE e.dept = #{dept}
   </select>
-  <!-- 결재 등록 -->
-  <insert id="addCalendar" parameterType="com.erp.backend.dto.CalendarDto">
-    INSERT INTO calendar(start_date, end_date, title, content, applicant_id)
+  <!-- 결재 상세 조회 -->
+  <select id="readApproval" resultMap="approvalResultMap">
+    SELECT c.approval_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
+    e.emp_id, e.name, e.dept
+    FROM approval c
+    LEFT JOIN employee e ON c.applicant_id = e.emp_id
+    WHERE c.approval_id = #{approvalId}
+  </select>
+  <!-- 결재 등록 : 신청자 -->
+  <insert id="addApproval" parameterType="com.erp.backend.dto.approvalDto">
+    INSERT INTO approval(start_date, end_date, title, content, applicant_id)
     VALUES (#{startDate}, #{endDate}, #{title}, #{content}, #{applicantId})
   </insert>
-  <!-- 결재 수정 -->
-  <update id = "updateCalendar" parameterType="com.erp.backend.dto.CalendarDto">
-    UPDATE calendar
+  <!-- 결재 수정(status) : 승인자 -->
+  <update id = "updateApproval" parameterType="com.erp.backend.dto.approvalDto">
+    UPDATE approval
     SET start_date = #{startDate}, 
       end_date = #{endDate}, 
       title = #{title}, 
       content = #{content}
-    WHERE calendar_id = #{calendarId}
+    WHERE approval_id = #{approvalId}
   </update>
-  <!-- 결재 삭제 -->
-  <delete id = "deleteCalendar" parameterType="Integer" >
-    DELETE FROM calendar
-    WHERE calendar_id = #{calendarId}
+  <!-- 결재 삭제 : 신청자 -->
+  <delete id = "deleteApproval" parameterType="Integer" >
+    DELETE FROM approval
+    WHERE approval_id = #{approvalId}
   </delete>
 </mapper>
