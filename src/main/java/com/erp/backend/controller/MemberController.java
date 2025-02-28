@@ -57,7 +57,7 @@ public class MemberController {
 
     //사원삭제
     @ResponseBody
-    @DeleteMapping("/{empId}")
+    @DeleteMapping("/delete/{empId}")
     public String deleteMember(@PathVariable(value = "empId") Long empId) {
         memberService.deleteMember(empId);
         return "success";

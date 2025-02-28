@@ -18,10 +18,8 @@ public class CustomLogoutFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         if (request.getRequestURI().equals("/logout") && request.getMethod().equals("GET")) {
-            // SecurityContext 초기화 (인증 객체 제거)
             SecurityContextHolder.clearContext();
 
-            // 응답 반환 (프론트에서 토큰 삭제하도록 요청)
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.getWriter().write("{\"message\": \"Logout successful, remove token on client-side\"}");
