@@ -4,8 +4,12 @@
 
     <!-- 전체조회 -->
     <select id="findAll" resultMap="memberResult">
-        SELECT * FROM employee
+        SELECT e.*, d.name AS department_name, p.name AS position_name
+        FROM employee e
+                 LEFT JOIN department d ON e.department_id = d.dept_id
+                 LEFT JOIN position p ON e.position_id = p.position_id
     </select>
+
     <resultMap id="memberResult" type="com.erp.backend.dto.MemberDto">
         <result property="empId" column="emp_id" />
         <result property="name" column="name" />
@@ -13,36 +17,62 @@
         <result property="password" column="password" />
         <result property="phone" column="phone" />
         <result property="imgUrl" column="img_url" />
-        <result property="dept" column="dept" />
-        <result property="position" column="position" />
+        <result property="departmentId" column="department_id" />
+        <result property="departmentName" column="department_name" />
+        <result property="positionId" column="position_id" />
+        <result property="positionName" column="position_name" />
         <result property="memberRole" column="member_role" />
     </resultMap>
 
-    <!--사원조회 (by 이름)-->
+    <!-- 사원조회 (by 이름) -->
     <select id="findByName" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
-        SELECT * FROM employee WHERE name = #{name}
+        SELECT e.*, d.name AS department_name, p.name AS position_name
+        FROM employee e
+                 LEFT JOIN department d ON e.department_id = d.dept_id
+                 LEFT JOIN position p ON e.position_id = p.position_id
+        WHERE e.name = #{name}
     </select>
 
-    <!--사원조회 (by 이메일)-->
+    <!-- 사원조회 (by 이메일) -->
     <select id="findByEmail" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
         SELECT * FROM employee WHERE email = #{email}
     </select>
 
     <!-- 사원등록 -->
     <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
-        INSERT INTO employee (emp_id, name, email, password, phone, img_url, dept, position, member_role)
-        VALUES (#{empId}, #{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{dept}, #{position}, #{memberRole})
+        INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, member_role)
+        VALUES (#{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{departmentId}, #{positionId}, #{memberRole})
     </insert>
 
     <!-- 사원수정 -->
-    <update id="updateMember" parameterType="com.erp.backend.dto.MemberDto">
+    <update id="updateMember">
         UPDATE employee SET
                             name = #{name},
                             email = #{email},
                             phone = #{phone},
-                            dept = #{dept},
-                            position = #{position}
+                            department_id = #{departmentId},
+                            position_id = #{positionId}
         WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 부서이동 -->
+    <update id="updateDepartment" parameterType="java.lang.Long">
+        UPDATE employee SET department_id = #{departmentId} WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 직급변경 -->
+    <update id="updatePosition" parameterType="java.lang.Long">
+        UPDATE employee SET position_id = #{positionId} WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 퇴사 -->
+    <update id="resignMember" parameterType="java.lang.Long">
+        UPDATE employee SET member_role = NULL WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 비밀번호 재설정 -->
+    <update id="updatePassword" parameterType="com.erp.backend.dto.MemberDto">
+        UPDATE employee SET password = #{password} WHERE emp_id = #{empId}
     </update>
 
     <!-- 사원삭제 -->

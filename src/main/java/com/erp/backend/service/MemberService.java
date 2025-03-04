@@ -48,6 +48,38 @@ public class MemberService {
         memberMapper.updateMember(memberDto);
     }
 
+    //부서이동
+    public void updateDepartment(Long empId, Long departmentId) {
+        memberMapper.updateDepartment(empId, departmentId);
+    }
+
+    //직급변경
+    public void updatePosition(Long empId, Long positionId) {
+        memberMapper.updatePosition(empId, positionId);
+    }
+
+    //퇴사
+    public void resignMember(Long empId) {
+        memberMapper.resignMember(empId);
+    }
+
+    //비밀번호 재설정
+    public void updatePassword(MemberDto memberDto) {
+        MemberDto member = memberMapper.findByPhone(memberDto.getPhone());
+
+        if (member == null) {
+            throw new IllegalArgumentException("해당 번호로 등록된 사원을 찾을 수 없습니다.");
+        }
+
+        if (!memberDto.getPassword().equals(memberDto.getRepassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
+        member.setPassword(encodedPassword);
+        memberMapper.updatePassword(member);
+    }
+
     //사원삭제
     public void deleteMember(Long empId) {
         memberMapper.deleteMember(empId);
