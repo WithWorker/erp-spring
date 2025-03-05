@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.erp.backend.dto.ApprovalDto;
+import com.erp.backend.dto.CalendarDto;
 import com.erp.backend.mapper.ApprovalMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -40,11 +41,16 @@ public class ApprovalService {
         return result;
     }   
 
-    public int updateApproval(ApprovalDto approvalDto) {
-        int result = -1;
-        log.info("service-updateApproval");
-        result = approvalMapper.updateApproval(approvalDto);
-        return result;
+    public ApprovalDto updateApproval(ApprovalDto approvalDto) {
+    // 1. 결재 상태 업데이트
+    approvalMapper.updateApproval(approvalDto);
+    // 2. 상태가 "승인(2)"으로 변경된 경우에만 calendar 정보 조회
+    if ("2".equals(approvalDto.getStatusId())) {
+        CalendarDto calendarDto = approvalMapper.getCalendarByApprovalId(approvalDto.getApprovalId());
+        approvalDto.setCalendarDto(calendarDto); // ApprovalDto에 Calendar 정보 추가
+    }
+
+    return approvalDto;
     }
 
     public int deleteApproval(Integer approvalId) {

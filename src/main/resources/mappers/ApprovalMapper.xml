@@ -28,6 +28,13 @@
     </association>
   </resultMap>
 
+  <resultMap id="calendarResultMap" type="com.erp.backend.dto.CalendarDto">
+    <id property="calendarId" column="calendar_id"/>
+    <result property="title" column="title"/>
+    <result property="startDate" column="start_date"/>
+    <result property="endDate" column="end_date"/>
+</resultMap>
+
   <!-- 결재 신청 목록 : 신청자 -->
   <select id="getApplicant" resultMap="approvalResultMap">
     SELECT
@@ -65,8 +72,10 @@
   <!-- 결재 승인 목록 -->
   <select id="getApprovedList" resultMap="approvalResultMap">
     SELECT
-    a.approval_id, a.title, a.content, a.start_date, a.end_date, 
-    app.name AS applicant_name, apr.name AS approver_name, 
+    a.approval_id, a.type_id, a.title, a.content, a.start_date, a.end_date, 
+    a.applicant_id, a.approver_id, a.status_id, a.calendar_id, 
+    app.emp_id AS applicant_id, app.name AS applicant_name, 
+    apr.emp_id AS approver_id, apr.name AS approver_name, 
     t.type_name, s.status_name
     FROM approval a
     JOIN employee app ON a.applicant_id = app.emp_id  
@@ -80,8 +89,10 @@
   <!-- 결재 상세 조회 -->
   <select id="readApproval" resultMap="approvalResultMap">
     SELECT
-    a.approval_id, a.title, a.content, a.start_date, a.end_date, 
-    app.name AS applicant_name, apr.name AS approver_name, 
+    a.approval_id, a.type_id, a.title, a.content, a.start_date, a.end_date, 
+    a.applicant_id, a.approver_id, a.status_id, a.calendar_id, 
+    app.emp_id AS applicant_id, app.name AS applicant_name, 
+    apr.emp_id AS approver_id, apr.name AS approver_name, 
     t.type_name, s.status_name
     FROM approval a
     JOIN employee app ON a.applicant_id = app.emp_id  
@@ -104,18 +115,25 @@
     SET status_id = #{statusId}
     WHERE approval_id = #{approvalId};
     <!-- status_id가 2인 경우에만 calendar 테이블에 추가 후 approval 테이블에 반영 -->
-    <if test="statusId == '2'">
-      INSERT INTO calendar (title, start_date, end_date, approval_id)
+    <if test="statusId = 2">
+      INSERT INTO calendar (title, start_date, end_date, applicant_id, approval_id)
       VALUES ((SELECT title FROM approval WHERE approval_id = #{approvalId}),
               (SELECT start_date FROM approval WHERE approval_id = #{approvalId}),
               (SELECT end_date FROM approval WHERE approval_id = #{approvalId}),
-              #{approvalId});
+              (SELECT applicant_id FROM approval WHERE approval_id = #{approvalId}),
+              #{approvalId})
     <!-- 가장 최근 삽입된 calendar_id 가져와서 approval 테이블 업데이트 -->
     UPDATE approval
     SET calendar_id = (SELECT LAST_INSERT_ID()) 
-    WHERE approval_id = #{approvalId};
+    WHERE approval_id = #{approvalId}
   </if>
 </update>
+<!-- 별도로 calendar 정보만 조회 -->
+<select id="getCalendarByApprovalId" resultMap="calendarResultMap">
+    SELECT c.*
+    FROM calendar c
+    WHERE c.approval_id = #{approvalId}
+</select>
 
   <!-- 결재 삭제 : 신청자 -->
   <delete id = "deleteApproval" parameterType="Integer" >

@@ -52,18 +52,20 @@ public class ApprovalController {
     // http://localhost:7777/approval/add
     @PostMapping("/approval/add")
 	public ResponseEntity<String> addApproval(@RequestBody ApprovalDto approvalDto) {
-    log.info("Received ApprovalDto: {}", approvalDto);
-    approvalService.addApproval(approvalDto);
-    return ResponseEntity.ok("결재 신청");
+        log.info("Received ApprovalDto: {}", approvalDto);
+        approvalService.addApproval(approvalDto);
+        return ResponseEntity.ok("결재 신청");
     }
     // 결재 수정(status) : 승인자 
     // http://localhost:7777/approval/edit/{approvalId}
     @PutMapping("/approval/edit/{approvalId}")
-	public ResponseEntity<String> updateApproval(@PathVariable Integer approvalId, @RequestBody ApprovalDto approvalDto) {
-    approvalDto.setApprovalId(approvalId);
-    approvalService.updateApproval(approvalDto);
-    return ResponseEntity.ok("결재 상태 수정");
-	}
+	public ResponseEntity<ApprovalDto> updateApproval(@PathVariable Integer approvalId, @RequestBody ApprovalDto approvalDto) {
+        approvalDto.setApprovalId(approvalId);
+        // 결재 수정 서비스 호출
+        ApprovalDto updatedApproval = approvalService.updateApproval(approvalDto);
+        // 결재 상태 수정 후 calendarDto 포함된 updatedApproval 반환
+        return ResponseEntity.ok(updatedApproval);
+    }
     // 결재 삭제 : 신청자 
     // http://localhost:7777/approval/{approvalId}
     @DeleteMapping("/approval/{approvalId}")
