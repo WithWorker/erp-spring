@@ -16,42 +16,42 @@ public class CalendarService {
     private final CalendarMapper calendarMapper;
 
     public List<CalendarDto> getAllCalendars() {
-        log.info("service-전체조회 성공");
+        log.info("service-getAllCalendars");
         return calendarMapper.getAllCalendars();
     }
 
     public List<CalendarDto> getMyCalendars(Integer applicantId) {
-        log.info("service-개인조회 성공");
+        log.info("service-getMyCalendars");
         return calendarMapper.getMyCalendars(applicantId);
     }
 
     public List<CalendarDto> getDeptCalendars(String dept) {
-        log.info("service-부서조회 성공");
+        log.info("service-getDeptCalendars");
         return calendarMapper.getDeptCalendars(dept);  
     }
     
     public CalendarDto readCalendar(Integer calendarId) {
-        log.info("service-상세보기 성공");
+        log.info("service-readCalendar");
         return calendarMapper.readCalendar(calendarId);
     }
 
     public int addCalendar(CalendarDto calendarDto) {
         int result = -1;
-        log.info("service-등록 성공");
+        log.info("service-addCalendar");
         result = calendarMapper.addCalendar(calendarDto);
         return result;
     }   
 
     public int updateCalendar(CalendarDto calendarDto) {
         int result = -1;
-        log.info("service-수정 성공");
+        log.info("service-updateCalendar");
         result = calendarMapper.updateCalendar(calendarDto);
         return result;
     }
 
     public int deleteCalendar(Integer calendarId) {
         int result = -1;
-        log.info("service-삭제 성공");
+        log.info("service-deleteCalendar");
         result = calendarMapper.deleteCalendar(calendarId);
         return result;
     }

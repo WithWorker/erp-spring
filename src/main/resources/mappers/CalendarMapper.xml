@@ -44,7 +44,8 @@
   </select>
   <!-- 일정 상세 조회 -->
   <select id="readCalendar" resultMap="calendarResultMap">
-    SELECT c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
+    SELECT 
+    c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
     e.emp_id, e.name, e.dept
     FROM calendar c
     LEFT JOIN employee e ON c.applicant_id = e.emp_id

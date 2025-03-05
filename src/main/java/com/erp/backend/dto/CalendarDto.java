@@ -3,6 +3,8 @@ package com.erp.backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -11,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class CalendarDto {
   private Integer calendarId;
 
@@ -31,6 +34,4 @@ public class CalendarDto {
 
   private MemberDto memberDto;
 
-  // 기본 생성자 필수
-  public CalendarDto() {}
 }

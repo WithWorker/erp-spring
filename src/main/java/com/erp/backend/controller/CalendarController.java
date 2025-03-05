@@ -25,27 +25,32 @@ import java.util.List;
 public class CalendarController {
 	private final CalendarService calendarService;
 	// 사원 전체 일정 목록 
+	// http://localhost:7777/calendar/all
 	@GetMapping("/calendar/all")
 	public List<CalendarDto> getAllCalendars() {
 			return calendarService.getAllCalendars();
 	}
 	// 개인 일정 목록
+	// http://localhost:7777/calendar/my/{applicantId}
 	@GetMapping("/calendar/my/{applicantId}")
 	public List<CalendarDto> getMyCalendars(@PathVariable Integer applicantId) {
 		return calendarService.getMyCalendars(applicantId);
 	}
 	// 부서 일정 목록
+	// http://localhost:7777/calendar/dept/{dept}
 	@GetMapping("/calendar/dept/{dept}")
 	public List<CalendarDto> getDeptCalendars(@PathVariable("dept") String dept) {
 		String decodedDept = URLDecoder.decode(dept, StandardCharsets.UTF_8);
 		return calendarService.getDeptCalendars(decodedDept);
 	}
 	// 일정 상세보기
+	// http://localhost:7777/calendar/{calendarId}
 	@GetMapping("/calendar/{calendarId}")
 	public CalendarDto readCalendar(@PathVariable Integer calendarId) {
 		return calendarService.readCalendar(calendarId);
 	}
 	// 일정 등록
+	// http://localhost:7777/calendar/add
 	@PostMapping("/calendar/add")
 	public ResponseEntity<String> addCalendar(@RequestBody CalendarDto calendarDto) {
     log.info("Received CalendarDto: {}", calendarDto);
@@ -53,6 +58,7 @@ public class CalendarController {
     return ResponseEntity.ok("일정 등록 성공");
 }
 	// 일정 수정
+	// http://localhost:7777/calendar/edit/{calendarId}
 	@PutMapping("/calendar/edit/{calendarId}")
 	public ResponseEntity<String> updateCalendar(@PathVariable Integer calendarId, @RequestBody CalendarDto calendarDto) {
     calendarDto.setCalendarId(calendarId);
@@ -60,6 +66,7 @@ public class CalendarController {
     return ResponseEntity.ok("일정 수정 성공");
 	}
 	// 일정 삭제
+	// http://localhost:7777/calendar/{calendarId}
 	@DeleteMapping("/calendar/{calendarId}")
 	public ResponseEntity<String> deleteCalendar(@PathVariable Integer calendarId) {
 		calendarService.deleteCalendar(calendarId);
