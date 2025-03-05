@@ -21,11 +21,11 @@ public class MemberController {
         return memberService.findAll();
     }
 
-    //사원조회 (by 이름)
+    //사원조회 (by id)
     @ResponseBody
-    @GetMapping("/{name}")
-    public MemberDto findByName(@PathVariable(value = "name") String name) {
-        return memberService.findByName(name);
+    @GetMapping("/{empId}")
+    public MemberDto findByName(@PathVariable(value = "empId") Long empId) {
+        return memberService.findById(empId);
     }
 
     //사원등록
@@ -69,7 +69,7 @@ public class MemberController {
     //부서이동
     @ResponseBody
     @PutMapping("/update/department/{empId}")
-    public String updateDepartment(@PathVariable(value = "empId") Long empId, @RequestParam Long departmentId) {
+    public String updateDepartment(@PathVariable(value = "empId") Long empId, @RequestBody Long departmentId) {
         memberService.updateDepartment(empId, departmentId);
         return "success";
     }
@@ -77,7 +77,7 @@ public class MemberController {
     //직급변경
     @ResponseBody
     @PutMapping("/update/position/{empId}")
-    public String updatePosition(@PathVariable(value = "empId") Long empId, @RequestParam Long positionId) {
+    public String updatePosition(@PathVariable(value = "empId") Long empId, @RequestBody Long positionId) {
         memberService.updatePosition(empId, positionId);
         return "success";
     }

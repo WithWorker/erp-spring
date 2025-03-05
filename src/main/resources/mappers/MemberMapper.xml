@@ -33,9 +33,23 @@
         WHERE e.name = #{name}
     </select>
 
+    <!-- 사원조회 (by id) -->
+    <select id="findById" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
+        SELECT e.*, d.name AS department_name, p.name AS position_name
+        FROM employee e
+                LEFT JOIN department d ON e.department_id = d.dept_id
+                LEFT JOIN position p ON e.position_id = p.position_id
+        WHERE e.emp_id = #{empId}
+    </select>
+
     <!-- 사원조회 (by 이메일) -->
     <select id="findByEmail" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
         SELECT * FROM employee WHERE email = #{email}
+    </select>
+
+    <!-- 사원조회 (by phone) -->
+    <select id="findByPhone" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
+        SELECT * FROM employee WHERE phone = #{phone}
     </select>
 
     <!-- 사원등록 -->
