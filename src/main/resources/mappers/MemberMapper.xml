@@ -63,9 +63,12 @@
         UPDATE employee SET
                             name = #{name},
                             email = #{email},
+                            password = #{password},
                             phone = #{phone},
+                            img_url = #{imgUrl},
                             department_id = #{departmentId},
-                            position_id = #{positionId}
+                            position_id = #{positionId},
+                            member_role = #{memberRole}
         WHERE emp_id = #{empId}
     </update>
 

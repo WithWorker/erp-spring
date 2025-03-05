@@ -1,3 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.erp.backend.mapper.InfoMapper">
+
+    <!-- 프로필 조회 -->
+    <select id="profile" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
+        SELECT e.name, e.email, e.phone, e.img_url, d.name AS department_name, p.name AS position_name
+        FROM employee e
+                LEFT JOIN department d ON e.department_id = d.dept_id
+                LEFT JOIN position p ON e.position_id = p.position_id
+        WHERE e.emp_id = #{empId}
+    </select>
 
 </mapper>
