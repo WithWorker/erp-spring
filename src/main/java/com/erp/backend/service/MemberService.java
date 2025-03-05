@@ -49,13 +49,13 @@ public class MemberService {
     }
 
     //부서이동
-    public void updateDepartment(Long empId, Long departmentId) {
-        memberMapper.updateDepartment(empId, departmentId);
+    public void updateDepartment(MemberDto memberDto) {
+        memberMapper.updateDepartment(memberDto);
     }
 
     //직급변경
-    public void updatePosition(Long empId, Long positionId) {
-        memberMapper.updatePosition(empId, positionId);
+    public void updatePosition(MemberDto memberDto) {
+        memberMapper.updatePosition(memberDto);
     }
 
     //퇴사

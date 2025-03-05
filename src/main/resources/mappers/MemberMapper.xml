@@ -70,12 +70,12 @@
     </update>
 
     <!-- 부서이동 -->
-    <update id="updateDepartment" parameterType="java.lang.Long">
+    <update id="updateDepartment" parameterType="com.erp.backend.dto.MemberDto">
         UPDATE employee SET department_id = #{departmentId} WHERE emp_id = #{empId}
     </update>
 
     <!-- 직급변경 -->
-    <update id="updatePosition" parameterType="java.lang.Long">
+    <update id="updatePosition" parameterType="com.erp.backend.dto.MemberDto">
         UPDATE employee SET position_id = #{positionId} WHERE emp_id = #{empId}
     </update>
 

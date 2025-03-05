@@ -69,16 +69,18 @@ public class MemberController {
     //부서이동
     @ResponseBody
     @PutMapping("/update/department/{empId}")
-    public String updateDepartment(@PathVariable(value = "empId") Long empId, @RequestBody Long departmentId) {
-        memberService.updateDepartment(empId, departmentId);
+    public String updateDepartment(@PathVariable Long empId, @RequestBody MemberDto memberDto) {
+        memberDto.setEmpId(empId);
+        memberService.updateDepartment(memberDto);
         return "success";
     }
 
     //직급변경
     @ResponseBody
     @PutMapping("/update/position/{empId}")
-    public String updatePosition(@PathVariable(value = "empId") Long empId, @RequestBody Long positionId) {
-        memberService.updatePosition(empId, positionId);
+    public String updatePosition(@PathVariable Long empId, @RequestBody MemberDto memberDto) {
+        memberDto.setEmpId(empId);
+        memberService.updatePosition(memberDto);
         return "success";
     }
 

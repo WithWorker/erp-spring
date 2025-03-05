@@ -29,10 +29,10 @@ public interface MemberMapper {
     void updateMember(MemberDto memberDto);
 
     //부서이동
-    void updateDepartment(Long empId, Long departmentId);
+    void updateDepartment(MemberDto memberDto);
 
     //직급변경
-    void updatePosition(Long empId, Long positionId);
+    void updatePosition(MemberDto memberDto);
 
     //퇴사
     void resignMember(Long empId);
