@@ -4,12 +4,18 @@
 
     <!-- 프로필 조회 -->
     <select id="profile" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
-        SELECT e.name, e.email, e.phone, e.img_url, d.name AS department_name, p.name AS position_name
+        SELECT e.emp_id, e.name, e.email, e.phone, e.img_url,
+               d.department_id AS departmentId, d.name AS departmentName,
+               p.position_id AS positionId, p.name AS positionName,
+               ps.base_salary AS baseSalary, db.bonus AS bonus
         FROM employee e
                  LEFT JOIN department d ON e.department_id = d.department_id
                  LEFT JOIN position p ON e.position_id = p.position_id
+                 LEFT JOIN position_salary ps ON e.position_id = ps.position_id
+                 LEFT JOIN department_bonus db ON e.department_id = db.department_id
         WHERE e.emp_id = #{empId}
     </select>
+
 
     <!-- 근태 조회 -->
     <select id="attendance" parameterType="java.lang.Long" resultType="com.erp.backend.dto.AttendanceDto">
