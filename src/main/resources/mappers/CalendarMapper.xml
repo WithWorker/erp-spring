@@ -51,6 +51,26 @@
     JOIN employee e ON c.applicant_id = e.emp_id
     WHERE CURDATE() BETWEEN c.start_date AND c.end_date
   </select>
+  <!-- 오늘 일정 목록(개인) -->
+  <select id="getMyTodayCalendars" resultMap="calendarResultMap">
+    SELECT
+    c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
+    e.emp_id, e.name, e.dept
+    FROM calendar c
+    JOIN employee e ON c.applicant_id = e.emp_id
+    WHERE CURDATE() BETWEEN c.start_date AND c.end_date
+          AND c.applicant_id = #{applicantId}
+  </select>
+  <!-- 오늘 일정 목록(부서) -->
+  <select id="getDeptTodayCalendars" resultMap="calendarResultMap">
+    SELECT
+    c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
+    e.emp_id, e.name, e.dept
+    FROM calendar c
+    JOIN employee e ON c.applicant_id = e.emp_id
+    WHERE CURDATE() BETWEEN c.start_date AND c.end_date
+          AND e.dept = #{dept}
+  </select>
   <!-- 일정 상세 조회 -->
   <select id="readCalendar" resultMap="calendarResultMap">
     SELECT 

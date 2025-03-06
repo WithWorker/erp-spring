@@ -34,6 +34,16 @@ public class CalendarService {
         log.info("service-getTodaysCalendars");
         return calendarMapper.getTodayCalendars();  
     }
+
+    public List<CalendarDto> getMyTodayCalendars(Integer applicantId) {
+        log.info("service-getMyTodayCalendars");
+        return calendarMapper.getMyTodayCalendars(applicantId);
+    }
+
+    public List<CalendarDto> getDeptTodayCalendars(String dept) {
+        log.info("service-getDeptTodayCalendars");
+        return calendarMapper.getDeptTodayCalendars(dept);  
+    }
     
     public CalendarDto readCalendar(Integer calendarId) {
         log.info("service-readCalendar");

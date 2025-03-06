@@ -43,12 +43,28 @@ public class CalendarController {
 		String decodedDept = URLDecoder.decode(dept, StandardCharsets.UTF_8);
 		return calendarService.getDeptCalendars(decodedDept);
 	}
-	// 오늘 일정 목록
-		// http://localhost:7777/calendar/today
+	// 오늘 일정 전체 목록
+	// http://localhost:7777/calendar/today
 	@GetMapping("/calendar/today")
 	public List<CalendarDto> getTodayCalendars() {
 			return calendarService.getTodayCalendars();
 	}
+
+	// 오늘 일정 개인 목록
+	// http://localhost:7777/calendar/mytoday/{applicantId}
+	@GetMapping("/calendar/mytoday/{applicantId}")
+	public List<CalendarDto> getMyTodayCalendars(@PathVariable Integer applicantId) {
+		return calendarService.getMyTodayCalendars(applicantId);
+	}
+
+	// 오늘 일정 부서 목록
+	// http://localhost:7777/calendar/depttoday/{dept}
+	@GetMapping("/calendar/depttoday/{dept}")
+	public List<CalendarDto> getDeptTodayCalendars(@PathVariable("dept") String dept) {
+		String decodedDept = URLDecoder.decode(dept, StandardCharsets.UTF_8);
+		return calendarService.getDeptTodayCalendars(decodedDept);
+	}
+
 	// 일정 상세보기
 	// http://localhost:7777/calendar/{calendarId}
 	@GetMapping("/calendar/{calendarId}")

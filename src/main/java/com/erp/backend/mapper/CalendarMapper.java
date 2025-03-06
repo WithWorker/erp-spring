@@ -11,6 +11,8 @@ public interface CalendarMapper {
     List<CalendarDto> getMyCalendars(Integer applicantId);
     List<CalendarDto> getDeptCalendars(String dept);
     List<CalendarDto> getTodayCalendars();
+    List<CalendarDto> getMyTodayCalendars(Integer applicantId);
+    List<CalendarDto> getDeptTodayCalendars(String dept);
     CalendarDto readCalendar(Integer calendarId);
     int addCalendar(CalendarDto calendarDto);
     int updateCalendar(CalendarDto calendarDto);
