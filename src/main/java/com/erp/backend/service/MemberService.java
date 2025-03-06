@@ -25,9 +25,14 @@ public class MemberService {
         return memberMapper.findByName(name);
     }
 
-    //직원조회 (by id)
+    //직원조회 (by 직원id)
     public MemberDto findById(Long empId) {
         return memberMapper.findById(empId);
+    }
+
+    //직원조회 (by 부서id)
+    public List<MemberDto> findAllByDept(Long departmentId) {
+        return memberMapper.findAllByDept(departmentId);
     }
 
     //직원등록

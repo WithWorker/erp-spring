@@ -16,7 +16,6 @@
         WHERE e.emp_id = #{empId}
     </select>
 
-
     <!-- 근태 조회 -->
     <select id="attendance" parameterType="java.lang.Long" resultType="com.erp.backend.dto.AttendanceDto">
         SELECT emp_id,

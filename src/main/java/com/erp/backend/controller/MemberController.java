@@ -21,11 +21,25 @@ public class MemberController {
         return memberService.findAll();
     }
 
-    //직원조회 (by id)
+    //직원조회 (by 이름)
     @ResponseBody
-    @GetMapping("/{empId}")
-    public MemberDto findByName(@PathVariable(value = "empId") Long empId) {
+    @PostMapping("/name")
+    public MemberDto findByName(@RequestBody MemberDto memberDto) {
+        return memberService.findByName(memberDto.getName());
+    }
+
+    //직원조회 (by 직원id)
+    @ResponseBody
+    @GetMapping("/emp/{empId}")
+    public MemberDto findById(@PathVariable(value = "empId") Long empId) {
         return memberService.findById(empId);
+    }
+
+    // 직원조회 (by 부서id)
+    @ResponseBody
+    @GetMapping("/dept/{departmentId}")
+    public List<MemberDto> findAllByDept(@PathVariable(value = "departmentId") Long departmentId) {
+        return memberService.findAllByDept(departmentId);
     }
 
     //직원등록
