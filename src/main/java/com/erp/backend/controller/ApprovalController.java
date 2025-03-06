@@ -36,11 +36,11 @@ public class ApprovalController {
     public List<ApprovalDto> getApprover(@PathVariable Integer approverId){
         return approvalService.getApprover(approverId);
     }
-    // 결재 승인 목록 
+    // 결재 상태 목록 
     // http://localhost:7777/approval/approved/{statusId}
-    @GetMapping("/approval/approved")
-    public List<ApprovalDto> getApprovedList(){
-        return approvalService.getApprovedList();
+    @GetMapping("/approval/approved/{statusId}")
+    public List<ApprovalDto> getApprovedList(@PathVariable Integer statusId){
+        return approvalService.getApprovedList(statusId);
     }
     // 결재 상세 조회 
     // http://localhost:7777/approval/{approvalId}
@@ -59,12 +59,10 @@ public class ApprovalController {
     // 결재 수정(status) : 승인자 
     // http://localhost:7777/approval/edit/{approvalId}
     @PutMapping("/approval/edit/{approvalId}")
-	public ResponseEntity<ApprovalDto> updateApproval(@PathVariable Integer approvalId, @RequestBody ApprovalDto approvalDto) {
+	public ResponseEntity<String> updateApproval(@PathVariable Integer approvalId, @RequestBody ApprovalDto approvalDto) {
         approvalDto.setApprovalId(approvalId);
-        // 결재 수정 서비스 호출
-        ApprovalDto updatedApproval = approvalService.updateApproval(approvalDto);
-        // 결재 상태 수정 후 calendarDto 포함된 updatedApproval 반환
-        return ResponseEntity.ok(updatedApproval);
+        approvalService.updateApproval(approvalDto);
+        return ResponseEntity.ok("결재 상태 수정");
     }
     // 결재 삭제 : 신청자 
     // http://localhost:7777/approval/{approvalId}

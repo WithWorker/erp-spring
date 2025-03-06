@@ -40,9 +40,6 @@ public class ApprovalDto {
     
     @JsonProperty("status_id")
     private Integer statusId;
-    
-    @JsonProperty("calendar_id")
-    private Integer calendarId;
 
     private String typeName; 
     private String statusName;  
