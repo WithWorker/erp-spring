@@ -43,6 +43,12 @@ public class CalendarController {
 		String decodedDept = URLDecoder.decode(dept, StandardCharsets.UTF_8);
 		return calendarService.getDeptCalendars(decodedDept);
 	}
+	// 오늘 일정 목록
+		// http://localhost:7777/calendar/today
+	@GetMapping("/calendar/today")
+	public List<CalendarDto> getTodayCalendars() {
+			return calendarService.getTodayCalendars();
+	}
 	// 일정 상세보기
 	// http://localhost:7777/calendar/{calendarId}
 	@GetMapping("/calendar/{calendarId}")

@@ -30,6 +30,11 @@ public class CalendarService {
         return calendarMapper.getDeptCalendars(dept);  
     }
     
+    public List<CalendarDto> getTodayCalendars() {
+        log.info("service-getTodaysCalendars");
+        return calendarMapper.getTodayCalendars();  
+    }
+    
     public CalendarDto readCalendar(Integer calendarId) {
         log.info("service-readCalendar");
         return calendarMapper.readCalendar(calendarId);
