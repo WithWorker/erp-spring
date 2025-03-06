@@ -21,14 +21,14 @@ public class MemberController {
         return memberService.findAll();
     }
 
-    //사원조회 (by id)
+    //직원조회 (by id)
     @ResponseBody
     @GetMapping("/{empId}")
     public MemberDto findByName(@PathVariable(value = "empId") Long empId) {
         return memberService.findById(empId);
     }
 
-    //사원등록
+    //직원등록
     @PostMapping("/join")
     @ResponseBody
     public ResponseEntity<String> insertMember(@RequestBody MemberDto memberDto) {
@@ -40,7 +40,7 @@ public class MemberController {
         }
     }
 
-    //사원수정
+    //직원수정
     @ResponseBody
     @PutMapping("/update/{empId}")
     public String updateMember(@PathVariable(value = "empId") Long empId, @RequestBody Map<String, Object> updateInfo) {
@@ -104,7 +104,7 @@ public class MemberController {
         }
     }
 
-    //사원삭제
+    //직원삭제
     @ResponseBody
     @DeleteMapping("/delete/{empId}")
     public String deleteMember(@PathVariable(value = "empId") Long empId) {

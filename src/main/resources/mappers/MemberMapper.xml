@@ -6,7 +6,7 @@
     <select id="findAll" resultMap="memberResult">
         SELECT e.*, d.name AS department_name, p.name AS position_name
         FROM employee e
-                 LEFT JOIN department d ON e.department_id = d.dept_id
+                 LEFT JOIN department d ON e.department_id = d.department_id
                  LEFT JOIN position p ON e.position_id = p.position_id
     </select>
 
@@ -24,41 +24,41 @@
         <result property="memberRole" column="member_role" />
     </resultMap>
 
-    <!-- 사원조회 (by 이름) -->
+    <!-- 직원조회 (by 이름) -->
     <select id="findByName" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
         SELECT e.*, d.name AS department_name, p.name AS position_name
         FROM employee e
-                 LEFT JOIN department d ON e.department_id = d.dept_id
+                 LEFT JOIN department d ON e.department_id = d.department_id
                  LEFT JOIN position p ON e.position_id = p.position_id
         WHERE e.name = #{name}
     </select>
 
-    <!-- 사원조회 (by id) -->
+    <!-- 직원조회 (by id) -->
     <select id="findById" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
         SELECT e.*, d.name AS department_name, p.name AS position_name
         FROM employee e
-                LEFT JOIN department d ON e.department_id = d.dept_id
+                LEFT JOIN department d ON e.department_id = d.department_id
                 LEFT JOIN position p ON e.position_id = p.position_id
         WHERE e.emp_id = #{empId}
     </select>
 
-    <!-- 사원조회 (by 이메일) -->
+    <!-- 직원조회 (by 이메일) -->
     <select id="findByEmail" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
         SELECT * FROM employee WHERE email = #{email}
     </select>
 
-    <!-- 사원조회 (by phone) -->
+    <!-- 직원조회 (by phone) -->
     <select id="findByPhone" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
         SELECT * FROM employee WHERE phone = #{phone}
     </select>
 
-    <!-- 사원등록 -->
+    <!-- 직원등록 -->
     <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
         INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, member_role)
         VALUES (#{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{departmentId}, #{positionId}, #{memberRole})
     </insert>
 
-    <!-- 사원수정 -->
+    <!-- 직원수정 -->
     <update id="updateMember">
         UPDATE employee SET
                             name = #{name},
@@ -92,7 +92,7 @@
         UPDATE employee SET password = #{password} WHERE emp_id = #{empId}
     </update>
 
-    <!-- 사원삭제 -->
+    <!-- 직원삭제 -->
     <delete id="deleteMember" parameterType="java.lang.Long">
         DELETE FROM employee WHERE emp_id = #{empId}
     </delete>

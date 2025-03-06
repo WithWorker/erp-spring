@@ -20,17 +20,17 @@ public class MemberService {
         return memberMapper.findAll();
     }
 
-    //사원조회 (by 이름)
+    //직원조회 (by 이름)
     public MemberDto findByName(String name){
         return memberMapper.findByName(name);
     }
 
-    //사원조회 (by id)
+    //직원조회 (by id)
     public MemberDto findById(Long empId) {
         return memberMapper.findById(empId);
     }
 
-    //사원등록
+    //직원등록
     public void insertMember(MemberDto memberDto) {
         if (memberMapper.findByEmail(memberDto.getEmail()) != null) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
@@ -43,7 +43,7 @@ public class MemberService {
         memberMapper.insertMember(memberDto);
     }
 
-    //사원수정
+    //직원수정
     public void updateMember(MemberDto memberDto) {
         memberMapper.updateMember(memberDto);
     }
@@ -80,7 +80,7 @@ public class MemberService {
         memberMapper.updatePassword(member);
     }
 
-    //사원삭제
+    //직원삭제
     public void deleteMember(Long empId) {
         memberMapper.deleteMember(empId);
     }

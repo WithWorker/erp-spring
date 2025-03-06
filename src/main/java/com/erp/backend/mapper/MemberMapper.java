@@ -10,22 +10,22 @@ public interface MemberMapper {
     //전체조회
     List<MemberDto> findAll();
 
-    //사원조회 (by 이름)
+    //직원조회 (by 이름)
     MemberDto findByName(String name);
 
-    //사원조회 (by id)
+    //직원조회 (by id)
     MemberDto findById(Long empId);
 
-    //사원조회 (by 이메일)
+    //직원조회 (by 이메일)
     MemberDto findByEmail(String email);
 
-    //사원조회 (by phone)
+    //직원조회 (by phone)
     MemberDto findByPhone(String phone);
 
-    //사원등록
+    //직원등록
     void insertMember(MemberDto memberDto);
 
-    //사원수정
+    //직원수정
     void updateMember(MemberDto memberDto);
 
     //부서이동
@@ -40,6 +40,6 @@ public interface MemberMapper {
     //비밀번호 재설정
     void updatePassword(MemberDto member);
 
-    //사원삭제
+    //직원삭제
     void deleteMember(Long empId);
 }

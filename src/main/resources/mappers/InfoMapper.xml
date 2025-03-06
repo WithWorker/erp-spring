@@ -6,9 +6,50 @@
     <select id="profile" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
         SELECT e.name, e.email, e.phone, e.img_url, d.name AS department_name, p.name AS position_name
         FROM employee e
-                LEFT JOIN department d ON e.department_id = d.dept_id
-                LEFT JOIN position p ON e.position_id = p.position_id
+                 LEFT JOIN department d ON e.department_id = d.department_id
+                 LEFT JOIN position p ON e.position_id = p.position_id
         WHERE e.emp_id = #{empId}
     </select>
+
+    <!-- 근태 조회 -->
+    <select id="attendance" parameterType="java.lang.Long" resultType="com.erp.backend.dto.AttendanceDto">
+        SELECT emp_id,
+               DATE_FORMAT(in_time, '%H:%i') AS in_time,
+               DATE_FORMAT(out_time, '%H:%i') AS out_time
+        FROM attendance
+        WHERE emp_id = #{empId}
+        AND DATE(in_time) = CURDATE()
+    </select>
+
+    <!-- 출근 확인 -->
+    <select id="hasTodayCheckIn" parameterType="java.lang.Long" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM attendance
+        WHERE emp_id = #{empId}
+        AND DATE(in_time) = CURDATE()
+    </select>
+
+    <!-- 출근 업데이트 -->
+    <update id="updateTodayCheckIn" parameterType="java.lang.Long">
+        UPDATE attendance
+        SET in_time = NOW()
+        WHERE emp_id = #{empId}
+        AND DATE(in_time) = CURDATE()
+    </update>
+
+    <!-- 출근 기록 -->
+    <insert id="insertCheckIn" parameterType="java.lang.Long">
+        INSERT INTO attendance (emp_id, in_time)
+        VALUES (#{empId}, NOW())
+    </insert>
+
+    <!-- 퇴근 기록 -->
+    <update id="updateCheckOut" parameterType="java.lang.Long">
+        UPDATE attendance
+        SET out_time = NOW()
+        WHERE emp_id = #{empId}
+        ORDER BY in_time DESC
+        LIMIT 1
+    </update>
 
 </mapper>

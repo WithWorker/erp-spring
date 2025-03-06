@@ -22,6 +22,6 @@ public class MemberDto {
     private Integer positionId;
     private String positionName;
     private MemberRole memberRole;
+    private Integer baseSalary;
+    private Integer bonus;
 }
-
-
