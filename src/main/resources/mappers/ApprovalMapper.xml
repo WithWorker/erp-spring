@@ -38,18 +38,14 @@
   <!-- 결재 신청 목록 : 신청자 -->
   <select id="getApplicant" resultMap="approvalResultMap">
     SELECT
-    a.approval_id, a.type_id, a.title, a.content, a.start_date, a.end_date, 
-    a.applicant_id, a.approver_id, a.status_id, a.calendar_id, 
-    app.emp_id AS applicant_id, app.name AS applicant_name, 
-    apr.emp_id AS approver_id, apr.name AS approver_name, 
-    t.type_name, s.status_name
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name
     FROM approval a
     JOIN employee app ON a.applicant_id = app.emp_id  
-    LEFT JOIN employee apr ON a.approver_id = apr.emp_id  
     JOIN approval_type t ON a.type_id = t.type_id
     JOIN approval_status s ON a.status_id = s.status_id
     WHERE a.applicant_id = #{applicantId}
-    ORDER BY a.approval_id DESC
+    ORDER BY a.approval_id desc
   </select>
 
   <!-- 결재 확인 목록 : 승인자 -->
@@ -72,40 +68,37 @@
   <!-- 결재 상태(대기, 반려, 승인) 목록 -->
   <select id="getApprovedList" resultMap="approvalResultMap">
     SELECT
-    a.approval_id, a.type_id, a.title, a.content, a.start_date, a.end_date, 
-    a.applicant_id, a.approver_id, a.status_id, a.calendar_id, 
-    app.emp_id AS applicant_id, app.name AS applicant_name, 
-    apr.emp_id AS approver_id, apr.name AS approver_name, 
-    t.type_name, s.status_name
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name
     FROM approval a
     JOIN employee app ON a.applicant_id = app.emp_id  
-    LEFT JOIN employee apr ON a.approver_id = apr.emp_id  
     JOIN approval_type t ON a.type_id = t.type_id
     JOIN approval_status s ON a.status_id = s.status_id
-    WHERE a.status_id = #{statusId}
+    WHERE a.status_id=#{statusId}
     ORDER BY a.approval_id desc
   </select>
 
   <!-- 결재 상세 조회 -->
   <select id="readApproval" resultMap="approvalResultMap">
-    SELECT
-    a.approval_id, a.type_id, a.title, a.content, a.start_date, a.end_date, 
-    a.applicant_id, a.approver_id, a.status_id, a.calendar_id, 
-    app.emp_id AS applicant_id, app.name AS applicant_name, 
-    apr.emp_id AS approver_id, apr.name AS approver_name, 
-    t.type_name, s.status_name
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name
     FROM approval a
     JOIN employee app ON a.applicant_id = app.emp_id  
-    LEFT JOIN employee apr ON a.approver_id = apr.emp_id  
     JOIN approval_type t ON a.type_id = t.type_id
     JOIN approval_status s ON a.status_id = s.status_id
-    WHERE a.approval_id = #{approvalId}
+    WHERE a.approval_id=2
+    ORDER BY a.approval_id desc
   </select>
 
   <!-- 결재 등록 : 신청자 -->
   <insert id="addApproval" parameterType="com.erp.backend.dto.ApprovalDto">
-    INSERT INTO approval(type_id, start_date, end_date, title, content, applicant_id, approver_id)
-    VALUES (#{typeId}, #{startDate}, #{endDate}, #{title}, #{content}, #{applicantId}, #{approverId})
+    INSERT INTO approval(type_id, start_date, end_date, title, content, applicant_id)
+    VALUES (#{typeId}, #{startDate}, #{endDate}, #{title}, #{content}, #{applicantId})
+  </insert>
+  <!-- 결재 승인자 등록 -->
+  <insert id = "addApprover">
+    INSERT INTO approver(approval_id, approver_id)
+    VALUES(#{approvalId}, #{approverId})
   </insert>
 
   <!-- 결재 상태 수정 : 승인자 -->
@@ -116,18 +109,11 @@
   </update>
   <!-- status_id가 2인 경우에만 calendar 테이블에 추가 -->
   <insert id="insertCalendarFromApproval" parameterType="com.erp.backend.dto.ApprovalDto">
-    INSERT INTO calendar (title, start_date, end_date, applicant_id, approval_id)
-    SELECT title, start_date, end_date, applicant_id, approval_id
+    INSERT INTO calendar (title, content, start_date, end_date, applicant_id, approval_id)
+    SELECT title, content, start_date, end_date, applicant_id, approval_id
     FROM approval
     WHERE approval_id = #{approvalId}
 </insert>
-
-  <!-- 별도로 calendar 정보만 조회 -->
-  <select id="getCalendarByApprovalId" resultMap="calendarResultMap">
-      SELECT c.*
-      FROM calendar c
-      WHERE c.approval_id = #{approvalId}
-  </select>
 
   <!-- 결재 삭제 : 신청자 -->
   <delete id = "deleteApproval" parameterType="Integer" >
