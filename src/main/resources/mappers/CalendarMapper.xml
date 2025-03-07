@@ -71,6 +71,12 @@
     WHERE CURDATE() BETWEEN c.start_date AND c.end_date
           AND e.dept = #{dept}
   </select>
+  
+  
+  <!-- 특정 날짜 일정 목록 (수정해야됨)-->
+  
+
+
   <!-- 일정 상세 조회 -->
   <select id="readCalendar" resultMap="calendarResultMap">
     SELECT 

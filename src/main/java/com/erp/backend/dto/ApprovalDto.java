@@ -1,6 +1,7 @@
 package com.erp.backend.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,9 +35,6 @@ public class ApprovalDto {
 
     @JsonProperty("applicant_id")
     private Integer applicantId;
-
-    @JsonProperty("approver_id")
-    private Integer approverId;
     
     @JsonProperty("status_id")
     private Integer statusId;
@@ -45,9 +43,9 @@ public class ApprovalDto {
     private String statusName;  
 
     private MemberDto applicant;
-    private MemberDto approver;
 
     private CalendarDto calendarDto;
 
+    private List<MemberDto> approvers;
 }
 

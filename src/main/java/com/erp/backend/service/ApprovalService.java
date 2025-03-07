@@ -1,11 +1,13 @@
 package com.erp.backend.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.erp.backend.dto.ApprovalDto;
+import com.erp.backend.dto.MemberDto;
 import com.erp.backend.mapper.ApprovalMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -34,12 +36,25 @@ public class ApprovalService {
         return approvalMapper.readApproval(approvalId);
     }
 
-    public int addApproval(ApprovalDto approvalDto) {
-        int result = -1;
-        log.info("service-addApproval");
-        result = approvalMapper.addApproval(approvalDto);
-        return result;
-    }   
+    @Transactional
+public void addApproval(ApprovalDto approvalDto) {
+    log.info("service-addApproval");
+    // 1. 결재 신청 등록
+    approvalMapper.addApproval(approvalDto);
+    // 2. 생성된 approvalId를 사용하여 승인자 등록
+    if (approvalDto.getApprovers() != null && !approvalDto.getApprovers().isEmpty()) {
+        // MemberDto에서 empId만 추출하여 List<Integer>로 변환
+        List<Long> approverIdsLong = approvalDto.getApprovers().stream()
+                                                .map(MemberDto::getEmpId)  // MemberDto에서 empId만 추출
+                                                .collect(Collectors.toList());
+        // List<Long>을 List<Integer>로 변환
+        List<Integer> approverIds = approverIdsLong.stream()
+                                                   .map(Long::intValue)  // Long을 Integer로 변환
+                                                    .collect(Collectors.toList());
+        approvalMapper.addApprovers(approvalDto.getApprovalId(), approverIds); // List<Integer> 전달
+    }
+}
+
 
     @Transactional // 하나의 트랜잭션으로 묶기
     public ApprovalDto updateApproval(ApprovalDto approvalDto) {

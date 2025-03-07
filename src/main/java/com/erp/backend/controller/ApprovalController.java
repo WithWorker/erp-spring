@@ -1,6 +1,8 @@
 package com.erp.backend.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,10 +53,18 @@ public class ApprovalController {
     // 결재 등록 : 신청자 
     // http://localhost:7777/approval/add
     @PostMapping("/approval/add")
-	public ResponseEntity<String> addApproval(@RequestBody ApprovalDto approvalDto) {
+	public ResponseEntity<Map<String, Object>> addApproval(@RequestBody ApprovalDto approvalDto) {
         log.info("Received ApprovalDto: {}", approvalDto);
+
+        // 결재 등록 (신청자 + 승인자)
         approvalService.addApproval(approvalDto);
-        return ResponseEntity.ok("결재 신청");
+
+        // 응답 데이터 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "결재 신청 완료");
+        response.put("approvalId", approvalDto.getApprovalId()); // 생성된 결재 ID 반환
+
+        return ResponseEntity.ok(response);
     }
     // 결재 수정(status) : 승인자 
     // http://localhost:7777/approval/edit/{approvalId}
