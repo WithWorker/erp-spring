@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.backend.mapper.SalaryMapper">
+
+    <!-- 기본급 내역 저장 -->
+    <insert id="insertSalaryHistory">
+        INSERT INTO salary_history (emp_id, payment_date, amount)
+        SELECT e.emp_id, #{paymentDate}, ps.base_salary
+        FROM employee e
+                 JOIN position_salary ps ON e.position_id = ps.position_id;
+    </insert>
+
+    <!-- 성과급 내역 저장 -->
+    <insert id="insertBonusHistory">
+        INSERT INTO bonus_history (emp_id, payment_date, amount)
+        SELECT e.emp_id, #{paymentDate}, db.bonus
+        FROM employee e
+                 JOIN department_bonus db ON e.department_id = db.department_id;
+    </insert>
+
+</mapper>
