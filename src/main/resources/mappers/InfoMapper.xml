@@ -16,6 +16,17 @@
         WHERE e.emp_id = #{empId}
     </select>
 
+    <!-- 급여 조회 -->
+    <select id="salaryAndBonusHistory" parameterType="map" resultType="com.erp.backend.dto.SalaryBonusHistoryDto">
+        SELECT emp_id, payment_date, amount, 'salary' AS type
+        FROM salary_history
+        WHERE emp_id = #{empId} AND YEAR(payment_date) = #{year} AND MONTH(payment_date) = #{month}
+        UNION ALL
+        SELECT emp_id, payment_date, amount, 'bonus' AS type
+        FROM bonus_history
+        WHERE emp_id = #{empId} AND YEAR(payment_date) = #{year} AND MONTH(payment_date) = #{month}
+    </select>
+
     <!-- 근태 조회 -->
     <select id="attendance" parameterType="java.lang.Long" resultType="com.erp.backend.dto.AttendanceDto">
         SELECT emp_id,
