@@ -64,10 +64,10 @@ public class MemberController {
             memberDto.setPhone((String) updateInfo.get("phone"));
         }
         if (updateInfo.containsKey("departmentId")) {
-            memberDto.setDepartmentId((Integer) updateInfo.get("departmentId"));
+            memberDto.setDepartmentId((Long) updateInfo.get("departmentId"));
         }
         if (updateInfo.containsKey("positionId")) {
-            memberDto.setPositionId((Integer) updateInfo.get("positionId"));
+            memberDto.setPositionId((Long) updateInfo.get("positionId"));
         }
 
         memberService.updateMember(memberDto);

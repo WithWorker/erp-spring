@@ -17,9 +17,9 @@ public class MemberDto {
     private String repassword;
     private String phone;
     private String imgUrl;
-    private Integer departmentId;
+    private Long departmentId;
     private String departmentName;
-    private Integer positionId;
+    private Long positionId;
     private String positionName;
     private MemberRole memberRole;
     private Integer baseSalary;
