@@ -12,21 +12,18 @@ public class InfoController {
     private final InfoService infoService;
 
     //프로필 조회
-    @ResponseBody
     @GetMapping("/info/{empId}")
     public MemberDto profile(@PathVariable(value = "empId") Long empId) {
         return infoService.profile(empId);
     }
 
     //근태 조회
-    @ResponseBody
     @GetMapping("/info/attendance/{empId}")
     public AttendanceDto attendance(@PathVariable(value = "empId") Long empId) {
         return infoService.attendance(empId);
     }
 
     //출근 기록
-    @ResponseBody
     @PostMapping("/info/attendance/in/{empId}")
     public String checkIn(@PathVariable(value = "empId") Long empId) {
         infoService.checkIn(empId);
@@ -34,7 +31,6 @@ public class InfoController {
     }
 
     //퇴근 기록
-    @ResponseBody
     @PutMapping("/info/attendance/out/{empId}")
     public String checkOut(@PathVariable(value = "empId") Long empId) {
         infoService.checkOut(empId);

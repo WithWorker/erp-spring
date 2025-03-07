@@ -20,6 +20,11 @@ public class MemberService {
         return memberMapper.findAll();
     }
 
+    //전체조회 (by 부서id)
+    public List<MemberDto> findAllByDept(Long departmentId) {
+        return memberMapper.findAllByDept(departmentId);
+    }
+
     //직원조회 (by 이름)
     public MemberDto findByName(String name){
         return memberMapper.findByName(name);
@@ -28,11 +33,6 @@ public class MemberService {
     //직원조회 (by 직원id)
     public MemberDto findById(Long empId) {
         return memberMapper.findById(empId);
-    }
-
-    //직원조회 (by 부서id)
-    public List<MemberDto> findAllByDept(Long departmentId) {
-        return memberMapper.findAllByDept(departmentId);
     }
 
     //직원등록

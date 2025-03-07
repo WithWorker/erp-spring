@@ -15,36 +15,31 @@ public class MemberController {
     private final MemberService memberService;
 
     //전체조회
-    @ResponseBody
     @GetMapping("/users")
     public List<MemberDto> findAll() {
         return memberService.findAll();
     }
 
+    //전체조회 (by 부서id)
+    @GetMapping("/dept/{departmentId}")
+    public List<MemberDto> findAllByDept(@PathVariable(value = "departmentId") Long departmentId) {
+        return memberService.findAllByDept(departmentId);
+    }
+
     //직원조회 (by 이름)
-    @ResponseBody
     @PostMapping("/name")
     public MemberDto findByName(@RequestBody MemberDto memberDto) {
         return memberService.findByName(memberDto.getName());
     }
 
     //직원조회 (by 직원id)
-    @ResponseBody
     @GetMapping("/emp/{empId}")
     public MemberDto findById(@PathVariable(value = "empId") Long empId) {
         return memberService.findById(empId);
     }
 
-    // 직원조회 (by 부서id)
-    @ResponseBody
-    @GetMapping("/dept/{departmentId}")
-    public List<MemberDto> findAllByDept(@PathVariable(value = "departmentId") Long departmentId) {
-        return memberService.findAllByDept(departmentId);
-    }
-
     //직원등록
     @PostMapping("/join")
-    @ResponseBody
     public ResponseEntity<String> insertMember(@RequestBody MemberDto memberDto) {
         try {
             memberService.insertMember(memberDto);
@@ -55,7 +50,6 @@ public class MemberController {
     }
 
     //직원수정
-    @ResponseBody
     @PutMapping("/update/{empId}")
     public String updateMember(@PathVariable(value = "empId") Long empId, @RequestBody Map<String, Object> updateInfo) {
         MemberDto memberDto = memberService.findById(empId);
@@ -81,7 +75,6 @@ public class MemberController {
     }
 
     //부서이동
-    @ResponseBody
     @PutMapping("/update/department/{empId}")
     public String updateDepartment(@PathVariable Long empId, @RequestBody MemberDto memberDto) {
         memberDto.setEmpId(empId);
@@ -90,7 +83,6 @@ public class MemberController {
     }
 
     //직급변경
-    @ResponseBody
     @PutMapping("/update/position/{empId}")
     public String updatePosition(@PathVariable Long empId, @RequestBody MemberDto memberDto) {
         memberDto.setEmpId(empId);
@@ -99,7 +91,6 @@ public class MemberController {
     }
 
     //퇴사
-    @ResponseBody
     @PutMapping("/resign/{empId}")
     public String resignMember(@PathVariable(value = "empId") Long empId) {
         memberService.resignMember(empId);
@@ -107,7 +98,6 @@ public class MemberController {
     }
 
     //비밀번호 재설정
-    @ResponseBody
     @PutMapping("/find")
     public ResponseEntity<?> updatePassword(@RequestBody MemberDto memberDto) {
         try {
@@ -119,7 +109,6 @@ public class MemberController {
     }
 
     //직원삭제
-    @ResponseBody
     @DeleteMapping("/delete/{empId}")
     public String deleteMember(@PathVariable(value = "empId") Long empId) {
         memberService.deleteMember(empId);

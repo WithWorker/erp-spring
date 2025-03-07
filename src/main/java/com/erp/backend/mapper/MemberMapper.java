@@ -10,14 +10,14 @@ public interface MemberMapper {
     //전체조회
     List<MemberDto> findAll();
 
+    //전체조회 (by 부서id)
+    List<MemberDto> findAllByDept(Long departmentId);
+
     //직원조회 (by 이름)
     MemberDto findByName(String name);
 
     //직원조회 (by 직원id)
     MemberDto findById(Long empId);
-
-    //직원조회 (by 부서id)
-    List<MemberDto> findAllByDept(Long departmentId);
 
     //직원조회 (by 이메일)
     MemberDto findByEmail(String email);
