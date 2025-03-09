@@ -37,23 +37,20 @@ public class ApprovalService {
     }
 
     @Transactional
-public void addApproval(ApprovalDto approvalDto) {
-    log.info("service-addApproval");
-    // 1. 결재 신청 등록
-    approvalMapper.addApproval(approvalDto);
-    // 2. 생성된 approvalId를 사용하여 승인자 등록
-    if (approvalDto.getApprovers() != null && !approvalDto.getApprovers().isEmpty()) {
-        // MemberDto에서 empId만 추출하여 List<Integer>로 변환
-        List<Long> approverIdsLong = approvalDto.getApprovers().stream()
-                                                .map(MemberDto::getEmpId)  // MemberDto에서 empId만 추출
-                                                .collect(Collectors.toList());
-        // List<Long>을 List<Integer>로 변환
-        List<Integer> approverIds = approverIdsLong.stream()
-                                                   .map(Long::intValue)  // Long을 Integer로 변환
-                                                    .collect(Collectors.toList());
-        approvalMapper.addApprovers(approvalDto.getApprovalId(), approverIds); // List<Integer> 전달
+    public void addApproval(ApprovalDto approvalDto) {
+        log.info("service-addApproval");
+        // 1. 결재 신청 등록
+        approvalMapper.addApproval(approvalDto);
+        // 2. 생성된 approvalId를 사용하여 승인자 등록
+        if (approvalDto.getApprovers() != null && !approvalDto.getApprovers().isEmpty()) {
+            // MemberDto에서 empId만 추출하여 List<Long>을 List<Integer>로 변환
+            List<Integer> approverIds = approvalDto.getApprovers().stream()
+                                        .map(approver -> approver.getEmpId().intValue())  // Long을 Integer로 변환
+                                        .collect(Collectors.toList());
+            // approverId들을 DB에 저장
+            approvalMapper.addApprovers(approvalDto.getApprovalId(), approverIds);
+        }
     }
-}
 
 
     @Transactional // 하나의 트랜잭션으로 묶기
@@ -68,9 +65,12 @@ public void addApproval(ApprovalDto approvalDto) {
         return approvalDto;
     }
 
+    @Transactional
+    
     public int deleteApproval(Integer approvalId) {
         int result = -1;
         log.info("service-deleteApproval");
+        approvalMapper.deleteApprovers(approvalId);
         result = approvalMapper.deleteApproval(approvalId);
         return result;
     }

@@ -118,10 +118,12 @@
     FROM approval
     WHERE approval_id = #{approvalId}
 </insert>
-
+  
   <!-- 결재 삭제 : 신청자 -->
-  <delete id = "deleteApproval" parameterType="Integer" >
-    DELETE FROM approver WHERE approval_id = #{approvalId}
-    DELETE FROM approval WHERE approval_id = #{approvalId}
+  <delete id="deleteApprovers" parameterType="Integer">
+      DELETE FROM approver WHERE approval_id = #{approvalId};
+  </delete>
+  <delete id="deleteApproval" parameterType="Integer">
+      DELETE FROM approval WHERE approval_id = #{approvalId};
   </delete>
 </mapper>
