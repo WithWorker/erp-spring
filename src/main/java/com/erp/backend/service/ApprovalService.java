@@ -19,23 +19,31 @@ import lombok.extern.log4j.Log4j2;
 public class ApprovalService {
     private final ApprovalMapper approvalMapper;
 
+    //결재 목록 조회 (by 신청자)
     public List<ApprovalDto> getApplicant(Integer applicantId) {
         log.info("service-getApplicant");
         return approvalMapper.getApplicant(applicantId);
     }
+
+    //결재 목록 조회 (by 승인자)
     public List<ApprovalDto> getApprover(Integer approverId) {
         log.info("service-getApprover");
         return approvalMapper.getApprover(approverId);
     }
+
+    //결재 목록 조회 (by 상태)
     public List<ApprovalDto> getApprovedList(Integer statusId) {
         log.info("service-getApprovedList");
         return approvalMapper.getApprovedList(statusId);
     }
+
+    //결재 상세보기
     public ApprovalDto readApproval(Integer approvalId) {
         log.info("service-readApproval");
         return approvalMapper.readApproval(approvalId);
     }
 
+    //결재 등록
     @Transactional
     public void addApproval(ApprovalDto approvalDto) {
         log.info("service-addApproval");
@@ -52,7 +60,7 @@ public class ApprovalService {
         }
     }
 
-
+    //결재 상태 변경
     @Transactional 
     public void updateStatus(ApprovalDto approvalDto) {
         log.info("service-updateApproval");
@@ -92,6 +100,7 @@ public class ApprovalService {
         log.info("=== service-updateApproval 종료 ===");
     }
 
+    //결재 삭제
     @Transactional
     public int deleteApproval(Integer approvalId) {
         int result = -1;

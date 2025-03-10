@@ -72,19 +72,15 @@
     WHERE CURDATE() BETWEEN c.start_date AND c.end_date
           AND e.dept = #{dept}
   </select>
-  
-  
   <!-- 특정 날짜 일정 목록 (수정해야됨)-->
-  <select id="getSelectedDayCalendars" resultMap="calendarResultMap">
+  <select id="getDateCalendars" resultMap="calendarResultMap">
     SELECT
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
     e.emp_id, e.name, e.dept
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
-    WHERE CURDATE() BETWEEN c.start_date AND c.end_date
+    WHERE #{selectedDate} BETWEEN c.start_date AND c.end_date
   </select>
-
-
   <!-- 일정 상세 조회 -->
   <select id="readCalendar" resultMap="calendarResultMap">
     SELECT 

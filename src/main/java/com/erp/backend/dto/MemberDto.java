@@ -9,17 +9,23 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class MemberDto {
     private Long empId;
     private String name;
     private String email;
     private String password;
+    private String repassword;
     private String phone;
     private String imgUrl;
-    private String dept;
-    private String position;
-    
+    private Long departmentId;
+    private String departmentName;
+    private Long positionId;
+    private String positionName;
+    private MemberRole memberRole;
+    private Integer baseSalary;
+    private Integer bonus;
+
+    // approver 승인 상태 추가
     private Integer approverStatusId;
     private String approverStatusName;
 }

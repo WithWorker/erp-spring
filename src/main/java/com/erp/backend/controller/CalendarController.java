@@ -65,6 +65,12 @@ public class CalendarController {
 		return calendarService.getDeptTodayCalendars(decodedDept);
 	}
 
+	//특정 일자 일정 목록
+	@GetMapping("/calendar/date/{date}")
+	public List<CalendarDto> getDateCalendars(@PathVariable("date") String date) {
+		return calendarService.getDateCalendars(date);
+	}
+
 	// 일정 상세보기
 	// http://localhost:7777/calendar/{calendarId}
 	@GetMapping("/calendar/{calendarId}")
