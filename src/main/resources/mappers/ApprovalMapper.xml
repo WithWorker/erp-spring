@@ -81,6 +81,7 @@
     a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
     app.name AS applicant_name, t.type_name, s1.status_name, 
     v.approver_id, apr.name AS approver_name,
+    v.approver_status_id,
     s2.status_name AS approver_status_name
     FROM approval a
     JOIN employee app ON a.applicant_id = app.emp_id  
@@ -90,7 +91,6 @@
     JOIN approval_status s1 ON a.status_id = s1.status_id
     JOIN approval_status s2 ON v.approver_status_id = s2.status_id  
     WHERE a.approval_id = #{approvalId}
-    ORDER BY a.approval_id DESC
   </select>
 
   <!-- 결재 등록 : 신청자 -->
@@ -114,6 +114,11 @@
     WHERE approval_id = #{approvalId} AND approver_id = #{approverId}
   </update>
   <!-- approver의 모든 승인자가 승인하면 approval의 최종 결재 상태 승인으로 변경 -->
+  <update id="updateApprovalStatus" parameterType="com.erp.backend.dto.ApprovalDto">
+    UPDATE approval
+    SET status_id = #{statusId}
+    WHERE approval_id = #{approvalId}
+</update>
   <!-- status_id가 2인 경우에만 calendar 테이블에 추가 -->
   <insert id="insertCalendarFromApproval" parameterType="com.erp.backend.dto.ApprovalDto">
     INSERT INTO calendar (title, content, start_date, end_date, applicant_id, approval_id)

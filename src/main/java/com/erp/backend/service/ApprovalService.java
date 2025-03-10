@@ -53,28 +53,46 @@ public class ApprovalService {
     }
 
 
-    //@Transactional // 하나의 트랜잭션으로 묶기
-    public int updateStatus(ApprovalDto approvalDto) {
+    @Transactional 
+    public void updateStatus(ApprovalDto approvalDto) {
         log.info("service-updateApproval");
+        // 승인자의 상태 업데이트
         for (MemberDto approver : approvalDto.getApprovers()) {
+            log.info("승인자 ID: {}, 현재 상태: {}", approver.getEmpId(), approver.getApproverStatusId());
             approvalDto.setApproverId(approver.getEmpId().intValue());  // 각 승인자 ID 설정
             approvalDto.setApproverStatusId(approver.getApproverStatusId()); // 각 승인자 상태 설정
             approvalMapper.updateApproverStatus(approvalDto);  // 승인자 상태 업데이트
         }
-    
-        return 1;  // 성공적으로 처리되었다면 1 반환
+        // DB에서 최신 승인자 상태를 조회
+        List<MemberDto> currentApprovers = approvalMapper.readApproval(approvalDto.getApprovalId()).getApprovers();
+        
+        log.info("현재 승인자 상태 목록 (DB 최신 데이터):");
+        for (MemberDto approver : currentApprovers) {
+            log.info("승인자 ID: {}, 상태: {}", approver.getEmpId(), approver.getApproverStatusId());
+        }
+        
+        // 모든 승인자가 승인(2)인지 확인
+        boolean allApproversApproved = currentApprovers.stream()
+                                    .allMatch(approver -> approver.getApproverStatusId() == 2);
 
-        // 상태 변경 (UPDATE)
-        //int result = approvalMapper.updateStatus(approvalDto);
-        // 승인(statusId == 2)이면 calendar에 추가 (INSERT)
-        //if (approvalDto.getStatusId() == 2) {
-        //    approvalMapper.insertCalendarFromApproval(approvalDto);
-        //}     
-        //return approvalDto;
+        if (allApproversApproved) {
+            log.info("모든 승인자가 승인 상태(2)입니다. approval.statusId를 2로 변경합니다.");
+            // 승인자 모두 상태가 2라면 approval의 status_id를 2로 변경
+            approvalDto.setStatusId(2);  // 상태를 승인 상태로 설정
+            approvalMapper.updateApprovalStatus(approvalDto);  // approval의 상태 변경
+
+            log.info("approval.statusId가 2로 업데이트됨 (approvalId: {})", approvalDto.getApprovalId());
+    
+            // 상태가 2로 변경되었으므로 캘린더에 자동으로 등록
+            approvalMapper.insertCalendarFromApproval(approvalDto);
+        }else {
+            log.info("아직 모든 승인자가 승인 상태가 아님. approval.statusId 변경 없음.");
+        }
+        
+        log.info("=== service-updateApproval 종료 ===");
     }
 
     @Transactional
-    
     public int deleteApproval(Integer approvalId) {
         int result = -1;
         log.info("service-deleteApproval");

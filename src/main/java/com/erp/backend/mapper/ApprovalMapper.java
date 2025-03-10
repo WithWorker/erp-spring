@@ -16,6 +16,7 @@ public interface ApprovalMapper {
     void addApproval(ApprovalDto approvalDto);
     void addApprovers(@Param("approvalId") Integer approvalId, @Param("approvers") List<Integer> approvers);
     int updateApproverStatus(ApprovalDto approvalDto);
+    void updateApprovalStatus(ApprovalDto approvalDto);
     int insertCalendarFromApproval(ApprovalDto approvalDto);
     int deleteApprovers(Integer approvalId);
     int deleteApproval(Integer approvalId);
