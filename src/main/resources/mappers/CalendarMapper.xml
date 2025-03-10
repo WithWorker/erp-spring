@@ -12,7 +12,7 @@
     <association property="memberDto" javaType="com.erp.backend.dto.MemberDto">
       <id property="empId" column="emp_id" />
       <result property="name" column="name" />
-      <result property="dept" column="dept" />
+      <result property="departmentId" column="department_id" />
     </association>
   </resultMap>
 
@@ -38,10 +38,11 @@
   <select id="getDeptCalendars" resultMap="calendarResultMap">
     SELECT
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.emp_id, e.name, e.dept
+    e.emp_id, e.name, d.name
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
-    WHERE e.dept = #{dept}
+    JOIN department d ON c.department_id = d.department_id
+    WHERE e.department_id = #{departmentId}
   </select>
   <!-- 오늘 일정 목록 -->
   <select id="getTodayCalendars" resultMap="calendarResultMap">
