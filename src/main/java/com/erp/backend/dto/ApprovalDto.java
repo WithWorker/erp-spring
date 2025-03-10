@@ -50,10 +50,10 @@ public class ApprovalDto {
     private List<MemberDto> approvers;
 
     @JsonProperty("approver_id")
-    private Integer approverId;  // approverId 필드 추가
+    private Integer approverId; 
 
     @JsonProperty("approver_status_id")
-    private Integer approverStatusId;  // approverStatusId 필드 추가
+    private Integer approverStatusId;  
 
 }
 

@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CalendarService {
     private final CalendarMapper calendarMapper;
+    
     //전체 일정 조회
     public List<CalendarDto> getAllCalendars() {
         log.info("service-getAllCalendars");
@@ -27,9 +28,9 @@ public class CalendarService {
     }
 
     //부서 일정 조회
-    public List<CalendarDto> getDeptCalendars(String dept) {
+    public List<CalendarDto> getDeptCalendars(Long departmentId) {
         log.info("service-getDeptCalendars");
-        return calendarMapper.getDeptCalendars(dept);  
+        return calendarMapper.getDeptCalendars(departmentId);  
     }
     
     //오늘 일정 조회
@@ -45,9 +46,9 @@ public class CalendarService {
     }
 
     //오늘 일정 조회 (by 부서id)
-    public List<CalendarDto> getDeptTodayCalendars(String dept) {
+    public List<CalendarDto> getDeptTodayCalendars(Long departmentId) {
         log.info("service-getDeptTodayCalendars");
-        return calendarMapper.getDeptTodayCalendars(dept);  
+        return calendarMapper.getDeptTodayCalendars(departmentId);  
     }
     
     //오늘 일정 조회 (by 일자)

@@ -9,6 +9,7 @@ import com.erp.backend.dto.ApprovalDto;
 
 @Mapper
 public interface ApprovalMapper {
+    
     //결재 목록 조회 (by 신청자)
     List<ApprovalDto> getApplicant(Integer applicantId);
 

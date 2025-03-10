@@ -20,20 +20,22 @@
   <select id="getAllCalendars" resultMap="calendarResultMap">
     SELECT
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.emp_id, e.name, e.dept
+    e.emp_id, e.name
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
     ORDER BY c.calendar_id DESC
   </select>
+
   <!-- 개인 일정 목록 -->
   <select id="getMyCalendars" resultMap="calendarResultMap">
     SELECT
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.emp_id, e.name, e.dept
+    e.emp_id, e.name
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
     WHERE c.applicant_id = #{applicantId}
   </select>
+
   <!-- 부서 일정 목록 -->
   <select id="getDeptCalendars" resultMap="calendarResultMap">
     SELECT
@@ -41,61 +43,69 @@
     e.emp_id, e.name, d.name
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
-    JOIN department d ON c.department_id = d.department_id
+    JOIN department d ON e.department_id = d.department_id
     WHERE e.department_id = #{departmentId}
   </select>
+
   <!-- 오늘 일정 목록 -->
   <select id="getTodayCalendars" resultMap="calendarResultMap">
     SELECT
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.emp_id, e.name, e.dept
+    e.emp_id, e.name
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
     WHERE CURDATE() BETWEEN c.start_date AND c.end_date
   </select>
+
   <!-- 오늘 일정 목록(개인) -->
   <select id="getMyTodayCalendars" resultMap="calendarResultMap">
     SELECT
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.emp_id, e.name, e.dept
+    e.emp_id, e.name
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
     WHERE CURDATE() BETWEEN c.start_date AND c.end_date
           AND c.applicant_id = #{applicantId}
   </select>
+
   <!-- 오늘 일정 목록(부서) -->
   <select id="getDeptTodayCalendars" resultMap="calendarResultMap">
     SELECT
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.emp_id, e.name, e.dept
+    e.emp_id, e.name, d.name
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
-    WHERE CURDATE() BETWEEN c.start_date AND c.end_date
-          AND e.dept = #{dept}
+    JOIN department d ON e.department_id = d.department_id
+    WHERE e.department_id = #{departmentId}
+          AND CURDATE() BETWEEN c.start_date AND c.end_date
   </select>
+
   <!-- 특정 날짜 일정 목록 (수정해야됨)-->
   <select id="getDateCalendars" resultMap="calendarResultMap">
     SELECT
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.emp_id, e.name, e.dept
+    e.emp_id, e.name
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
     WHERE #{selectedDate} BETWEEN c.start_date AND c.end_date
   </select>
+
   <!-- 일정 상세 조회 -->
   <select id="readCalendar" resultMap="calendarResultMap">
     SELECT 
     c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
-    e.emp_id, e.name, e.dept
+    e.emp_id, e.name
     FROM calendar c
     LEFT JOIN employee e ON c.applicant_id = e.emp_id
     WHERE c.calendar_id = #{calendarId}
   </select>
+
   <!-- 일정 등록 -->
   <insert id="addCalendar" parameterType="com.erp.backend.dto.CalendarDto">
     INSERT INTO calendar(start_date, end_date, title, content, applicant_id)
     VALUES (#{startDate}, #{endDate}, #{title}, #{content}, #{applicantId})
   </insert>
+
   <!-- 일정 수정 -->
   <update id = "updateCalendar" parameterType="com.erp.backend.dto.CalendarDto">
     UPDATE calendar
@@ -105,6 +115,7 @@
       content = #{content}
     WHERE calendar_id = #{calendarId}
   </update>
+  
   <!-- 일정 삭제 -->
   <delete id = "deleteCalendar" parameterType="Integer" >
     DELETE FROM calendar

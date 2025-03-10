@@ -31,24 +31,28 @@ public class ApprovalController {
     public List<ApprovalDto> getApplicant(@PathVariable Integer applicantId){
         return approvalService.getApplicant(applicantId);
     }
+
     // 결재 확인 목록 : 승인자 
     // http://localhost:7777/approval/approver/{approverId}
     @GetMapping("/approval/approver/{approverId}")
     public List<ApprovalDto> getApprover(@PathVariable Integer approverId){
         return approvalService.getApprover(approverId);
     }
+
     // 결재 상태 목록 
     // http://localhost:7777/approval/approved/{statusId}
     @GetMapping("/approval/approved/{statusId}")
     public List<ApprovalDto> getApprovedList(@PathVariable Integer statusId){
         return approvalService.getApprovedList(statusId);
     }
+
     // 결재 상세 조회 
     // http://localhost:7777/approval/{approvalId}
     @GetMapping("/approval/{approvalId}")
     public ApprovalDto readApproval(@PathVariable Integer approvalId){
         return approvalService.readApproval(approvalId);
     }
+
     // 결재 등록 : 신청자 
     // http://localhost:7777/approval/add
     @PostMapping("/approval/add")
@@ -65,6 +69,7 @@ public class ApprovalController {
 
         return ResponseEntity.ok(response);
     }
+
     // 결재 수정(status) : 승인자 
     // http://localhost:7777/approval/edit/{approvalId}
     @PutMapping("/approval/edit/{approvalId}")
@@ -73,6 +78,7 @@ public class ApprovalController {
         approvalService.updateStatus(approvalDto);
         return ResponseEntity.ok("결재 상태 수정");
     }
+    
     // 결재 삭제 : 신청자 
     // http://localhost:7777/approval/{approvalId}
     @DeleteMapping("/approval/{approvalId}")

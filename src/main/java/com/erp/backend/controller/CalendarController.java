@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Log4j2
@@ -24,25 +22,28 @@ import java.util.List;
 @RestController
 public class CalendarController {
 	private final CalendarService calendarService;
+
 	// 사원 전체 일정 목록 
 	// http://localhost:7777/calendar/all
 	@GetMapping("/calendar/all")
 	public List<CalendarDto> getAllCalendars() {
 			return calendarService.getAllCalendars();
 	}
+
 	// 개인 일정 목록
 	// http://localhost:7777/calendar/my/{applicantId}
 	@GetMapping("/calendar/my/{applicantId}")
 	public List<CalendarDto> getMyCalendars(@PathVariable Integer applicantId) {
 		return calendarService.getMyCalendars(applicantId);
 	}
+
 	// 부서 일정 목록
 	// http://localhost:7777/calendar/dept/{dept}
-	@GetMapping("/calendar/dept/{dept}")
-	public List<CalendarDto> getDeptCalendars(@PathVariable("dept") String dept) {
-		String decodedDept = URLDecoder.decode(dept, StandardCharsets.UTF_8);
-		return calendarService.getDeptCalendars(decodedDept);
+	@GetMapping("/calendar/dept/{departmentId}")
+	public List<CalendarDto> getDeptCalendars(@PathVariable Long departmentId) {
+		return calendarService.getDeptCalendars(departmentId);
 	}
+
 	// 오늘 일정 전체 목록
 	// http://localhost:7777/calendar/today
 	@GetMapping("/calendar/today")
@@ -59,10 +60,9 @@ public class CalendarController {
 
 	// 오늘 일정 부서 목록
 	// http://localhost:7777/calendar/depttoday/{dept}
-	@GetMapping("/calendar/depttoday/{dept}")
-	public List<CalendarDto> getDeptTodayCalendars(@PathVariable("dept") String dept) {
-		String decodedDept = URLDecoder.decode(dept, StandardCharsets.UTF_8);
-		return calendarService.getDeptTodayCalendars(decodedDept);
+	@GetMapping("/calendar/depttoday/{departmentId}")
+	public List<CalendarDto> getDeptTodayCalendars(@PathVariable Long departmentId) {
+		return calendarService.getDeptTodayCalendars(departmentId);
 	}
 
 	//특정 일자 일정 목록
@@ -77,6 +77,7 @@ public class CalendarController {
 	public CalendarDto readCalendar(@PathVariable Integer calendarId) {
 		return calendarService.readCalendar(calendarId);
 	}
+
 	// 일정 등록
 	// http://localhost:7777/calendar/add
 	@PostMapping("/calendar/add")
@@ -93,6 +94,7 @@ public class CalendarController {
     calendarService.updateCalendar(calendarDto);
     return ResponseEntity.ok("일정 수정 성공");
 	}
+	
 	// 일정 삭제
 	// http://localhost:7777/calendar/{calendarId}
 	@DeleteMapping("/calendar/{calendarId}")
