@@ -19,5 +19,7 @@ public class MemberDto {
     private String imgUrl;
     private String dept;
     private String position;
-
+    
+    private Integer approverStatusId;
+    private String approverStatusName;
 }

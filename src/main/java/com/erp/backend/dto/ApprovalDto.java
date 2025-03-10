@@ -40,6 +40,7 @@ public class ApprovalDto {
     private Integer statusId;
 
     private String typeName; 
+    
     private String statusName;  
 
     private MemberDto applicant;
@@ -47,5 +48,12 @@ public class ApprovalDto {
     private CalendarDto calendarDto;
 
     private List<MemberDto> approvers;
+
+    @JsonProperty("approver_id")
+    private Integer approverId;  // approverId 필드 추가
+
+    @JsonProperty("approver_status_id")
+    private Integer approverStatusId;  // approverStatusId 필드 추가
+
 }
 

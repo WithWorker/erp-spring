@@ -53,16 +53,24 @@ public class ApprovalService {
     }
 
 
-    @Transactional // 하나의 트랜잭션으로 묶기
-    public ApprovalDto updateApproval(ApprovalDto approvalDto) {
+    //@Transactional // 하나의 트랜잭션으로 묶기
+    public int updateStatus(ApprovalDto approvalDto) {
         log.info("service-updateApproval");
+        for (MemberDto approver : approvalDto.getApprovers()) {
+            approvalDto.setApproverId(approver.getEmpId().intValue());  // 각 승인자 ID 설정
+            approvalDto.setApproverStatusId(approver.getApproverStatusId()); // 각 승인자 상태 설정
+            approvalMapper.updateApproverStatus(approvalDto);  // 승인자 상태 업데이트
+        }
+    
+        return 1;  // 성공적으로 처리되었다면 1 반환
+
         // 상태 변경 (UPDATE)
-        int result = approvalMapper.updateStatus(approvalDto);
+        //int result = approvalMapper.updateStatus(approvalDto);
         // 승인(statusId == 2)이면 calendar에 추가 (INSERT)
-        if (approvalDto.getStatusId() == 2) {
-            approvalMapper.insertCalendarFromApproval(approvalDto);
-        }     
-        return approvalDto;
+        //if (approvalDto.getStatusId() == 2) {
+        //    approvalMapper.insertCalendarFromApproval(approvalDto);
+        //}     
+        //return approvalDto;
     }
 
     @Transactional

@@ -23,6 +23,7 @@
     e.emp_id, e.name, e.dept
     FROM calendar c
     JOIN employee e ON c.applicant_id = e.emp_id
+    ORDER BY c.calendar_id DESC
   </select>
   <!-- 개인 일정 목록 -->
   <select id="getMyCalendars" resultMap="calendarResultMap">
@@ -74,7 +75,14 @@
   
   
   <!-- 특정 날짜 일정 목록 (수정해야됨)-->
-  
+  <select id="getSelectedDayCalendars" resultMap="calendarResultMap">
+    SELECT
+    c.calendar_id, c.start_date, c.end_date, c.title, c.content, c.applicant_id,
+    e.emp_id, e.name, e.dept
+    FROM calendar c
+    JOIN employee e ON c.applicant_id = e.emp_id
+    WHERE CURDATE() BETWEEN c.start_date AND c.end_date
+  </select>
 
 
   <!-- 일정 상세 조회 -->

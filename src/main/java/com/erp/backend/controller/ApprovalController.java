@@ -68,9 +68,9 @@ public class ApprovalController {
     // 결재 수정(status) : 승인자 
     // http://localhost:7777/approval/edit/{approvalId}
     @PutMapping("/approval/edit/{approvalId}")
-	public ResponseEntity<String> updateApproval(@PathVariable Integer approvalId, @RequestBody ApprovalDto approvalDto) {
+	public ResponseEntity<String> updateStatus(@PathVariable Integer approvalId, @RequestBody ApprovalDto approvalDto) {
         approvalDto.setApprovalId(approvalId);
-        approvalService.updateApproval(approvalDto);
+        approvalService.updateStatus(approvalDto);
         return ResponseEntity.ok("결재 상태 수정");
     }
     // 결재 삭제 : 신청자 
