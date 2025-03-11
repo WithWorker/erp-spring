@@ -33,6 +33,7 @@ public class SecurityConfig {
     private final MemberDetailsService memberDetailsService;
     private final JwtUtil jwtUtil;
 
+    //비밀번호 인코딩
     @Bean
     protected PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -55,12 +56,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsSource()))
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable())
-
+                //필터 인가
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.toString())
                         .anyRequest().permitAll())
-
+                //필터 추가
                 .addFilterBefore(new JwtFilter(jwtUtil), AuthenticationFilter.class)
                 .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(new CustomLogoutFilter(), LogoutFilter.class)

@@ -25,6 +25,7 @@ public class JwtUtil {
         this.tokenExpiration = tokenExpiration;
     }
 
+    //토큰 생성
     public String createToken(String email, String role) {
         long now = System.currentTimeMillis();
 
@@ -50,6 +51,7 @@ public class JwtUtil {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
+    //유효성 검사
     public boolean validateToken(String token) {
         try {
             return !parseClaims(token).getExpiration().before(new Date());
@@ -58,6 +60,7 @@ public class JwtUtil {
         }
     }
 
+    //클레임 파싱
     private Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)

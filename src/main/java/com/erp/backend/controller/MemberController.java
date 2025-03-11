@@ -102,7 +102,7 @@ public class MemberController {
     public ResponseEntity<?> updatePassword(@RequestBody MemberDto memberDto) {
         try {
             memberService.updatePassword(memberDto);
-            return ResponseEntity.ok(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
+            return ResponseEntity.ok(Map.of("success", true, "message", "비밀번호가 성공적으로 변경되었습니다."));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

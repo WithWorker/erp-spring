@@ -25,6 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = resolveToken(request);
 
+        //유효성 검사
         if (token != null && jwtUtil.validateToken(token)) {
             Authentication authentication = createAuth(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -33,6 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
+    //토큰 추출
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
