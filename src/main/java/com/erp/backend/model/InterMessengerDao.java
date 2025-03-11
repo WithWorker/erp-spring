@@ -15,7 +15,7 @@ public interface InterMessengerDao {
     List<Map<String, String>> getTeam(String dept);
 
     // 선택 직원 가져오기
-    List<Map<String, String>> getChosenEmp(String empId);
+    List<Map<String, String>> getChosenEmp(Long empId);
 
     // 메신저 보내기
     void sendMessage(String sql);
@@ -31,7 +31,7 @@ public interface InterMessengerDao {
     Map<String, String>  getMsgContent2(String content);
 
     // 안읽은 메신저 읽기
-    void updateAllMsg(String empId);
+    void updateAllMsg(Long empId);
 
     // 메신저 파일 첨부
     void addFile(FileVO filevo);
@@ -43,8 +43,8 @@ public interface InterMessengerDao {
     int getTotalMsg(Map<String, String> map);
 
     // 메신저 발송을 위한 사람 이름 조회
-    String getEmpName(String empId);
+    String getEmpName(Long empId);
 
     // 안읽은 메신저 개수 조회
-    int getUnreadMsg(String empId);
+    int getUnreadMsg(Long empId);
 }

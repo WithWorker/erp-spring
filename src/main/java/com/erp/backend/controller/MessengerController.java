@@ -18,13 +18,13 @@ public class MessengerController {
     @Autowired
     private MessengerService ms;
 
-    // 세션 기반 로그인 사용자 ID 반환
-    private String getLoginEmpId(HttpSession session) {
+    // 세션 기반 로그인 사용자 ID 반환 ==> JWT 기반으로 변경할 것!!
+    private Long getLoginEmpId(HttpSession session) {
         MemberDto user = (MemberDto) session.getAttribute("user");
         if(user == null) {
             throw new RuntimeException("로그인이 필요합니다");
         }
-        return String.valueOf(user.getEmpId());
+        return Long.valueOf(String.valueOf(user.getEmpId()));
     }
 
 
@@ -36,20 +36,20 @@ public class MessengerController {
 
     // 부서 직원 조회
     @GetMapping("/dept/person")
-    public List<Map<String, String>> getDeptPerson(@RequestParam String deptId) {
-        return ms.getDeptPerson(Map.of("deptId", deptId));
+    public List<Map<String, String>> getDeptPerson(@RequestParam Long deptId) {
+        return ms.getDeptPerson(Map.of("deptId", String.valueOf(deptId)));
     }
 
     // 해당 부서의 팀 조회
     @GetMapping("/dept/team")
-    public List<Map<String, String>> getDeptTeam(@RequestParam String deptId) {
-        return ms.getTeam(deptId);
+    public List<Map<String, String>> getDeptTeam(@RequestParam Long deptId) {
+        return ms.getTeam(String.valueOf(deptId));
     }
 
     // 선택 직원 가져오기
     @GetMapping("/emp/selected")
     public List<Map<String, String>> getChosenEmp(HttpSession session) {
-        String empId = getLoginEmpId(session);
+        Long empId = getLoginEmpId(session);
         return ms.getChosenEmp(empId);
     }
 
@@ -64,32 +64,32 @@ public class MessengerController {
     // 전체 메시지 목록 조회
     @GetMapping("message/list")
     public Map<String, List<Map<String, String>>> getMessageList(HttpSession session) {
-        String empId = getLoginEmpId(session);
+        Long empId = getLoginEmpId(session);
         // 보낸 메시지 조회
-        List<Map<String, String>> sendMsg = ms.getSendMsg(Map.of("empId", empId));
+        List<Map<String, String>> sendMsg = ms.getSendMsg(Map.of("empId", String.valueOf(empId)));
         // 받은 메시지 조회
-        List<Map<String, String>> receiveMsg = ms.getReceivedMsg(Map.of("empId", empId));
+        List<Map<String, String>> receiveMsg = ms.getReceivedMsg(Map.of("empId", String.valueOf(empId)));
         return Map.of("sendMsg", sendMsg, "receiveMsg", receiveMsg);
     }
 
     // 보낸 메시지 내용 조회
     @GetMapping("/message/content/send")
-    public Map<String, String> getSendMsgContent(@RequestParam String msgId ,HttpSession session) {
+    public Map<String, String> getSendMsgContent(@RequestParam Long msgId ,HttpSession session) {
         getLoginEmpId(session);
-        return ms.getMsgContent(msgId);
+        return ms.getMsgContent(String.valueOf(msgId));
     }
 
     // 받은 메시지 내용 조회
     @GetMapping("/message/content/receive")
-    public Map<String, String> getReceiveMsgContent(@RequestParam String msgId ,HttpSession session) {
+    public Map<String, String> getReceiveMsgContent(@RequestParam Long msgId ,HttpSession session) {
         getLoginEmpId(session);
-        return ms.getMsgContent2(msgId);
+        return ms.getMsgContent2(String.valueOf(msgId));
     }
 
     // 안읽은 메신저 읽기
     @PostMapping("/read")
     public String readMessage(HttpSession session) {
-        String empId = getLoginEmpId(session);
+        Long empId = getLoginEmpId(session);
         ms.updateAllMsg(empId);
         return "모든 메시지를 읽음 처리했습니다.";
     }
@@ -103,7 +103,7 @@ public class MessengerController {
 
     // 첨부파일 조회
     @GetMapping("/file/list")
-    public List<FileVO> getFileList(@RequestParam String msgId) {
+    public List<FileVO> getFileList(@RequestParam Long msgId) {
         return ms.getMsgFile(msgId);
     }
 
@@ -120,21 +120,21 @@ public class MessengerController {
     // 메신저 방 개수
     @GetMapping("/room/count")
     public int getRoomCount(HttpSession session) {
-        String empId = getLoginEmpId(session);
-        return ms.getTotalMsg(Map.of("empId", empId));
+        Long empId = getLoginEmpId(session);
+        return ms.getTotalMsg(Map.of("empId", String.valueOf(empId)));
     }
 
     // 메시지 발송을 위한 사람 이름 조회
     @GetMapping("/send/name")
     public String getEmpName(HttpSession session) {
-        String empId = getLoginEmpId(session);
+        Long empId = getLoginEmpId(session);
         return ms.getEmpName(empId);
     }
 
     // 안읽은 메신저 개수
     @GetMapping("/read/not/count")
     public int getUnreadMsg(HttpSession session) {
-        String empId = getLoginEmpId(session);
+        Long empId = getLoginEmpId(session);
         return ms.getUnreadMsg(empId);
     }
 }

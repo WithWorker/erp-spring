@@ -20,97 +20,76 @@ public class MessengerService implements InterMessengerService {
     // 전체 부서 조회
     @Override
     public List<Map<String, String>> getDept() {
-        List<Map<String, String>> deptList = imDao.getDept();
-        return deptList;
+        return imDao.getDept();
     }
 
     // 부서 직원 조회
     @Override
     public List<Map<String, String>> getDeptPerson(Map<String, String> map) {
-        List<Map<String, String>> deptPerson = imDao.getDeptPerson(map);
-        return deptPerson;
+        return imDao.getDeptPerson(map);
     }
 
-    // 해당 부서 팀 조회 (20250219)
+    // 해당 부서 팀 조회
     @Override
     public List<Map<String, String>> getTeam(String dept) {
-        List<Map<String, String>> team = imDao.getTeam(dept);
-        return team;
+        return imDao.getTeam(dept);
     }
 
-    // 선택 직원 가져오기
+    // 선택 직원 조회
     @Override
-    public List<Map<String, String>> getChosenEmp(String empId) {
-        List<Map<String, String>> chosenEmp = imDao.getChosenEmp(empId);
-        return chosenEmp;
+    public List<Map<String, String>> getChosenEmp(Long empId) {
+        return imDao.getChosenEmp(empId);
     }
 
     // 메신저 보내기
     @Override
     public String sendMessage(MessengerVO mvo) {
-
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-
         String time = sdf.format(calendar.getTime());
 
-        String receiverId = mvo.getReceiverId();
-        String[] arr_receiverId = receiverId.split(",");
+        Long receiverId = mvo.getReceiverId();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("insert all");
+        sb.append("insert into messenger (group_id, filepath, messenger_id, sender_id, receiver_id, content) values (");
+        sb.append(time).append(", ")
+                .append(mvo.getFilePath()).append(", ")
+                .append(mvo.getMessengerId()).append(", ")
+                .append(mvo.getSenderId()).append(", ")
+                .append(receiverId).append(", '")
+                .append(mvo.getContent()).append("')");
 
-        if(mvo.getMessengerId() == "" || mvo.getMessengerId() == null) {
-            mvo.setReceiverId("null");
-        }
-
-        String start = " into messenger(group_id, filepath, messenger_id, sender_id, receiver_id, content) values("+ time + ", " + mvo.getFilePath();
-        String end = ", '" + mvo.getMessengerId() + "', '" + mvo.getContent() + "')";
-        // messenger table에 filepath 추가
-
-        for(int i = 0; i < arr_receiverId.length; i++) {
-            sb.append(start);
-            sb.append(time + i + ", " + mvo.getSenderId() + ", " + arr_receiverId[i]);
-            sb.append(end);
-        }
-
-        sb.append("select * from dual");
         imDao.sendMessage(sb.toString());
-
         return time;
     }
 
     // 보낸 메일 리스트
     @Override
     public List<Map<String, String>> getSendMsg(Map<String, String> map) {
-        List<Map<String, String>> sendMsg = imDao.getSendMsg(map);
-        return sendMsg;
+        return imDao.getSendMsg(map);
     }
 
     // 받은 메일 리스트
     @Override
     public List<Map<String, String>> getReceivedMsg(Map<String, String> map) {
-        List<Map<String, String>> receiveMsg = imDao.getReceivedMsg(map);
-        return receiveMsg;
+        return imDao.getReceivedMsg(map);
     }
 
     // 보낸 메신저 내용 조회
     @Override
     public Map<String, String> getMsgContent(String content) {
-        Map<String, String> MsgContent = imDao.getMsgContent(content);
-        return MsgContent;
+        return imDao.getMsgContent(content);
     }
 
     // 받은 메신저 내용 조회
     @Override
     public Map<String, String> getMsgContent2(String content) {
-        Map<String, String> MsgContent = imDao.getMsgContent2(content);
-        return MsgContent;
+        return imDao.getMsgContent2(content);
     }
 
     // 안읽은 메신저 읽기
     @Override
-    public void updateAllMsg(String empId) {
+    public void updateAllMsg(Long empId) {
         imDao.updateAllMsg(empId);
     }
 
@@ -122,9 +101,8 @@ public class MessengerService implements InterMessengerService {
 
     // 첨부파일 조회
     @Override
-    public List<FileVO> getMsgFile(String messengerId) {
-        List<FileVO> msgFile = imDao.getMsgFile(messengerId);
-        return msgFile;
+    public List<FileVO> getMsgFile(Long messengerId) {
+        return imDao.getMsgFile(String.valueOf(messengerId));
     }
 
     // 메신저 전달
@@ -134,43 +112,35 @@ public class MessengerService implements InterMessengerService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String time = sdf.format(calendar.getTime());
 
-        String receiverId = dvo.getReceiverId();
-        String[] arr_receiverId = receiverId.split(",");
+        Long receiverId = dvo.getReceiverId();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("insert all");
+        sb.append("insert into messenger (group_id, filepath, messenger_id, sender_id, receiver_id, content) values (");
+        sb.append(dvo.getMessengerId()).append(", ")
+                .append(dvo.getFilePath()).append(", ")
+                .append(time).append(", ")
+                .append(mvo.getSenderId()).append(", ")
+                .append(receiverId).append(", '")
+                .append(mvo.getContent()).append("')");
 
-        String start = " into messenger(group_id, filepath, messenger_id, sender_id, receiver_id, content) values("+ dvo.getMessengerId() + ", " + dvo.getFilePath() + ",";
-        String end = ", null , '" + mvo.getContent() + "')";
-
-        for(int i = 0; i < arr_receiverId.length; i++) {
-            sb.append(start);
-            sb.append(time + i + ", " + mvo.getSenderId() + ", " + arr_receiverId[i]);
-            sb.append(end);
-        }
-
-        sb.append("select * from dual");
         imDao.sendMessage(sb.toString());
     }
 
     // 메신저 방 개수
     @Override
     public int getTotalMsg(Map<String, String> map) {
-        int totalMsg = imDao.getTotalMsg(map);
-        return totalMsg;
+        return imDao.getTotalMsg(map);
     }
 
     // 메시지 발송을 위한 사람 이름 조회
     @Override
-    public String getEmpName(String empId) {
-        String name = imDao.getEmpName(empId);
-        return name;
+    public String getEmpName(Long empId) {
+        return imDao.getEmpName(empId);
     }
 
     // 안읽은 메신저 개수
     @Override
-    public int getUnreadMsg(String empId) {
-        int unreadMsg = imDao.getUnreadMsg(empId);
-        return unreadMsg;
+    public int getUnreadMsg(Long empId) {
+        return imDao.getUnreadMsg(empId);
     }
 }

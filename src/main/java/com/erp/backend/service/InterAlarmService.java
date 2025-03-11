@@ -10,17 +10,17 @@ public interface InterAlarmService {
     void addAlarm(Map<String, String> map);
 
     // 알람 조회
-    List<AlarmVO> getAlarmList(String empId);
+    List<AlarmVO> getAlarmList(Long empId);
 
     // 지난 알람 조회
-    List<AlarmVO> getPastAlarmList(String empId);
+    List<AlarmVO> getPastAlarmList(Long empId);
 
     // 알람 읽기
-    boolean readAlarm(String alarmId, String empId);
+    boolean readAlarm(Long alarmId, Long empId);
 
     // 모든 알람 읽기
-    void readAllAlarm(String empId);
+    void readAllAlarm(Long empId);
 
     // 안읽은 알람 개수
-    String getUnreadAlarm(String empId);
+    String getUnreadAlarm(Long empId);
 }

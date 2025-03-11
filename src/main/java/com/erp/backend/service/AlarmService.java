@@ -68,34 +68,32 @@ public class AlarmService implements InterAlarmService {
 
     // 알람 조회
     @Override
-    public List<AlarmVO> getAlarmList(String empId) {
-        List<AlarmVO> alarmList = alarmDao.getAlarmList(empId);
-        return alarmList;
+    public List<AlarmVO> getAlarmList(Long empId) {
+        return alarmDao.getAlarmList(empId);
     }
 
     // 지난 알람 조회
     @Override
-    public List<AlarmVO> getPastAlarmList(String empId) {
-        List<AlarmVO> alarmList = alarmDao.getPastAlarmList(empId);
-        return alarmList;
+    public List<AlarmVO> getPastAlarmList(Long empId) {
+        return alarmDao.getPastAlarmList(empId);
     }
 
     // 알람 읽기
     @Override
-    public boolean readAlarm(String alarmId, String empId) {
+    public boolean readAlarm(Long alarmId, Long empId) {
         int count = alarmDao.readAlarm(alarmId, empId);
         return count > 0;
     }
 
     // 모든 알람 읽기
     @Override
-    public void readAllAlarm(String empId) {
+    public void readAllAlarm(Long empId) {
         alarmDao.readAllAlarm(empId);
     }
 
     // 안읽은 소식 개수
     @Override
-    public String getUnreadAlarm(String alarmId) {
+    public String getUnreadAlarm(Long alarmId) {
         return alarmDao.getUnreadAlarm(alarmId);
     }
 }

@@ -44,7 +44,7 @@ public class AlarmController {
         if(member == null) {
             throw new RuntimeException("로그인이 필요합니다.");
         }
-        return alarmService.getAlarmList(String.valueOf(member.getEmpId()));
+        return alarmService.getAlarmList(member.getEmpId());
     }
 
     // 지난 알람 조회
@@ -54,18 +54,18 @@ public class AlarmController {
         if(member == null) {
             throw new RuntimeException("로그인이 필요합니다.");
         }
-        return alarmService.getPastAlarmList(String.valueOf(member.getEmpId()));
+        return alarmService.getPastAlarmList(member.getEmpId());
     }
 
     // 알람 읽기
     @PostMapping("/read")
-    public String readAlarm(@RequestBody Map<String, String> alarmData, HttpSession session) {
+    public String readAlarm(@RequestBody Map<String, Long> alarmData, HttpSession session) {
         MemberDto member = (MemberDto) session.getAttribute("member");
         if(member == null) {
             return "로그인이 필요합니다.";
         }
-            String alarmId = alarmData.get("alarmId");
-            boolean success = alarmService.readAlarm(alarmId, String.valueOf(member.getEmpId()));
+            Long alarmId = alarmData.get("alarmId");
+            boolean success = alarmService.readAlarm(alarmId, member.getEmpId());
             return success ? "알림 읽기 성공" : "알림 읽기 실패 (권한 없음)";
     }
 
@@ -76,7 +76,7 @@ public class AlarmController {
         if(member == null) {
             return "로그인이 필요합니다.";
         }
-        alarmService.readAllAlarm(String.valueOf(member.getEmpId()));
+        alarmService.readAllAlarm(member.getEmpId());
         return "알람을 모두 읽음 처리했습니다!";
     }
 
@@ -87,6 +87,6 @@ public class AlarmController {
         if(member == null) {
             return "로그인이 필요합니다.";
         }
-        return alarmService.getUnreadAlarm(String.valueOf(member.getEmpId()));
+        return alarmService.getUnreadAlarm(member.getEmpId());
     }
 }

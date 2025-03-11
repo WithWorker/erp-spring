@@ -10,25 +10,25 @@ import java.util.List;
 public interface InterAlarmDao {
 
     // 알람 소유자 조회
-    String getAlarmOwnerId(String alarmId);
+    String getAlarmOwnerId(Long alarmId);
 
     // 알람 읽음 처리
-    int readAlarm(String alarmId, String empId);
+    int readAlarm(Long alarmId, Long empId);
 
     // 알람 추가
     void addAlarm(String sql);
 
     // 알람 조회
-    List<AlarmVO> getAlarmList(String empId);
+    List<AlarmVO> getAlarmList(Long empId);
 
     // 지난 알람 조회
-    List<AlarmVO> getPastAlarmList(String empId);
+    List<AlarmVO> getPastAlarmList(Long empId);
 
     // 전체 알람 읽기
-    void readAllAlarm(String empId);
+    void readAllAlarm(Long empId);
 
     // 안읽은 소식 개수
-    String getUnreadAlarm(String empId);
+    String getUnreadAlarm(Long empId);
 }
 
 /*

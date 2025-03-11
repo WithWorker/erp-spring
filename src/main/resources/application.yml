@@ -9,8 +9,8 @@ spring:
   datasource:
     hikari:
       jdbc-url: jdbc:mysql://localhost:3306/erp_db?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-      username: ${DB_USERNAME}
-      password: ${DB_PASSWORD}
+      username: root
+      password: abcd1234
       driver-class-name: com.mysql.cj.jdbc.Driver
       minimum-idle: 5
       maximum-pool-size: 20
@@ -26,4 +26,3 @@ mybatis:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:/mappers/**/*.xml
   config-location: classpath:/mybatis-config.xml
-  type-aliases-package: com.erp.backend.model

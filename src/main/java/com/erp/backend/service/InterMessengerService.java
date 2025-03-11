@@ -18,7 +18,7 @@ public interface InterMessengerService {
     List<Map<String, String>> getTeam(String dept);
 
     // 선택 직원 가져오기
-    List<Map<String, String>> getChosenEmp(String empId);
+    List<Map<String, String>> getChosenEmp(Long empId);
 
     // 메신저 보내기
     String sendMessage(MessengerVO msgvo);
@@ -30,17 +30,17 @@ public interface InterMessengerService {
     List<Map<String, String>> getReceivedMsg(Map<String, String> map);
 
     // 메신저 내용 조회(보낸 메신저, 받은 메신저)
-    Map<String, String>  getMsgContent(String content);
-    Map<String, String>  getMsgContent2(String content);
+    Map<String, String> getMsgContent(String content);
+    Map<String, String> getMsgContent2(String content);
 
     // 안읽은 메신저 읽기
-    void updateAllMsg(String empId);
+    void updateAllMsg(Long empId);
 
     // 메신저 파일 첨부
     void addFile(FileVO filevo);
 
     // 메신저 첨부파일 조회
-    List<FileVO> getMsgFile(String content);
+    List<FileVO> getMsgFile(Long messengerId);
 
     // 메신저 전달
     void deliverMessage(MessengerVO dvo, MessengerVO mvo);
@@ -49,8 +49,8 @@ public interface InterMessengerService {
     int getTotalMsg(Map<String, String> map);
 
     // 메신저 발송을 위한 사람 이름 조회
-    String getEmpName(String empId);
+    String getEmpName(Long empId);
 
     // 안읽은 메신저 개수 조회
-    int getUnreadMsg(String empId);
+    int getUnreadMsg(Long empId);
 }

@@ -24,7 +24,7 @@ public class WebSocketController {
     @MessageMapping("/chat.one")
     public void sendPrivateMessage(MessengerVO mvo) {
         ms.sendMessage(mvo);
-        smt.convertAndSendToUser(mvo.getSenderId(), "/one/messages", mvo);
+        smt.convertAndSendToUser(String.valueOf(mvo.getSenderId()), "/one/messages", mvo);
     }
 
     /**
