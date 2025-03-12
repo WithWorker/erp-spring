@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.erp.backend.mapper.MemberMapper">
+    <mapper namespace="com.erp.backend.mapper.MemberMapper">
 
-    <select id="findByEmail" parameterType="string" resultType="com.erp.backend.dto.MemberDto">
-        SELECT * FROM employee WHERE email = #{email}
-    </select>
+        <select id="findByEmail" parameterType="string" resultType="com.erp.backend.dto.MemberDto">
+            SELECT * FROM employee WHERE email = #{email}
+        </select>
 
-    <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
-        INSERT INTO employee (emp_id, name, email, password, phone, img_url, dept, position, member_role)
-        VALUES (#{empId}, #{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{dept}, #{position}, #{memberRole})
-    </insert>
+        <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
+            INSERT INTO employee (emp_id, name, email, password, phone, img_url, dept, position, member_role)
+            VALUES (#{empId}, #{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{dept}, #{position}, #{memberRole})
+        </insert>
 
-</mapper>
+    </mapper>

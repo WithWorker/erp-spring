@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
+import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.stereotype.Repository;
 
-@Repository
+@Mapper
 public class AlarmDao implements InterAlarmDao {
 
     @Resource

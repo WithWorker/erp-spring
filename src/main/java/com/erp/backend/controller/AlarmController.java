@@ -25,6 +25,12 @@ public class AlarmController {
     @Autowired
     private AlarmService alarmService;
 
+    // Test
+    @GetMapping("")
+    public String alarmtest() {
+        return "test";
+    }
+
     // AOP 알람 추가
     @PostMapping("/add")
     public String addAlarm(@RequestBody Map<String, String> alarmData, HttpSession session) {

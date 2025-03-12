@@ -20,7 +20,7 @@ import java.util.Map;
 //@RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private ObjectMapper objectMapper = new ObjectMapper();
-    //private final AuthenticationManager authenticationManager;
+    // private final AuthenticationManager authenticationManager;
     // AuthenticationManager를 생성자에서 주입받습니다.
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         super.setAuthenticationManager(authenticationManager);

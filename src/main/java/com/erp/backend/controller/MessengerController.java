@@ -24,9 +24,14 @@ public class MessengerController {
         if(user == null) {
             throw new RuntimeException("로그인이 필요합니다");
         }
-        return Long.valueOf(String.valueOf(user.getEmpId()));
+        return user.getEmpId();
     }
 
+    // Test
+    @GetMapping("")
+    public String messengertest() {
+        return "test";
+    }
 
     // 전체 부서 조회
     @GetMapping("/dept")

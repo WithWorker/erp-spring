@@ -2,12 +2,14 @@ package com.erp.backend.model;
 
 import jakarta.annotation.Resource;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
 @Repository
+@Primary
 public class MessengerDao implements InterMessengerDao {
 
     @Resource

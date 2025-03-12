@@ -1,9 +1,11 @@
 package com.erp.backend;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@MapperScan({"com.erp.backend.mapper", "com.erp.backend.model"})
 public class BackendApplication {
 
 	public static void main(String[] args) {

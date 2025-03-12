@@ -4,6 +4,7 @@ import com.erp.backend.model.FileVO;
 import com.erp.backend.model.InterMessengerDao;
 import com.erp.backend.model.MessengerVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -14,8 +15,12 @@ import java.util.Map;
 @Service
 public class MessengerService implements InterMessengerService {
 
+    private final InterMessengerDao imDao;
+
     @Autowired
-    private InterMessengerDao imDao;
+    public MessengerService(@Qualifier("messengerDao") InterMessengerDao imDao) {  // ✅ 명확하게 지정
+        this.imDao = imDao;
+    }
 
     // 전체 부서 조회
     @Override
