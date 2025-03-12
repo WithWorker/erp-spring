@@ -1,6 +1,6 @@
-package com.erp.backend.filter;
+package com.erp.backend.security.filter;
 
-import com.erp.backend.util.JwtUtil;
+import com.erp.backend.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

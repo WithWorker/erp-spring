@@ -1,4 +1,4 @@
-package com.erp.backend.util;
+package com.erp.backend.security;
 
 import com.erp.backend.dto.MemberRole;
 import io.jsonwebtoken.*;
@@ -26,7 +26,7 @@ public class JwtUtil {
     }
 
     //토큰 생성
-    public String createToken(String email, String role) {
+    public String createToken(Long empId, String email, String role) {
         long now = System.currentTimeMillis();
 
         return Jwts.builder()
@@ -34,8 +34,13 @@ public class JwtUtil {
                 .setExpiration(new Date(now + tokenExpiration))
                 .claim("email", email)
                 .claim("role", role)
+                .claim("empId", empId)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Long getEmpId(String token) {
+        return parseClaims(token).get("empId", Long.class);
     }
 
     public String getEmail(String token) {
@@ -60,7 +65,6 @@ public class JwtUtil {
         }
     }
 
-    //클레임 파싱
     private Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)

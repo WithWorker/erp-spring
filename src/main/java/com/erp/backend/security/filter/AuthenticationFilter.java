@@ -1,6 +1,7 @@
-package com.erp.backend.filter;
+package com.erp.backend.security.filter;
 
-import com.erp.backend.util.JwtUtil;
+import com.erp.backend.security.CustomUserDetails;
+import com.erp.backend.security.JwtUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -44,8 +45,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         String email = authResult.getName();
         String role = authResult.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
+        Long empId = ((CustomUserDetails) authResult.getPrincipal()).getEmpId();
 
-        String token = jwtUtil.createToken(email, role);
+        String token = jwtUtil.createToken(empId, email, role);
         response.setHeader("Authorization", "Bearer " + token);
         response.setStatus(HttpServletResponse.SC_OK);
     }

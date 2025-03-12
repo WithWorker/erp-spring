@@ -1,11 +1,10 @@
 package com.erp.backend.config;
 
 import com.erp.backend.dto.MemberRole;
-import com.erp.backend.filter.AuthenticationFilter;
-import com.erp.backend.filter.CustomLogoutFilter;
-import com.erp.backend.filter.JwtFilter;
-import com.erp.backend.service.MemberDetailsService;
-import com.erp.backend.util.JwtUtil;
+import com.erp.backend.security.filter.AuthenticationFilter;
+import com.erp.backend.security.filter.CustomLogoutFilter;
+import com.erp.backend.security.filter.JwtFilter;
+import com.erp.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +14,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,10 +30,9 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final MemberDetailsService memberDetailsService;
+    private final UserDetailsService empDetailsService;
     private final JwtUtil jwtUtil;
 
-    //비밀번호 인코딩
     @Bean
     protected PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -42,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authManager() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(memberDetailsService);
+        authProvider.setUserDetailsService(empDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
     }
