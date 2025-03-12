@@ -15,7 +15,7 @@ public class MemberController {
     private final MemberService memberService;
 
     //전체조회
-    @GetMapping("/users")
+    @GetMapping("/employees")
     public List<MemberDto> findAll() {
         return memberService.findAll();
     }
@@ -28,7 +28,7 @@ public class MemberController {
 
     //직원조회 (by 이름)
     @PostMapping("/name")
-    public MemberDto findByName(@RequestBody MemberDto memberDto) {
+    public List<MemberDto> findByName(@RequestBody MemberDto memberDto) {
         return memberService.findByName(memberDto.getName());
     }
 

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -22,6 +23,8 @@ public class MemberDto {
     private Long positionId;
     private String positionName;
     private MemberRole memberRole;
+    private LocalDate hireDate;
+    private LocalDate resignDate;
     private Integer baseSalary;
     private Integer bonus;
 }

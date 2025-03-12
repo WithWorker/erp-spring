@@ -26,7 +26,7 @@ public class MemberService {
     }
 
     //직원조회 (by 이름)
-    public MemberDto findByName(String name){
+    public List<MemberDto> findByName(String name){
         return memberMapper.findByName(name);
     }
 

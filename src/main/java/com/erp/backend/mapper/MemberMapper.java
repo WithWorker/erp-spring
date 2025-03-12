@@ -14,7 +14,7 @@ public interface MemberMapper {
     List<MemberDto> findAllByDept(Long departmentId);
 
     //직원조회 (by 이름)
-    MemberDto findByName(String name);
+    List<MemberDto> findByName(String name);
 
     //직원조회 (by 직원id)
     MemberDto findById(Long empId);

@@ -39,7 +39,7 @@
         FROM employee e
                  LEFT JOIN department d ON e.department_id = d.department_id
                  LEFT JOIN position p ON e.position_id = p.position_id
-        WHERE e.name = #{name}
+        WHERE e.name LIKE CONCAT('%', #{name}, '%')
     </select>
 
     <!-- 직원조회 (by 직원id) -->
@@ -63,8 +63,8 @@
 
     <!-- 직원등록 -->
     <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
-        INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, member_role)
-        VALUES (#{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{departmentId}, #{positionId}, #{memberRole})
+        INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, member_role, hire_date)
+        VALUES (#{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{departmentId}, #{positionId}, #{memberRole}, NOW())
     </insert>
 
     <!-- 직원수정 -->
@@ -93,7 +93,7 @@
 
     <!-- 퇴사 -->
     <update id="resignMember" parameterType="java.lang.Long">
-        UPDATE employee SET member_role = NULL WHERE emp_id = #{empId}
+        UPDATE employee SET member_role = NULL, resign_date = NOW() WHERE emp_id = #{empId}
     </update>
 
     <!-- 비밀번호 재설정 -->
