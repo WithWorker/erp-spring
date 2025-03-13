@@ -26,7 +26,7 @@ public class JwtUtil {
     }
 
     //토큰 생성
-    public String createToken(Long empId, String email, String role) {
+    public String createToken(String email, String role, Long empId) {
         long now = System.currentTimeMillis();
 
         return Jwts.builder()

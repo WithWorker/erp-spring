@@ -47,7 +47,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String role = authResult.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
         Long empId = ((CustomUserDetails) authResult.getPrincipal()).getEmpId();
 
-        String token = jwtUtil.createToken(empId, email, role);
+        String token = jwtUtil.createToken(email, role, empId);
         response.setHeader("Authorization", "Bearer " + token);
         response.setStatus(HttpServletResponse.SC_OK);
     }
