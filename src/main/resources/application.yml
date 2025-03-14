@@ -5,6 +5,8 @@ spring:
   output:
     ansi:
       enabled: always
+  file-upload:
+    upload-dir: /upload
   jwt:
     secret: bWluc2Vva21pbnNlb2ttaW5zZW9rbWluc2Vva21pbnNlb2s=
     expiration: 3600000
