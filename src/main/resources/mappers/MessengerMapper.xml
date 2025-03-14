@@ -6,9 +6,9 @@
         <!-- ✅ 메시지 전송 -->
         <insert id="insertMessage">
             INSERT INTO messenger
-            (messenger_id, sender_id, receiver_id, content, send_time, read_status)
+            (sender_id, receiver_id, content, send_time, read_status, file_path)
             VALUES
-            (#{messengerId}, #{senderId}, #{receiverId}, #{content}, SYSDATE, 0)
+            (#{senderId}, #{receiverId}, #{content}, SYSDATE, 0, null)
         </insert>
 
         <!-- ✅ 보낸 메시지 조회 -->

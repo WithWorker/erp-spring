@@ -40,7 +40,7 @@ public class MessengerController {
     }
 
     // 부서 직원 조회
-    @GetMapping("/dept/person")
+    @GetMapping("/dept/${deptId}")
     public List<Map<String, String>> getDeptPerson(@RequestParam Long deptId) {
         return ms.getDeptPerson(Map.of("deptId", String.valueOf(deptId)));
     }
@@ -67,7 +67,7 @@ public class MessengerController {
     }
 
     // 전체 메시지 목록 조회
-    @GetMapping("message/list")
+    @GetMapping("/message/list")
     public Map<String, List<Map<String, String>>> getMessageList(HttpSession session) {
         Long empId = getLoginEmpId(session);
         // 보낸 메시지 조회

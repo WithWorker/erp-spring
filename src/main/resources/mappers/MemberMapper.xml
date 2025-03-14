@@ -8,8 +8,8 @@
         </select>
 
         <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
-            INSERT INTO employee (emp_id, name, email, password, phone, img_url, dept, position, member_role)
-            VALUES (#{empId}, #{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{dept}, #{position}, #{memberRole})
+            INSERT INTO employee (emp_id, name, email, password, phone, img_url, department_id, position_id, member_role)
+            VALUES (#{empId}, #{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{department_id}, #{position_id}, #{memberRole})
         </insert>
 
     </mapper>
