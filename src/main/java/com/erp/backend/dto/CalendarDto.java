@@ -29,7 +29,6 @@ public class CalendarDto {
 
   private String content;
 
-  @JsonProperty("applicant_id")
   private Integer applicantId;
 
   private MemberDto memberDto;

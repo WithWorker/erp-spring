@@ -83,6 +83,7 @@ public class CalendarController {
 	@PostMapping("/calendar/add")
 	public ResponseEntity<String> addCalendar(@RequestBody CalendarDto calendarDto) {
     log.info("Received CalendarDto: {}", calendarDto);
+		System.out.println("applicant_id: " + calendarDto.getApplicantId()); // 확인용 출력
     calendarService.addCalendar(calendarDto);
     return ResponseEntity.ok("일정 등록 성공");
 }
