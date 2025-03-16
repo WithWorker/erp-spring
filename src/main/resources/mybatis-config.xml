@@ -7,6 +7,6 @@
     <mappers>
         <mapper resource="mappers/MemberMapper.xml" />
         <mapper resource="mappers/InfoMapper.xml" />
-        <mapper resource="mappers/SalaryMapper.xml" />
+        <mapper resource="mappers/PaymentMapper.xml" />
     </mappers>
 </configuration>

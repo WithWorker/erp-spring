@@ -26,5 +26,5 @@ public class MemberDto {
     private LocalDate hireDate;
     private LocalDate resignDate;
     private Integer baseSalary;
-    private Integer bonus;
+    private Integer departmentBonus;
 }

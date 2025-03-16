@@ -4,6 +4,7 @@ import com.erp.backend.dto.MemberDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface MemberMapper {
@@ -35,7 +36,7 @@ public interface MemberMapper {
     void updateDepartment(MemberDto memberDto);
 
     //직급변경
-    void updatePosition(MemberDto memberDto);
+    void updatePosition(Long empId, Long positionId, Integer newSalary);
 
     //퇴사
     void resignMember(Long empId);
@@ -45,4 +46,22 @@ public interface MemberMapper {
 
     //직원삭제
     void deleteMember(Long empId);
+
+    //직급별 급여 조회
+    Integer getSalaryByPositionId(Long positionId);
+
+    //부서별 성과급 조회
+    Integer getDepartmentBonusByDepartmentId(Long departmentId);
+
+    //직원 ID로 기본급 조회
+    Integer getBaseSalaryByEmpId(Long empId);
+
+    //직원 ID로 직급 ID 조회
+    Integer getPositionIdByEmpId(Long empId);
+
+    //직원 ID로 부서 ID 조회
+    Integer getDepartmentIdByEmpId(Long empId);
+
+    //기본급 업데이트
+    void updateBaseSalary(Long empId, Integer newSalary);
 }

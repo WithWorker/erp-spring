@@ -3,10 +3,10 @@ package com.erp.backend.mapper;
 import com.erp.backend.dto.MemberDto;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.time.LocalDate;
+import java.util.Map;
 
 @Mapper
-public interface SalaryMapper {
+public interface PaymentMapper {
 
     //기본급 수정
     void updateSalary(MemberDto memberDto);
@@ -14,9 +14,6 @@ public interface SalaryMapper {
     //성과급 수정
     void updateBonus(MemberDto memberDto);
 
-    //기본급 내역 저장
-    void insertSalaryHistory(LocalDate paymentDate);
-
-    //성과급 내역 저장
-    void insertBonusHistory(LocalDate paymentDate);
+    //급여내역 저장
+    void insertPaymentHistory(Map<String, Object> insertInfo);
 }

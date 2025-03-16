@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.backend.mapper.PaymentMapper">
+
+    <!-- 기본급 수정 -->
+    <update id="updateSalary" parameterType="com.erp.backend.dto.MemberDto">
+        UPDATE position_salary SET base_salary = #{baseSalary} WHERE position_id = #{positionId}
+    </update>
+
+    <!-- 성과급 수정 -->
+    <update id="updateBonus" parameterType="com.erp.backend.dto.MemberDto">
+        UPDATE department_bonus SET bonus = #{bonus} WHERE department_id = #{departmentId}
+    </update>
+
+    <!-- 급여내역 저장 -->
+    <insert id="insertPaymentHistory">
+        INSERT INTO payment_history (emp_id, payment_date, amount, type)
+        VALUES (#{empId}, #{paymentDate}, #{amount}, #{type});
+    </insert>
+
+</mapper>

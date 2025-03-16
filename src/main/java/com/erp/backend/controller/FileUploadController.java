@@ -15,7 +15,7 @@ public class FileUploadController {
     @PostMapping("/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file) {
         try {
-            return fileUploadService.uploadFile(file);
+            return fileUploadService.uploadImage(file);
         } catch (IOException e) {
             e.printStackTrace();
             return "파일 업로드 실패";

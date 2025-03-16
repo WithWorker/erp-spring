@@ -17,19 +17,20 @@ public class FileUploadService {
     @Value("${spring.file-upload.upload-dir}")
     private String uploadDir;
 
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadImage(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new IOException("파일이 비어 있습니다.");
         }
 
-        String absolutePath = System.getProperty("user.dir") + File.separator + uploadDir;
+        //상대경로 디렉토리
+        String absolutePath = Paths.get(uploadDir).toAbsolutePath().toString();
 
         File dir = new File(absolutePath);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        // 파일 저장
+        //파일 저장
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path path = Paths.get(absolutePath + File.separator + fileName);
         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);

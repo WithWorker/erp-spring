@@ -5,15 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SalaryBonusHistoryDto {
+public class PaymentDto {
     private Long empId;
-    private LocalDate paymentDate;
+    private int year;
+    private int month;
     private Integer amount;
-    private String type; // 'salary' or 'bonus'
+    private PaymentType type; // SALARY or BONUS
 }
+

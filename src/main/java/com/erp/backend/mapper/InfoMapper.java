@@ -2,7 +2,7 @@ package com.erp.backend.mapper;
 
 import com.erp.backend.dto.AttendanceDto;
 import com.erp.backend.dto.MemberDto;
-import com.erp.backend.dto.SalaryBonusHistoryDto;
+import com.erp.backend.dto.PaymentDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public interface InfoMapper {
     MemberDto profile(Long empId);
 
     //급여 조회
-    List<SalaryBonusHistoryDto> salaryAndBonusHistory(Long empId, int year, int month);
+    List<PaymentDto> getPaymentHistory(Long empId, int year, int month);
 
     //근태 조회
     AttendanceDto attendance(Long empId);

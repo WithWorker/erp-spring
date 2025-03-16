@@ -20,6 +20,12 @@ public class MemberController {
         return memberService.findAll();
     }
 
+    //직원조회 (by 직원id)
+    @GetMapping("/emp/{empId}")
+    public MemberDto findById(@PathVariable(value = "empId") Long empId) {
+        return memberService.findById(empId);
+    }
+
     //전체조회 (by 부서id)
     @GetMapping("/dept/{departmentId}")
     public List<MemberDto> findAllByDept(@PathVariable(value = "departmentId") Long departmentId) {
@@ -30,12 +36,6 @@ public class MemberController {
     @PostMapping("/name")
     public List<MemberDto> findByName(@RequestBody MemberDto memberDto) {
         return memberService.findByName(memberDto.getName());
-    }
-
-    //직원조회 (by 직원id)
-    @GetMapping("/emp/{empId}")
-    public MemberDto findById(@PathVariable(value = "empId") Long empId) {
-        return memberService.findById(empId);
     }
 
     //직원등록
@@ -64,10 +64,12 @@ public class MemberController {
             memberDto.setPhone((String) updateInfo.get("phone"));
         }
         if (updateInfo.containsKey("departmentId")) {
-            memberDto.setDepartmentId((Long) updateInfo.get("departmentId"));
+            Object deptIdObj = updateInfo.get("departmentId");
+            memberDto.setDepartmentId(deptIdObj != null ? ((Number) deptIdObj).longValue() : null);
         }
         if (updateInfo.containsKey("positionId")) {
-            memberDto.setPositionId((Long) updateInfo.get("positionId"));
+            Object posIdObj = updateInfo.get("positionId");
+            memberDto.setPositionId(posIdObj != null ? ((Number) posIdObj).longValue() : null);
         }
 
         memberService.updateMember(memberDto);

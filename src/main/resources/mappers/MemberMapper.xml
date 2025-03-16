@@ -8,6 +8,10 @@
         FROM employee e
                  LEFT JOIN department d ON e.department_id = d.department_id
                  LEFT JOIN position p ON e.position_id = p.position_id
+        ORDER BY
+            e.resign_date IS NOT NULL,
+            e.resign_date ASC,
+            e.emp_id ASC;
     </select>
 
     <resultMap id="memberResult" type="com.erp.backend.dto.MemberDto">
@@ -22,6 +26,8 @@
         <result property="positionId" column="position_id" />
         <result property="positionName" column="position_name" />
         <result property="memberRole" column="member_role" />
+        <result property="hireDate" column="hire_date" />
+        <result property="resignDate" column="resign_date" />
     </resultMap>
 
     <!-- 전체조회 (by 부서id) -->
@@ -87,8 +93,10 @@
     </update>
 
     <!-- 직급변경 -->
-    <update id="updatePosition" parameterType="com.erp.backend.dto.MemberDto">
-        UPDATE employee SET position_id = #{positionId} WHERE emp_id = #{empId}
+    <update id="updatePosition">
+        UPDATE employee
+        SET position_id = #{positionId}, base_salary = #{newSalary}
+        WHERE emp_id = #{empId}
     </update>
 
     <!-- 퇴사 -->
@@ -105,5 +113,35 @@
     <delete id="deleteMember" parameterType="java.lang.Long">
         DELETE FROM employee WHERE emp_id = #{empId}
     </delete>
+
+    <!-- 직급별 급여 조회 -->
+    <select id="getSalaryByPositionId" resultType="java.lang.Integer">
+        SELECT position_salary FROM position_salary WHERE position_id = #{positionId}
+    </select>
+
+    <!-- 부서별 성과급 조회 -->
+    <select id="getDepartmentBonusByDepartmentId" resultType="java.lang.Integer">
+        SELECT department_bonus FROM department WHERE department_id = #{departmentId}
+    </select>
+
+    <!-- 기본급 업데이트 -->
+    <update id="updateBaseSalary">
+        UPDATE employee SET base_salary = #{newSalary} WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 직원 ID로 기본급 조회 -->
+    <select id="getBaseSalaryByEmpId" resultType="java.lang.Integer">
+        SELECT base_salary FROM employee WHERE emp_id = #{empId}
+    </select>
+
+    <!-- 직원 ID로 직급 ID 조회 -->
+    <select id="getPositionIdByEmpId" resultType="java.lang.Integer">
+        SELECT position_id FROM employee WHERE emp_id = #{empId}
+    </select>
+
+    <!-- 직원 ID로 부서 ID 조회 -->
+    <select id="getDepartmentIdByEmpId" resultType="java.lang.Integer">
+        SELECT department_id FROM employee WHERE emp_id = #{empId}
+    </select>
 
 </mapper>

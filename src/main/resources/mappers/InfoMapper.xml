@@ -6,25 +6,21 @@
     <select id="profile" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
         SELECT e.emp_id, e.name, e.email, e.phone, e.img_url,
                d.department_id AS departmentId, d.name AS departmentName,
-               p.position_id AS positionId, p.name AS positionName,
-               ps.base_salary AS baseSalary, db.bonus AS bonus
+               p.position_id AS positionId, p.name AS positionName
         FROM employee e
                  LEFT JOIN department d ON e.department_id = d.department_id
                  LEFT JOIN position p ON e.position_id = p.position_id
-                 LEFT JOIN position_salary ps ON e.position_id = ps.position_id
-                 LEFT JOIN department_bonus db ON e.department_id = db.department_id
         WHERE e.emp_id = #{empId}
     </select>
 
     <!-- 급여 조회 -->
-    <select id="salaryAndBonusHistory" parameterType="map" resultType="com.erp.backend.dto.SalaryBonusHistoryDto">
-        SELECT emp_id, payment_date, amount, 'salary' AS type
-        FROM salary_history
-        WHERE emp_id = #{empId} AND YEAR(payment_date) = #{year} AND MONTH(payment_date) = #{month}
-        UNION ALL
-        SELECT emp_id, payment_date, amount, 'bonus' AS type
-        FROM bonus_history
-        WHERE emp_id = #{empId} AND YEAR(payment_date) = #{year} AND MONTH(payment_date) = #{month}
+    <select id="getPaymentHistory" resultType="com.erp.backend.dto.PaymentDto">
+        SELECT emp_id, payment_date, amount, type
+        FROM payment_history
+        WHERE emp_id = #{empId}
+            AND YEAR(payment_date) = #{year}
+          AND MONTH(payment_date) = #{month}
+        ORDER BY payment_date ASC;
     </select>
 
     <!-- 근태 조회 -->
