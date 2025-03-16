@@ -86,7 +86,8 @@ public class CalendarController {
 		System.out.println("applicant_id: " + calendarDto.getApplicantId()); // 확인용 출력
     calendarService.addCalendar(calendarDto);
     return ResponseEntity.ok("일정 등록 성공");
-}
+	}
+	
 	// 일정 수정
 	// http://localhost:7777/calendar/edit/{calendarId}
 	@PutMapping("/calendar/edit/{calendarId}")

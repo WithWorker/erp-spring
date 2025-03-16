@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 public class ApprovalDto {
     private Integer approvalId;
 
-    @JsonProperty("type_id") 
     private Integer typeId;
 
     @JsonProperty("start_date") // JSON 키와 매핑
@@ -33,10 +32,8 @@ public class ApprovalDto {
 
     private String content;
 
-    @JsonProperty("applicant_id")
     private Integer applicantId;
     
-    @JsonProperty("status_id")
     private Integer statusId;
 
     private String typeName; 
@@ -49,10 +46,8 @@ public class ApprovalDto {
 
     private List<MemberDto> approvers;
 
-    @JsonProperty("approver_id")
     private Integer approverId; 
 
-    @JsonProperty("approver_status_id")
     private Integer approverStatusId;  
 
 }
