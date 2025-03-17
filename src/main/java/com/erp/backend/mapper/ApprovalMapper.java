@@ -12,7 +12,13 @@ public interface ApprovalMapper {
     
     //결재 목록 조회 (by 신청자)
     List<ApprovalDto> getApplicant(Integer applicantId);
-
+    
+    //결재 대기 목록 조회 (by 신청자)
+    List<ApprovalDto> getApplicantPending(Integer applicantId);
+    
+    //결재 승인 목록 조회 (by 신청자)
+    List<ApprovalDto> getApplicantApproved(Integer applicantId);
+    
     //결재 목록 조회 (by 승인자)
     List<ApprovalDto> getApprover(Integer approverId);
 

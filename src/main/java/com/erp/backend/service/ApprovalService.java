@@ -25,6 +25,18 @@ public class ApprovalService {
         return approvalMapper.getApplicant(applicantId);
     }
 
+    //결재 대기 목록 조회 (by 신청자)
+    public List<ApprovalDto> getApplicantPending(Integer applicantId) {
+        log.info("service-getApplicantPending");
+        return approvalMapper.getApplicantPending(applicantId);
+    }
+
+    //결재 승인,반려 목록 조회 (by 신청자)
+    public List<ApprovalDto> getApplicantApproved(Integer applicantId) {
+        log.info("service-getApplicantApproved");
+        return approvalMapper.getApplicantApproved(applicantId);
+    }
+
     //결재 목록 조회 (by 승인자)
     public List<ApprovalDto> getApprover(Integer approverId) {
         log.info("service-getApprover");

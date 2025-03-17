@@ -31,6 +31,20 @@ public class ApprovalController {
     public List<ApprovalDto> getApplicant(@PathVariable Integer applicantId){
         return approvalService.getApplicant(applicantId);
     }
+    
+    // 결재 신청 목록(대기) : 신청자
+    // http://localhost:7777/approval/applicantPending/{applicantId}
+    @GetMapping("/approval/applicantPending/{applicantId}")
+    public List<ApprovalDto> getApplicantPending(@PathVariable Integer applicantId){
+        return approvalService.getApplicantPending(applicantId);
+    }
+    
+    // 결재 신청 목록(승인,반려) : 신청자
+    // http://localhost:7777/approval/applicantApproved/{applicantId}
+    @GetMapping("/approval/applicantApproved/{applicantId}")
+    public List<ApprovalDto> getApplicantApproved(@PathVariable Integer applicantId){
+        return approvalService.getApplicantApproved(applicantId);
+    }
 
     // 결재 확인 목록 : 승인자 
     // http://localhost:7777/approval/approver/{approverId}

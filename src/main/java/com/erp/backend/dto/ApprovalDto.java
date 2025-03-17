@@ -49,6 +49,5 @@ public class ApprovalDto {
     private Integer approverId; 
 
     private Integer approverStatusId;  
-
 }
 

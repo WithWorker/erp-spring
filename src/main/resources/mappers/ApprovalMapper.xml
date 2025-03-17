@@ -18,6 +18,8 @@
     <association property="applicant" javaType="com.erp.backend.dto.MemberDto">
       <id property="empId" column="applicant_id" />
       <result property="name" column="applicant_name" />
+      <result property="departmentName" column="department_name" />
+      <result property="positionName" column="position_name" />
     </association>
     <!-- 승인자 (Approvers) -->
     <collection property="approvers" javaType="java.util.List" ofType="com.erp.backend.dto.MemberDto">
@@ -25,6 +27,8 @@
       <result property="name" column="approver_name" />
       <result property="approverStatusId" column="approver_status_id" />
       <result property="approverStatusName" column="approver_status_name" /> 
+      <result property="departmentName" column="department_name" />
+      <result property="positionName" column="position_name" />
     </collection>
   </resultMap>
 
@@ -35,7 +39,7 @@
     <result property="endDate" column="end_date"/>
 </resultMap>
 
-  <!-- 결재 신청 목록 : 신청자 (최종 상태 표시) -->
+  <!-- 결재 신청 전체 목록 : 신청자 (최종 상태 표시) -->
   <select id="getApplicant" resultMap="approvalResultMap">
     SELECT
     a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
@@ -47,17 +51,54 @@
     WHERE a.applicant_id = #{applicantId}
     ORDER BY a.approval_id desc
   </select>
+  
+  <!-- 결재 신청 목록 : 신청자 (대기 표시) -->
+  <select id="getApplicantPending" resultMap="approvalResultMap">
+    SELECT
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name, 
+    d.name as department_name, p.name as position_name
+    FROM approval a
+    JOIN employee app ON a.applicant_id = app.emp_id  
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approval_status s ON a.status_id = s.status_id
+    LEFT JOIN department d ON app.department_id = d.department_id  
+    LEFT JOIN position p ON p.position_id = app.position_id  
+    WHERE a.applicant_id = #{applicantId}
+    AND s.status_id = 1
+    ORDER BY a.approval_id desc
+  </select>
+
+  <!-- 결재 신청 목록 : 신청자 (승인,반려 표시) -->
+  <select id="getApplicantApproved" resultMap="approvalResultMap">
+    SELECT
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name, 
+    d.name as department_name, p.name as position_name
+    FROM approval a
+    JOIN employee app ON a.applicant_id = app.emp_id  
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approval_status s ON a.status_id = s.status_id
+    LEFT JOIN department d ON app.department_id = d.department_id
+    LEFT JOIN position p ON p.position_id=app.position_id
+    WHERE a.applicant_id = #{applicantId}
+    AND s.status_id IN (2, 3)
+    ORDER BY a.approval_id desc
+  </select>
 
   <!-- 결재 확인 목록 : 승인자 (최종 상태 표시) -->
   <select id="getApprover" resultMap="approvalResultMap">
     SELECT
     a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id,
-    app.name AS applicant_name, t.type_name, s.status_name
+    app.name AS applicant_name, d.name as department_name, p.name as position_name,
+    t.type_name, s.status_name
     FROM approver v
     JOIN approval a ON v.approval_id = a.approval_id
     JOIN employee app ON a.applicant_id = app.emp_id  
     JOIN approval_type t ON a.type_id = t.type_id
     JOIN approval_status s ON a.status_id = s.status_id
+    LEFT JOIN department d ON app.department_id = d.department_id
+    LEFT JOIN position p ON p.position_id=app.position_id
     WHERE v.approver_id = #{approverId}
     ORDER BY a.approval_id desc
   </select>
@@ -80,6 +121,7 @@
     SELECT
     a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
     app.name AS applicant_name, t.type_name, s1.status_name, 
+    d.name as department_name, p.name as position_name,
     v.approver_id, apr.name AS approver_name,
     v.approver_status_id,
     s2.status_name AS approver_status_name
@@ -88,6 +130,8 @@
     JOIN approval_type t ON a.type_id = t.type_id
     JOIN approver v ON a.approval_id = v.approval_id  
     JOIN employee apr ON v.approver_id = apr.emp_id  
+    LEFT JOIN department d ON app.department_id = d.department_id
+    LEFT JOIN position p ON p.position_id=app.position_id
     JOIN approval_status s1 ON a.status_id = s1.status_id
     JOIN approval_status s2 ON v.approver_status_id = s2.status_id  
     WHERE a.approval_id = #{approvalId}
