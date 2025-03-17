@@ -1,8 +1,11 @@
 package com.erp.backend.model;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import java.util.List;
 import java.util.Map;
 
+@Mapper
 public interface InterMessengerDao {
 
     // 전체 부서 조회
@@ -20,18 +23,18 @@ public interface InterMessengerDao {
     // 메신저 보내기
     void sendMessage(String sql);
 
-    // 보낸 메일 리스트 가져오기
-    List<Map<String, String>> getSendMsg(Map<String, String> map);
+    // 보낸 메시지 리스트 조회
+    List<Map<String, Object>> getSendMsg(Map<String, Object> paramMap);
 
-    // 받은 메일 리스트 가져오기
-    List<Map<String, String>> getReceivedMsg(Map<String, String> map);
+    // 받은 메시지 리스트 조회
+    List<Map<String, Object>> getReceivedMsg(Map<String, Object> paramMap);
 
     // 메신저 내용 조회(보낸 메신저, 받은 메신저)
-    Map<String, String>  getMsgContent(String content);
-    Map<String, String>  getMsgContent2(String content);
+    Map<String, Object> getMsgContent(Map<String, Object> paramMap);
+    Map<String, Object> getMsgContent2(Map<String, Object> paramMap);
 
     // 안읽은 메신저 읽기
-    void updateAllMsg(Long empId);
+    void updateAllMsg(Map<String, Object> paramMap);
 
     // 메신저 파일 첨부
     void addFile(FileVO filevo);
@@ -43,8 +46,9 @@ public interface InterMessengerDao {
     int getTotalMsg(Map<String, String> map);
 
     // 메신저 발송을 위한 사람 이름 조회
-    String getEmpName(Long empId);
+    Map<String, Object> getEmpName(Map<String, Object> paramMap);
 
     // 안읽은 메신저 개수 조회
-    int getUnreadMsg(Long empId);
+    int getUnreadMsg(Map<String, Object> paramMap);
+
 }

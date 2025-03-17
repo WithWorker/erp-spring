@@ -6,8 +6,11 @@ import com.erp.backend.model.MessengerVO;
 import com.erp.backend.service.MessengerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +21,7 @@ public class MessengerController {
     @Autowired
     private MessengerService ms;
 
+    /*
     // 세션 기반 로그인 사용자 ID 반환 ==> JWT 기반으로 변경할 것!!
     private Long getLoginEmpId(HttpSession session) {
         MemberDto user = (MemberDto) session.getAttribute("user");
@@ -26,6 +30,7 @@ public class MessengerController {
         }
         return user.getEmpId();
     }
+    */
 
     // Test
     @GetMapping("")
@@ -40,7 +45,7 @@ public class MessengerController {
     }
 
     // 부서 직원 조회
-    @GetMapping("/dept/${deptId}")
+    @GetMapping("/dept/person")
     public List<Map<String, String>> getDeptPerson(@RequestParam Long deptId) {
         return ms.getDeptPerson(Map.of("deptId", String.valueOf(deptId)));
     }
@@ -51,53 +56,43 @@ public class MessengerController {
         return ms.getTeam(String.valueOf(deptId));
     }
 
-    // 선택 직원 가져오기
-    @GetMapping("/emp/selected")
-    public List<Map<String, String>> getChosenEmp(HttpSession session) {
-        Long empId = getLoginEmpId(session);
-        return ms.getChosenEmp(empId);
-    }
-
-    // 메신저 보내기
-    @PostMapping("/send")
-    public String sendMessage(@RequestBody MessengerVO mvo, HttpSession session) {
-        mvo.setSenderId(getLoginEmpId(session));
-        ms.sendMessage(mvo);
-        return "메시지를 성공적으로 보냈습니다.";
-    }
-
-    // 전체 메시지 목록 조회
+    // 메시지 리스트 조회 (보낸 메시지 + 받은 메시지)
     @GetMapping("/message/list")
-    public Map<String, List<Map<String, String>>> getMessageList(HttpSession session) {
-        Long empId = getLoginEmpId(session);
+    public Map<String, List<Map<String, Object>>> getMessageList(@RequestParam Long empId) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("senderId", empId);  //
+        paramMap.put("receiverId", empId);
+
         // 보낸 메시지 조회
-        List<Map<String, String>> sendMsg = ms.getSendMsg(Map.of("empId", String.valueOf(empId)));
+        List<Map<String, Object>> sendMsg = ms.getSendMsg(paramMap);
         // 받은 메시지 조회
-        List<Map<String, String>> receiveMsg = ms.getReceivedMsg(Map.of("empId", String.valueOf(empId)));
+        List<Map<String, Object>> receiveMsg = ms.getReceivedMsg(paramMap);
+
         return Map.of("sendMsg", sendMsg, "receiveMsg", receiveMsg);
     }
 
     // 보낸 메시지 내용 조회
     @GetMapping("/message/content/send")
-    public Map<String, String> getSendMsgContent(@RequestParam Long msgId ,HttpSession session) {
-        getLoginEmpId(session);
-        return ms.getMsgContent(String.valueOf(msgId));
+    public Map<String, Object> getMsgContent(@RequestParam Long msgId, @RequestParam Long senderId) {
+        return ms.getMsgContent(msgId, senderId);
     }
 
     // 받은 메시지 내용 조회
     @GetMapping("/message/content/receive")
-    public Map<String, String> getReceiveMsgContent(@RequestParam Long msgId ,HttpSession session) {
-        getLoginEmpId(session);
-        return ms.getMsgContent2(String.valueOf(msgId));
+    public Map<String, Object> getMsgContent2(@RequestParam Long msgId, @RequestParam Long receiverId) {
+        return ms.getMsgContent2(msgId, receiverId);
     }
 
-    // 안읽은 메신저 읽기
-    @PostMapping("/read")
-    public String readMessage(HttpSession session) {
-        Long empId = getLoginEmpId(session);
+    // 메시지 읽음 처리
+    @PostMapping("/message/read")
+    public ResponseEntity<?> readAllMessages(@RequestParam(required = false) Long empId) {
+        if (empId == null) {
+            return ResponseEntity.badRequest().body("❌ empId가 필요합니다.");
+        }
         ms.updateAllMsg(empId);
-        return "모든 메시지를 읽음 처리했습니다.";
+        return ResponseEntity.ok("✅ 모든 메시지가 읽음 처리되었습니다.");
     }
+
 
     // 첨부파일 추가
     @PostMapping("/file/add")
@@ -114,32 +109,33 @@ public class MessengerController {
 
     // 메신저 전달
     @PostMapping("/deliver")
-    public String deliverMessage(@RequestBody Map<String, MessengerVO> msg, HttpSession session) {
+    public String deliverMessage(@RequestBody Map<String, MessengerVO> msg, @RequestParam Long empId) {
         MessengerVO mvo = msg.get("mvo");
         MessengerVO mvo1 = msg.get("mvo1");
-        mvo.setSenderId(getLoginEmpId(session));
+        mvo.setSenderId(empId);
         ms.deliverMessage(mvo, mvo1);
         return "메시지 전달 성공";
     }
 
     // 메신저 방 개수
     @GetMapping("/room/count")
-    public int getRoomCount(HttpSession session) {
-        Long empId = getLoginEmpId(session);
+    public int getRoomCount(@RequestParam Long empId) {
         return ms.getTotalMsg(Map.of("empId", String.valueOf(empId)));
     }
 
     // 메시지 발송을 위한 사람 이름 조회
     @GetMapping("/send/name")
-    public String getEmpName(HttpSession session) {
-        Long empId = getLoginEmpId(session);
-        return ms.getEmpName(empId);
+    public Map<String, Object> getEmpName(@RequestParam Long receiverId) {
+        return ms.getEmpName(receiverId);
     }
 
-    // 안읽은 메신저 개수
-    @GetMapping("/read/not/count")
-    public int getUnreadMsg(HttpSession session) {
-        Long empId = getLoginEmpId(session);
-        return ms.getUnreadMsg(empId);
+    // 안 읽은 메시지 개수 조회
+    @GetMapping("/message/unread/count")
+    public ResponseEntity<?> getUnreadMsg(@RequestParam(required = false) Long empId) {
+        if (empId == null) {
+            return ResponseEntity.badRequest().body("❌ empId가 필요합니다.");
+        }
+        int unreadCount = ms.getUnreadMsg(empId);
+        return ResponseEntity.ok(Map.of("unreadCount", unreadCount));
     }
 }

@@ -1,77 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-    <mapper namespace="com.erp.backend.model.InterMessengerDao">
+<mapper namespace="com.erp.backend.model.InterMessengerDao">
 
-        <!-- ✅ 메시지 전송 -->
-        <insert id="insertMessage">
-            INSERT INTO messenger
-            (sender_id, receiver_id, content, send_time, read_status, file_path)
-            VALUES
-            (#{senderId}, #{receiverId}, #{content}, SYSDATE, 0, null)
-        </insert>
+    <!-- ✅ 메시지 전송 -->
+    <insert id="insertMessage">
+        INSERT INTO messenger
+            (sender_id, receiver_id, content, send_time, read_status)
+        VALUES
+            (#{senderId}, #{receiverId}, #{content}, NOW(), 0)
+    </insert>
 
-        <!-- ✅ 보낸 메시지 조회 -->
-        <select id="selectSendMsg" resultType="map">
-            SELECT *
-            FROM messenger
-            WHERE sender_id = #{empId} ORDER BY send_time DESC
-        </select>
+    <!-- ✅ 전체 부서 조회 -->
+    <select id="selectDept" resultType="map">
+        SELECT department_id, name FROM department
+    </select>
 
-        <!-- ✅ 받은 메시지 조회 -->
-        <select id="selectReceivedMsg" resultType="map">
-            SELECT *
-            FROM messenger
-            WHERE receiver_id = #{empId} ORDER BY send_time DESC
-        </select>
+    <!-- ✅ 보낸 메시지 조회 ==> 테스트 완료 -->
+    <select id="selectSendMsg" parameterType="map" resultType="map">
+        SELECT
+            m.messenger_id, m.content, m.send_time, m.read_status,
+            s.emp_id AS sender_id, s.name AS sender_name, s.email AS sender_email,
+            s.phone AS sender_phone, s.img_url AS sender_img,
+            sd.name AS sender_department, sp.name AS sender_position,
+            r.emp_id AS receiver_id, r.name AS receiver_name, r.email AS receiver_email,
+            r.phone AS receiver_phone, r.img_url AS receiver_img,
+            rd.name AS receiver_department, rp.name AS receiver_position,
+            ma.is_read AS alarm_read
+        FROM messenger m
+                 JOIN employee s ON m.sender_id = s.emp_id
+                 LEFT JOIN department sd ON s.department_id = sd.department_id
+                 LEFT JOIN position sp ON s.position_id = sp.position_id
+                 JOIN employee r ON m.receiver_id = r.emp_id
+                 LEFT JOIN department rd ON r.department_id = rd.department_id
+                 LEFT JOIN position rp ON r.position_id = rp.position_id
+                 LEFT JOIN messenger_alarm ma ON ma.messenger_id = m.messenger_id
+        WHERE m.sender_id = CAST(#{senderId} AS UNSIGNED)
+        ORDER BY m.send_time DESC;
+    </select>
 
-        <!-- ✅ 보낸 메시지 내용 -->
-        <select id="selectMsgContent" resultType="map">
-            SELECT *
-            FROM messenger
-            WHERE messenger_id = #{messageId} AND sender_id = #{empId}
-        </select>
+    <!-- ✅ 받은 메시지 조회 ==> 테스트 완료 -->
+    <select id="selectReceivedMsg" parameterType="map" resultType="map">
+        SELECT
+            m.messenger_id, m.content, m.send_time, m.read_status,
+            r.emp_id AS receiver_id, r.name AS receiver_name, r.email AS receiver_email,
+            r.phone AS receiver_phone, r.img_url AS receiver_img,
+            rd.name AS receiver_department, rp.name AS receiver_position,
+            s.emp_id AS sender_id, s.name AS sender_name, s.email AS sender_email,
+            s.phone AS sender_phone, s.img_url AS sender_img,
+            sd.name AS sender_department, sp.name AS sender_position,
+            ma.is_read AS alarm_read
+        FROM messenger m
+                 JOIN employee r ON m.receiver_id = r.emp_id
+                 LEFT JOIN department rd ON r.department_id = rd.department_id
+                 LEFT JOIN position rp ON r.position_id = rp.position_id
+                 JOIN employee s ON m.sender_id = s.emp_id
+                 LEFT JOIN department sd ON s.department_id = sd.department_id
+                 LEFT JOIN position sp ON s.position_id = sp.position_id
+                 LEFT JOIN messenger_alarm ma ON ma.messenger_id = m.messenger_id
+        WHERE m.receiver_id = CAST(#{receiverId} AS UNSIGNED)
+        ORDER BY m.send_time DESC;
+    </select>
 
-        <!-- ✅ 받은 메시지 내용 -->
-        <select id="selectMsgContent2" resultType="map">
-            SELECT *
-            FROM messenger
-            WHERE messenger_id = #{messageId} AND receiver_id = #{empId}
-        </select>
+    <!-- ✅ 보낸 메시지 내용 ==> 테스트 완료 -->
+    <select id="selectMsgContent" parameterType="map" resultType="map">
+        SELECT
+            m.messenger_id, m.content, m.read_status, m.file_attached, m.send_time,
+            s.emp_id AS sender_id, s.name AS sender_name, s.email AS sender_email, s.phone AS sender_phone, s.img_url AS sender_img,
+            d.name AS sender_department, p.name AS sender_position
+        FROM messenger m
+                 JOIN employee s ON m.sender_id = s.emp_id
+                 LEFT JOIN department d ON s.department_id = d.department_id
+                 LEFT JOIN position p ON s.position_id = p.position_id
+        WHERE m.messenger_id = CAST(#{messageId} AS UNSIGNED)
+          AND m.sender_id = CAST(#{senderId} AS UNSIGNED);
+    </select>
 
-        <!-- ✅ 안 읽은 메시지 개수 조회 -->
-        <select id="getUnreadMsg" resultType="int">
-            SELECT COUNT(*)
-            FROM messenger WHERE
-            receiver_id = #{empId} AND read_status = 0
-        </select>
+    <!-- ✅ 받은 메시지 내용 ==> 테스트 완료 -->
+    <select id="selectMsgContent2" parameterType="map" resultType="map">
+        SELECT
+            m.messenger_id, m.content, m.read_status, m.file_attached, m.send_time,
+            s.emp_id AS sender_id, s.name AS sender_name, s.email AS sender_email,
+            s.phone AS sender_phone, s.img_url AS sender_img,
+            d.name AS sender_department, p.name AS sender_position
+        FROM messenger m
+            JOIN employee s ON m.sender_id = s.emp_id
+            LEFT JOIN department d ON s.department_id = d.department_id
+            LEFT JOIN position p ON s.position_id = p.position_id
+        WHERE m.messenger_id = CAST(#{messageId} AS UNSIGNED)
+        AND m.receiver_id = CAST(#{receiverId} AS UNSIGNED);
+    </select>
 
-        <!-- ✅ 전체 메시지 방 개수 -->
-        <select id="selectTotalMsg" resultType="int">
-            SELECT COUNT(DISTINCT messenger_id)
-            FROM messenger
-            WHERE sender_id = #{empId} OR receiver_id = #{empId}
-        </select>
+    <!-- ✅ 안 읽은 메시지 개수 조회 ==> 테스트 완료 -->
+    <select id="selectUnreadMsg" parameterType="map" resultType="int">
+        SELECT COUNT(*) AS unread_count
+        FROM messenger m
+        WHERE m.receiver_id = CAST(#{empId} AS UNSIGNED)
+          AND m.read_status = 0;
+    </select>
 
-        <!-- ✅ 모든 메시지 읽음 처리 -->
-        <update id="updateAllMsg">
-            UPDATE messenger SET read_status = 1 WHERE receiver_id = #{empId}
-        </update>
+    <!-- ✅ 전체 메시지 방 개수 ==> 테스트 완료 -->
+    <select id="selectTotalMsg" resultType="int">
+        SELECT COUNT(DISTINCT m.messenger_id) AS room_count
+        FROM messenger m
+        WHERE m.sender_id = CAST(#{empId} AS UNSIGNED)
+           OR m.receiver_id = CAST(#{empId} AS UNSIGNED);
+    </select>
 
-        <!-- ✅ 첨부파일 추가 -->
-        <insert id="insertFile">
-            INSERT INTO messenger_files (file_id, messenger_id, file_path)
-            VALUES (#{fileId}, #{messengerId}, #{filePath})
-        </insert>
+    <!-- ✅ 모든 메시지 읽음 처리 ==> 테스트 완료-->
+    <update id="updateAllMsg">
+        UPDATE messenger
+        SET read_status = 1
+        WHERE receiver_id = CAST(#{empId} AS UNSIGNED)
+          AND read_status = 0;
+    </update>
 
-        <!-- ✅ 첨부파일 조회 -->
-        <select id="selectMsgFile" resultType="com.erp.backend.model.FileVO">
-            SELECT * FROM messenger_files WHERE messenger_id = #{messengerId}
-        </select>
+    <!-- ✅ 첨부파일 추가 -->
+    <update id="updateFilePath" parameterType="map">
+        UPDATE messenger
+        SET file_path = #{filePath}
+        WHERE messenger_id = #{messengerId};
+    </update>
 
-        <!-- ✅ 메시지 발송자 이름 조회 -->
-        <select id="selectEmpName" resultType="string">
-            SELECT name FROM employee WHERE emp_id = #{empId}
-        </select>
+    <!-- ✅ 첨부파일 조회 -->
+    <select id="selectMsgFile" resultType="com.erp.backend.model.FileVO">
+        SELECT m.messenger_id, m.file_path
+        FROM messenger m
+        WHERE (m.sender_id = #{empId} OR m.receiver_id = #{empId})
+          AND m.messenger_id = #{msgId};
+    </select>
 
-    </mapper>
+    <!-- ✅ 메시지 발송을 위한 사람 조회 ==> 테스트 완료 -->
+    <select id="selectEmpName" resultType="string">
+        SELECT
+            e.emp_id AS empId,
+            e.name AS empName,
+            e.email AS empEmail,
+            e.phone AS empPhone,
+            e.img_url AS empImg,
+            d.name AS department,
+            p.name AS position
+        FROM employee e
+            LEFT JOIN department d ON e.department_id = d.department_id
+            LEFT JOIN position p ON e.position_id = p.position_id
+        WHERE e.emp_id = #{receiverId};
+    </select>
+
+</mapper>

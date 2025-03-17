@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MessengerService implements InterMessengerService {
@@ -68,35 +66,71 @@ public class MessengerService implements InterMessengerService {
         return time;
     }
 
-    // 보낸 메일 리스트
+    // 보낸 메시지 리스트
     @Override
-    public List<Map<String, String>> getSendMsg(Map<String, String> map) {
-        return imDao.getSendMsg(map);
+    public List<Map<String, Object>> getSendMsg(Map<String, Object> paramMap) {
+        return imDao.getSendMsg(paramMap);
     }
 
-    // 받은 메일 리스트
+    // 받은 메시지 리스트
     @Override
-    public List<Map<String, String>> getReceivedMsg(Map<String, String> map) {
-        return imDao.getReceivedMsg(map);
+    public List<Map<String, Object>> getReceivedMsg(Map<String, Object> paramMap) {
+        return imDao.getReceivedMsg(paramMap);
     }
+
 
     // 보낸 메신저 내용 조회
     @Override
-    public Map<String, String> getMsgContent(String content) {
-        return imDao.getMsgContent(content);
+    public Map<String, Object> getMsgContent(Long msgId, Long senderId) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("messageId", msgId);
+        paramMap.put("senderId", senderId);
+
+        System.out.println("🔍 실행할 쿼리 파라미터: " + paramMap);
+
+        Map<String, Object> result = imDao.getMsgContent(paramMap);
+
+        if (result == null || result.isEmpty()) {
+            System.out.println("🚨 MyBatis에서 결과 없음! msgId: " + msgId + ", senderId: " + senderId);
+            return Collections.emptyMap();
+        }
+
+        System.out.println("✅ 조회 결과: " + result);
+        return result;
     }
 
     // 받은 메신저 내용 조회
-    @Override
-    public Map<String, String> getMsgContent2(String content) {
-        return imDao.getMsgContent2(content);
+    public Map<String, Object> getMsgContent2(Long msgId, Long receiverId) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("messageId", msgId);
+        paramMap.put("receiverId", receiverId);
+
+        System.out.println("🔍 실행할 쿼리 파라미터: " + paramMap);
+
+        Map<String, Object> result = imDao.getMsgContent2(paramMap);
+
+        if (result == null || result.isEmpty()) {
+            System.out.println("🚨 MyBatis에서 결과 없음! msgId: " + msgId + ", receiverId: " + receiverId);
+            return Collections.emptyMap();
+        }
+
+        System.out.println("✅ 조회 결과: " + result);
+        return result;
     }
 
     // 안읽은 메신저 읽기
     @Override
     public void updateAllMsg(Long empId) {
-        imDao.updateAllMsg(empId);
+        if (empId == null) {
+            throw new IllegalArgumentException("❌ empId가 NULL입니다.");
+        }
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("empId", empId);
+
+        imDao.updateAllMsg(paramMap);
     }
+
 
     // 메신저 첨부파일 추가
     @Override
@@ -139,13 +173,28 @@ public class MessengerService implements InterMessengerService {
 
     // 메시지 발송을 위한 사람 이름 조회
     @Override
-    public String getEmpName(Long empId) {
-        return imDao.getEmpName(empId);
+    public Map<String, Object> getEmpName(Long receiverId) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("receiverId", receiverId);
+
+        System.out.println("🔍 수신자 조회 실행: " + paramMap);
+
+        Map<String, Object> result = imDao.getEmpName(paramMap);
+
+        if (result == null || result.isEmpty()) {
+            System.out.println("🚨 조회 결과 없음! receiverId: " + receiverId);
+            return Collections.emptyMap();
+        }
+
+        System.out.println("✅ 수신자 정보 조회 성공: " + result);
+        return result;
     }
+
 
     // 안읽은 메신저 개수
     @Override
     public int getUnreadMsg(Long empId) {
-        return imDao.getUnreadMsg(empId);
+        return imDao.getUnreadMsg(Map.of("empId", empId));
     }
+
 }

@@ -4,7 +4,6 @@ import jakarta.annotation.Resource;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
 
@@ -47,32 +46,32 @@ public class MessengerDao implements InterMessengerDao {
 
     // 보낸 메일 리스트
     @Override
-    public List<Map<String, String>> getSendMsg(Map<String, String> map) {
-        return sqlsession.selectList("selectSendMsg", map);
+    public List<Map<String, Object>> getSendMsg(Map<String, Object> paramMap) {
+        return sqlsession.selectList("com.erp.backend.model.InterMessengerDao.selectSendMsg", paramMap);
     }
 
     // 받은 메일 리스트
     @Override
-    public List<Map<String, String>> getReceivedMsg(Map<String, String> map) {
-        return sqlsession.selectList("selectReceivedMsg", map);
+    public List<Map<String, Object>> getReceivedMsg(Map<String, Object> paramMap) {
+        return sqlsession.selectList("com.erp.backend.model.InterMessengerDao.selectReceivedMsg", paramMap);
     }
 
     // 보낸 메신저 내용 조회
     @Override
-    public Map<String, String> getMsgContent(String content) {
-        return sqlsession.selectOne("selectMsgContent", content);
+    public Map<String, Object> getMsgContent(Map<String, Object> paramMap) {
+        return sqlsession.selectOne("selectMsgContent", paramMap);
     }
 
     // 받은 메신저 내용 조회
     @Override
-    public Map<String, String> getMsgContent2(String content) {
-        return sqlsession.selectOne("selectMsgContent2", content);
+    public Map<String, Object> getMsgContent2(Map<String, Object> paramMap) {
+        return sqlsession.selectOne("selectMsgContent2", paramMap);
     }
 
     // 안읽은 메신저 읽기
     @Override
-    public void updateAllMsg(Long empId) {
-        sqlsession.update("updateAllMsg", empId);
+    public void updateAllMsg(Map<String, Object> paramMap) {
+        sqlsession.update("com.erp.backend.model.InterMessengerDao.updateAllMsg", paramMap);
     }
 
     // 메신저 첨부파일 추가
@@ -95,13 +94,14 @@ public class MessengerDao implements InterMessengerDao {
 
     // 메신저 발송을 위한 사람 조회
     @Override
-    public String getEmpName(Long empId) {
-        return sqlsession.selectOne("selectEmpName", empId);
+    public Map<String, Object> getEmpName(Map<String, Object> paramMap) {
+        return sqlsession.selectOne("selectRecipientInfo", paramMap);
     }
 
     // 안읽은 메신저 개수 조회
     @Override
-    public int getUnreadMsg(Long empId) {
-        return sqlsession.selectOne("selectUnreadMsg", empId);
+    public int getUnreadMsg(Map<String, Object> paramMap) {
+        return sqlsession.selectOne("com.erp.backend.model.InterMessengerDao.selectUnreadMsg", paramMap);
     }
+
 }
