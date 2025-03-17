@@ -71,6 +71,10 @@ public class MemberController {
             Object posIdObj = updateInfo.get("positionId");
             memberDto.setPositionId(posIdObj != null ? ((Number) posIdObj).longValue() : null);
         }
+        if (updateInfo.containsKey("baseSalary")) {
+            Object salObj = updateInfo.get("baseSalary");
+            memberDto.setBaseSalary(salObj != null ? ((Number) salObj).intValue() : null);
+        }
 
         memberService.updateMember(memberDto);
         return "success";

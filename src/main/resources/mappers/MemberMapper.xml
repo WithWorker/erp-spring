@@ -69,9 +69,21 @@
 
     <!-- 직원등록 -->
     <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
-        INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, member_role, hire_date)
-        VALUES (#{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{departmentId}, #{positionId}, #{memberRole}, NOW())
+        INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, base_salary, member_role, hire_date)
+        VALUES (
+                   #{name},
+                   #{email},
+                   #{password},
+                   #{phone},
+                   #{imgUrl},
+                   #{departmentId},
+                   #{positionId},
+                   (SELECT salary FROM position_salary WHERE position_id = #{positionId}),
+                   #{memberRole},
+                   NOW()
+               )
     </insert>
+
 
     <!-- 직원수정 -->
     <update id="updateMember">
@@ -83,7 +95,8 @@
                             img_url = #{imgUrl},
                             department_id = #{departmentId},
                             position_id = #{positionId},
-                            member_role = #{memberRole}
+                            member_role = #{memberRole},
+                            base_salary = #{baseSalary}
         WHERE emp_id = #{empId}
     </update>
 
@@ -93,10 +106,8 @@
     </update>
 
     <!-- 직급변경 -->
-    <update id="updatePosition">
-        UPDATE employee
-        SET position_id = #{positionId}, base_salary = #{newSalary}
-        WHERE emp_id = #{empId}
+    <update id="updatePosition" parameterType="com.erp.backend.dto.MemberDto">
+        UPDATE employee SET position_id = #{positionId} WHERE emp_id = #{empId}
     </update>
 
     <!-- 퇴사 -->
@@ -114,34 +125,17 @@
         DELETE FROM employee WHERE emp_id = #{empId}
     </delete>
 
-    <!-- 직급별 급여 조회 -->
-    <select id="getSalaryByPositionId" resultType="java.lang.Integer">
-        SELECT position_salary FROM position_salary WHERE position_id = #{positionId}
-    </select>
-
-    <!-- 부서별 성과급 조회 -->
-    <select id="getDepartmentBonusByDepartmentId" resultType="java.lang.Integer">
-        SELECT department_bonus FROM department WHERE department_id = #{departmentId}
-    </select>
-
-    <!-- 기본급 업데이트 -->
-    <update id="updateBaseSalary">
-        UPDATE employee SET base_salary = #{newSalary} WHERE emp_id = #{empId}
-    </update>
-
-    <!-- 직원 ID로 기본급 조회 -->
-    <select id="getBaseSalaryByEmpId" resultType="java.lang.Integer">
+    <!-- 기본급 조회 -->
+    <select id="getSalaryByEmpId" resultType="java.lang.Integer">
         SELECT base_salary FROM employee WHERE emp_id = #{empId}
     </select>
 
-    <!-- 직원 ID로 직급 ID 조회 -->
-    <select id="getPositionIdByEmpId" resultType="java.lang.Integer">
-        SELECT position_id FROM employee WHERE emp_id = #{empId}
-    </select>
-
-    <!-- 직원 ID로 부서 ID 조회 -->
-    <select id="getDepartmentIdByEmpId" resultType="java.lang.Integer">
-        SELECT department_id FROM employee WHERE emp_id = #{empId}
+    <!-- 성과급 조회 -->
+    <select id="getBonusByEmpId" resultType="java.lang.Integer">
+        SELECT db.bonus
+        FROM employee e
+                 JOIN department_bonus db ON e.department_id = db.department_id
+        WHERE e.emp_id = #{empId}
     </select>
 
 </mapper>

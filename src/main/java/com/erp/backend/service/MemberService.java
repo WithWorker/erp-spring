@@ -60,8 +60,7 @@ public class MemberService {
 
     //직급변경
     public void updatePosition(MemberDto memberDto) {
-        Integer newSalary = memberMapper.getSalaryByPositionId(memberDto.getPositionId());
-        memberMapper.updatePosition(memberDto.getEmpId(), memberDto.getPositionId(), newSalary);
+        memberMapper.updatePosition(memberDto);
     }
 
     //퇴사

@@ -20,7 +20,7 @@
         WHERE emp_id = #{empId}
             AND YEAR(payment_date) = #{year}
           AND MONTH(payment_date) = #{month}
-        ORDER BY payment_date ASC;
+        ORDER BY payment_date DESC;
     </select>
 
     <!-- 근태 조회 -->

@@ -12,14 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    //기본급 수정
-    @PutMapping("/updateSalary/{positionId}")
-    public String updateSalary(@PathVariable Long positionId, @RequestBody MemberDto memberDto) {
-        memberDto.setPositionId(positionId);
-        paymentService.updateSalary(memberDto);
-        return "success";
-    }
-
     //성과급 수정
     @PutMapping("/updateBonus/{departmentId}")
     public String updateBonus(@PathVariable Long departmentId, @RequestBody MemberDto memberDto) {
@@ -27,9 +19,11 @@ public class PaymentController {
         paymentService.updateBonus(memberDto);
         return "success";
     }
+
     //급여내역 저장
-    @PostMapping("/savePayment")
-    public ResponseEntity<String> insertPaymentHistory(@RequestBody PaymentDto paymentDto) {
+    @PostMapping("/savePayment/{empId}")
+    public ResponseEntity<String> insertPaymentHistory(@PathVariable Long empId, @RequestBody PaymentDto paymentDto) {
+        paymentDto.setEmpId(empId);
         paymentService.insertPaymentHistory(paymentDto);
         return ResponseEntity.ok("급여내역이 저장되었습니다.");
     }

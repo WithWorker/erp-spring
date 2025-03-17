@@ -8,9 +8,6 @@ import java.util.Map;
 @Mapper
 public interface PaymentMapper {
 
-    //기본급 수정
-    void updateSalary(MemberDto memberDto);
-
     //성과급 수정
     void updateBonus(MemberDto memberDto);
 
