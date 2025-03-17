@@ -90,4 +90,9 @@ public class MemberService {
         memberMapper.deleteMember(empId);
     }
 
+    //성과급 조회
+    public Integer getBonusByEmpId(Long empId) {
+        return memberMapper.getBonusByEmpId(empId);
+    }
+
 }

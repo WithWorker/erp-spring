@@ -120,4 +120,11 @@ public class MemberController {
         memberService.deleteMember(empId);
         return "success";
     }
+
+    //성과급 조회
+    @GetMapping("/bonus/{empId}")
+    public ResponseEntity<Integer> getBonus(@PathVariable Long empId) {
+        Integer bonus = memberService.getBonusByEmpId(empId);
+        return ResponseEntity.ok(bonus);
+    }
 }
