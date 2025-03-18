@@ -28,4 +28,5 @@ public class MemberDto {
     // approver 승인 상태 추가
     private Integer approverStatusId;
     private String approverStatusName;
+    private String approverDepartmentName;
 }

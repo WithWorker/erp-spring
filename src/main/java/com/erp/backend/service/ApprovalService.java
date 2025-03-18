@@ -55,6 +55,12 @@ public class ApprovalService {
         return approvalMapper.readApproval(approvalId);
     }
 
+    //승인자 검색
+    public List<MemberDto> searchApprover(String keyword) {
+        log.info("service-searchApprover");
+        return approvalMapper.searchApprover(keyword);
+    }   
+
     //결재 등록
     @Transactional
     public void addApproval(ApprovalDto approvalDto) {

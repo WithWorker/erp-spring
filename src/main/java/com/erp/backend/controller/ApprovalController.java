@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.erp.backend.dto.ApprovalDto;
+import com.erp.backend.dto.MemberDto;
 import com.erp.backend.service.ApprovalService;
 
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,13 @@ public class ApprovalController {
     @GetMapping("/approval/{approvalId}")
     public ApprovalDto readApproval(@PathVariable Integer approvalId){
         return approvalService.readApproval(approvalId);
+    }
+
+    // 승인자 검색
+    // http://localhost:7777/approval/search/{keyword}
+    @GetMapping("/approval/search/{keyword}")
+    public List<MemberDto> searchApprover(@PathVariable String keyword){
+        return approvalService.searchApprover(keyword);
     }
 
     // 결재 등록 : 신청자 

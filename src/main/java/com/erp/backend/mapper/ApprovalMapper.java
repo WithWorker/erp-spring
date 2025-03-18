@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.erp.backend.dto.ApprovalDto;
+import com.erp.backend.dto.MemberDto;
 
 @Mapper
 public interface ApprovalMapper {
@@ -27,6 +28,9 @@ public interface ApprovalMapper {
 
     //결재 상세보기 - 승인자 각각 상태
     ApprovalDto readApproval(Integer approvalId);
+
+    //승인자 검색
+    List<MemberDto> searchApprover(String keyword);
     
     //결재 등록 - 신청자
     void addApproval(ApprovalDto approvalDto);
