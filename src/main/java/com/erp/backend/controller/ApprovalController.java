@@ -74,6 +74,13 @@ public class ApprovalController {
     public List<MemberDto> searchApprover(@PathVariable String keyword){
         return approvalService.searchApprover(keyword);
     }
+    
+    // 승인자 조직도
+    // http://localhost:7777/approval/organization
+    @GetMapping("/approval/organization")
+    public List<MemberDto> getOrganization(){
+        return approvalService.getOrganization();
+    }
 
     // 결재 등록 : 신청자 
     // http://localhost:7777/approval/add

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.erp.backend.mapper.ApprovalMapper">
+
+  <resultMap id="memberResultMap" type="com.erp.backend.dto.MemberDto">
+    <id property="empId" column="emp_id"/>
+    <result property="name" column="name"/>
+    <result property="imgUrl" column="img_url"/>
+    <result property="departmentName" column="department_name"/>
+    <result property="positionName" column="position_name"/>
+  </resultMap>
+
   <resultMap id="approvalResultMap" type="com.erp.backend.dto.ApprovalDto">
     <id property="approvalId" column="approval_id" />
     <id property="typeId" column="type_id" />
@@ -152,12 +161,30 @@
   </select>
 
   <!-- 승인자 검색 -->
-  <select id = "searchApprover" resultMap="approvalResultMap">
+  <select id = "searchApprover" resultMap="memberResultMap">
     SELECT e.emp_id, e.name, e.img_url, d.name as department_name, p.name as position_name
     FROM employee e
     LEFT JOIN department d on e.department_id = d.department_id 
     LEFT JOIN position p on e.position_id = p.position_id
     WHERE e.name LIKE CONCAT('%', #{empName}, '%')
+    ORDER BY 
+      CASE 
+        WHEN p.position_id = 4 THEN 1
+        WHEN p.position_id = 2 THEN 2
+        WHEN p.position_id = 5 THEN 3
+        WHEN p.position_id = 1 THEN 4
+        WHEN p.position_id = 3 THEN 5
+        WHEN p.position_id = 6 THEN 6
+        ELSE 7
+      END;
+  </select>
+
+  <!-- 승인자 조직도 -->
+  <select id="getOrganization" resultMap="memberResultMap">
+    SELECT e.emp_id, e.name, e.img_url, d.name AS department_name, p.name AS position_name
+    FROM employee e
+    LEFT JOIN department d ON e.department_id = d.department_id
+    LEFT JOIN position p ON e.position_id = p.position_id
     ORDER BY 
       CASE 
         WHEN p.position_id = 4 THEN 1

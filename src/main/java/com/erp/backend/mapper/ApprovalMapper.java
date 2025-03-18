@@ -31,6 +31,9 @@ public interface ApprovalMapper {
 
     //승인자 검색
     List<MemberDto> searchApprover(String keyword);
+
+    //승인자 조직도
+    List<MemberDto> getOrganization();
     
     //결재 등록 - 신청자
     void addApproval(ApprovalDto approvalDto);

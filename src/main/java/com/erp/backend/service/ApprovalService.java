@@ -61,6 +61,12 @@ public class ApprovalService {
         return approvalMapper.searchApprover(keyword);
     }   
 
+    //승인자 조직도 
+    public List<MemberDto> getOrganization() {
+        log.info("service-getOrganization");
+        return approvalMapper.getOrganization();
+    }
+
     //결재 등록
     @Transactional
     public void addApproval(ApprovalDto approvalDto) {
