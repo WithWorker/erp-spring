@@ -4,6 +4,8 @@ import com.erp.backend.dto.MemberDto;
 import com.erp.backend.dto.MemberRole;
 import com.erp.backend.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +18,21 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     //전체조회
-    public List<MemberDto> findAll(){
-        return memberMapper.findAll();
+    public List<MemberDto> findAll() {
+        String role = getUserRole();
+        return memberMapper.findAll(role);
     }
 
     //전체조회 (by 부서id)
     public List<MemberDto> findAllByDept(Long departmentId) {
-        return memberMapper.findAllByDept(departmentId);
+        String role = getUserRole();
+        return memberMapper.findAllByDept(departmentId, role);
     }
 
-    //직원조회 (by 이름)
-    public List<MemberDto> findByName(String name){
-        return memberMapper.findByName(name);
+    //전체조회 (by 이름)
+    public List<MemberDto> findByName(String name) {
+        String role = getUserRole();
+        return memberMapper.findByName(name, role);
     }
 
     //직원조회 (by 직원id)
@@ -93,6 +98,12 @@ public class MemberService {
     //성과급 조회
     public Integer getBonusByEmpId(Long empId) {
         return memberMapper.getBonusByEmpId(empId);
+    }
+
+    //role get 메서드
+    private String getUserRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
     }
 
 }

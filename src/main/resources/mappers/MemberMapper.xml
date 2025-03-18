@@ -6,12 +6,15 @@
     <select id="findAll" resultMap="memberResult">
         SELECT e.*, d.name AS department_name, p.name AS position_name
         FROM employee e
-                 LEFT JOIN department d ON e.department_id = d.department_id
-                 LEFT JOIN position p ON e.position_id = p.position_id
-        ORDER BY
-            e.resign_date IS NOT NULL,
-            e.resign_date ASC,
-            e.emp_id ASC;
+        LEFT JOIN department d ON e.department_id = d.department_id
+        LEFT JOIN position p ON e.position_id = p.position_id
+        <where>
+            <if test="role == 'USER'">
+                AND e.resign_date IS NULL
+            </if>
+            AND e.member_role != 'ADMIN'
+        </where>
+        ORDER BY e.resign_date IS NOT NULL, e.resign_date ASC, e.emp_id ASC;
     </select>
 
     <resultMap id="memberResult" type="com.erp.backend.dto.MemberDto">
@@ -31,21 +34,38 @@
     </resultMap>
 
     <!-- 전체조회 (by 부서id) -->
-    <select id="findAllByDept" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
+    <select id="findAllByDept" resultMap="memberResult">
         SELECT e.*, d.name AS department_name, p.name AS position_name
         FROM employee e
-                 LEFT JOIN department d ON e.department_id = d.department_id
-                 LEFT JOIN position p ON e.position_id = p.position_id
-        WHERE e.department_id = #{departmentId}
+        LEFT JOIN department d ON e.department_id = d.department_id
+        LEFT JOIN position p ON e.position_id = p.position_id
+        <where>
+            <if test="role == 'USER'">
+                AND e.resign_date IS NULL
+            </if>
+            <if test="departmentId != null">
+                AND e.department_id = #{departmentId}
+            </if>
+        </where>
+        ORDER BY e.resign_date IS NOT NULL, e.resign_date ASC, e.emp_id ASC;
     </select>
 
-    <!-- 직원조회 (by 이름) -->
-    <select id="findByName" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
+    <!-- 전체조회 (by 이름) -->
+    <select id="findByName" resultMap="memberResult">
         SELECT e.*, d.name AS department_name, p.name AS position_name
         FROM employee e
-                 LEFT JOIN department d ON e.department_id = d.department_id
-                 LEFT JOIN position p ON e.position_id = p.position_id
-        WHERE e.name LIKE CONCAT('%', #{name}, '%')
+        LEFT JOIN department d ON e.department_id = d.department_id
+        LEFT JOIN position p ON e.position_id = p.position_id
+        <where>
+            <if test="role == 'USER'">
+                AND e.resign_date IS NULL
+            </if>
+            AND e.member_role != 'ADMIN'
+            <if test="name != null">
+                AND e.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+        </where>
+        ORDER BY e.resign_date IS NOT NULL, e.resign_date ASC, e.emp_id ASC;
     </select>
 
     <!-- 직원조회 (by 직원id) -->

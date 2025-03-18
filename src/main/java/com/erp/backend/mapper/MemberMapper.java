@@ -4,18 +4,18 @@ import com.erp.backend.dto.MemberDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface MemberMapper {
+
     //전체조회
-    List<MemberDto> findAll();
+    List<MemberDto> findAll(String role);
 
     //전체조회 (by 부서id)
-    List<MemberDto> findAllByDept(Long departmentId);
+    List<MemberDto> findAllByDept(Long departmentId, String role);
 
-    //직원조회 (by 이름)
-    List<MemberDto> findByName(String name);
+    //전체조회 (by 이름)
+    List<MemberDto> findByName(String name, String role);
 
     //직원조회 (by 직원id)
     MemberDto findById(Long empId);

@@ -20,22 +20,22 @@ public class MemberController {
         return memberService.findAll();
     }
 
-    //직원조회 (by 직원id)
-    @GetMapping("/emp/{empId}")
-    public MemberDto findById(@PathVariable(value = "empId") Long empId) {
-        return memberService.findById(empId);
-    }
-
     //전체조회 (by 부서id)
     @GetMapping("/dept/{departmentId}")
     public List<MemberDto> findAllByDept(@PathVariable(value = "departmentId") Long departmentId) {
         return memberService.findAllByDept(departmentId);
     }
 
-    //직원조회 (by 이름)
+    //전체조회 (by 이름)
     @PostMapping("/name")
     public List<MemberDto> findByName(@RequestBody MemberDto memberDto) {
         return memberService.findByName(memberDto.getName());
+    }
+
+    //직원조회 (by 직원id)
+    @GetMapping("/emp/{empId}")
+    public MemberDto findById(@PathVariable(value = "empId") Long empId) {
+        return memberService.findById(empId);
     }
 
     //직원등록
