@@ -4,6 +4,8 @@ import jakarta.annotation.Resource;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -16,32 +18,57 @@ public class MessengerDao implements InterMessengerDao {
 
     // 전체부서 조회
     @Override
-    public List<Map<String, String>> getDept() {
-        return sqlsession.selectList("selectDept");
+    public List<Map<String, Object>> getDept() {
+        List<Map<String, Object>> result = sqlsession.selectList("selectDept");
+        System.out.println("✅ 부서 조회 결과: " + result);
+        return result != null ? result : Collections.emptyList();
     }
 
     // 부서 직원 조회
     @Override
-    public List<Map<String, String>> getDeptPerson(Map<String, String> map) {
-        return sqlsession.selectList("selectDeptPerson", map);
-    }
-
-    // 해당부서 팀 조회
-    @Override
-    public List<Map<String, String>> getTeam(String dept) {
-        return sqlsession.selectList("selectTeam", dept);
+    public List<Map<String, Object>> getDeptPerson(Map<String, Object> map) {
+        List<Map<String, Object>> result = sqlsession.selectList("selectDeptPerson", map);
+        System.out.println("✅ 부서 직원 조회 결과: " + result);
+        return result != null ? result : Collections.emptyList();
     }
 
     // 선택 직원 조회
     @Override
-    public List<Map<String, String>> getChosenEmp(Long empId) {
-        return sqlsession.selectList("selectChosenEmp", empId);
+    public List<Map<String, Object>> getChosenEmp(Long empId) {
+        List<Map<String, Object>> result = sqlsession.selectList("selectChosenEmp", Map.of("empId", empId));
+        System.out.println("✅ 선택된 직원 조회 결과: " + result);
+        return result != null ? result : Collections.emptyList();
     }
 
     // 메신저 보내기
     @Override
-    public void sendMessage(String sql) {
-        sqlsession.insert("insertMessage", sql);
+    public void sendMessage(MessengerVO msgvo) {
+        sqlsession.insert("sendMessage", msgvo);
+    }
+
+    // 메신저 전달
+    @Override
+    public void deliverMessage(MessengerVO newMessage) {
+        sqlsession.insert("deliverMessage", newMessage);
+    }
+
+    // sender or receiver 존재 확인
+    @Override
+    public boolean isEmployeeExists(Long empId) {
+        return sqlsession.selectOne("isEmployeeExists", empId);
+    }
+
+    // 메시지 존재 여부 확인
+    @Override
+    public boolean isMessageExists(Long msgId) {
+        Integer count = sqlsession.selectOne("isMessageExists", msgId);
+        return count != null && count > 0;
+    }
+
+    // 기존 메시지 가져오기
+    @Override
+    public MessengerVO getMessageById(Long msgId) {
+        return sqlsession.selectOne("getMessageById", msgId);
     }
 
     // 보낸 메일 리스트
@@ -74,16 +101,16 @@ public class MessengerDao implements InterMessengerDao {
         sqlsession.update("com.erp.backend.model.InterMessengerDao.updateAllMsg", paramMap);
     }
 
-    // 메신저 첨부파일 추가
-    @Override
-    public void addFile(FileVO filevo) {
-        sqlsession.insert("insertFile", filevo);
-    }
-
     // 첨부파일 조회
     @Override
-    public List<FileVO> getMsgFile(String content) {
-        return sqlsession.selectList("selectMsgFile", content);
+    public List<FileVO> getMsgFile(Long msgId) {
+        return sqlsession.selectList("selectMsgFile", msgId);
+    }
+
+    // 첨부파일 추가
+    @Override
+    public void addFile(FileVO fileVO) {
+        sqlsession.insert("insertFile", fileVO);
     }
 
     // 메신저 방 개수
@@ -104,4 +131,9 @@ public class MessengerDao implements InterMessengerDao {
         return sqlsession.selectOne("com.erp.backend.model.InterMessengerDao.selectUnreadMsg", paramMap);
     }
 
+    // 메신저 방 삭제
+    @Override
+    public int deleteMessage(Map<String, Object> paramMap) {
+        return sqlsession.delete("deleteMessage", paramMap);
+    }
 }

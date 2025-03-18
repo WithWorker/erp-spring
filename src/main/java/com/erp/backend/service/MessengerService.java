@@ -5,7 +5,10 @@ import com.erp.backend.model.InterMessengerDao;
 import com.erp.backend.model.MessengerVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -22,48 +25,77 @@ public class MessengerService implements InterMessengerService {
 
     // 전체 부서 조회
     @Override
-    public List<Map<String, String>> getDept() {
+    public List<Map<String, Object>> getDept() {
         return imDao.getDept();
     }
 
     // 부서 직원 조회
     @Override
-    public List<Map<String, String>> getDeptPerson(Map<String, String> map) {
+    public List<Map<String, Object>> getDeptPerson(Map<String, Object> map) {
         return imDao.getDeptPerson(map);
-    }
-
-    // 해당 부서 팀 조회
-    @Override
-    public List<Map<String, String>> getTeam(String dept) {
-        return imDao.getTeam(dept);
     }
 
     // 선택 직원 조회
     @Override
-    public List<Map<String, String>> getChosenEmp(Long empId) {
+    public List<Map<String, Object>> getChosenEmp(Long empId) {
         return imDao.getChosenEmp(empId);
     }
 
     // 메신저 보내기
     @Override
-    public String sendMessage(MessengerVO mvo) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        String time = sdf.format(calendar.getTime());
+    public void sendMessage(MessengerVO msgvo) {
+        if (msgvo == null || msgvo.getSenderId() == null || msgvo.getReceiverId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "❌ senderId 또는 receiverId가 필요합니다.");
+        }
 
-        Long receiverId = mvo.getReceiverId();
+        // senderId와 receiverId가 employee 테이블에 존재하는지 확인
+        boolean isValidSender = imDao.isEmployeeExists(msgvo.getSenderId());
+        boolean isValidReceiver = imDao.isEmployeeExists(msgvo.getReceiverId());
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("insert into messenger (group_id, filepath, messenger_id, sender_id, receiver_id, content) values (");
-        sb.append(time).append(", ")
-                .append(mvo.getFilePath()).append(", ")
-                .append(mvo.getMessengerId()).append(", ")
-                .append(mvo.getSenderId()).append(", ")
-                .append(receiverId).append(", '")
-                .append(mvo.getContent()).append("')");
+        if (!isValidSender || !isValidReceiver) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "❌ senderId 또는 receiverId가 유효하지 않습니다.");
+        }
 
-        imDao.sendMessage(sb.toString());
-        return time;
+        try {
+            imDao.sendMessage(msgvo);
+            System.out.println("✅ 메시지 전송 완료: msgId=" + msgvo.getMessengerId());
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "🚨 데이터 무결성 오류: senderId 또는 receiverId가 employee 테이블에 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "🚨 서버 오류 발생: " + e.getMessage());
+        }
+    }
+
+    // 메신저 전달
+    @Override
+    public void deliverMessage(MessengerVO originalMessage, MessengerVO newMessage) {
+        if (originalMessage == null || newMessage == null) {
+            throw new IllegalArgumentException("❌ 전달할 메시지 정보가 필요합니다.");
+        }
+
+        // ✅ senderId와 receiverId가 존재하는지 확인
+        if (!imDao.isEmployeeExists(newMessage.getSenderId()) || !imDao.isEmployeeExists(newMessage.getReceiverId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "❌ 존재하지 않는 senderId 또는 receiverId 입니다.");
+        }
+
+        // ✅ 기존 메시지가 존재하는지 확인
+        if (!imDao.isMessageExists(originalMessage.getMessengerId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "❌ 전달할 메시지가 존재하지 않습니다.");
+        }
+
+        // ✅ 메시지 전달
+        try {
+            imDao.sendMessage(newMessage);
+            System.out.println("✅ 메시지 전달 완료: msgId=" + newMessage.getMessengerId());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "🚨 메시지 전달 실패: " + e.getMessage());
+        }
+    }
+
+    // 기존 메시지 가져오기
+    @Override
+    public MessengerVO getMessageById(Long msgId) {
+        return imDao.getMessageById(msgId);
     }
 
     // 보낸 메시지 리스트
@@ -131,38 +163,36 @@ public class MessengerService implements InterMessengerService {
         imDao.updateAllMsg(paramMap);
     }
 
-
-    // 메신저 첨부파일 추가
+    // 첨부파일 추가
     @Override
-    public void addFile(FileVO filevo) {
-        imDao.addFile(filevo);
+    public void addFile(FileVO fileVO) {
+        if (fileVO.getMessengerId() == null || fileVO.getFilePath() == null) {
+            throw new IllegalArgumentException("❌ MessengerId와 filePath는 필수입니다.");
+        }
+
+        // 파일명 추출 (경로에서 마지막 "/" 이후 값)
+        String fileName = fileVO.getFilePath().substring(fileVO.getFilePath().lastIndexOf("/") + 1);
+        fileVO.setFileName(fileName);
+
+        imDao.addFile(fileVO);
+        System.out.println("✅ 파일 추가 완료: " + fileVO);
     }
 
     // 첨부파일 조회
     @Override
-    public List<FileVO> getMsgFile(Long messengerId) {
-        return imDao.getMsgFile(String.valueOf(messengerId));
-    }
+    public List<FileVO> getMsgFile(Long msgId) {
+        if (msgId == null) {
+            throw new IllegalArgumentException("❌ msgId가 필요합니다.");
+        }
 
-    // 메신저 전달
-    @Override
-    public void deliverMessage(MessengerVO dvo, MessengerVO mvo) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        String time = sdf.format(calendar.getTime());
+        List<FileVO> fileList = imDao.getMsgFile(msgId);
+        if (fileList == null || fileList.isEmpty()) {
+            System.out.println("🚨 첨부파일 없음! msgId=" + msgId);
+            return List.of();
+        }
 
-        Long receiverId = dvo.getReceiverId();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("insert into messenger (group_id, filepath, messenger_id, sender_id, receiver_id, content) values (");
-        sb.append(dvo.getMessengerId()).append(", ")
-                .append(dvo.getFilePath()).append(", ")
-                .append(time).append(", ")
-                .append(mvo.getSenderId()).append(", ")
-                .append(receiverId).append(", '")
-                .append(mvo.getContent()).append("')");
-
-        imDao.sendMessage(sb.toString());
+        System.out.println("✅ 조회된 파일 목록: " + fileList);
+        return fileList;
     }
 
     // 메신저 방 개수
@@ -190,11 +220,22 @@ public class MessengerService implements InterMessengerService {
         return result;
     }
 
-
     // 안읽은 메신저 개수
     @Override
     public int getUnreadMsg(Long empId) {
         return imDao.getUnreadMsg(Map.of("empId", empId));
     }
+
+    // 메신저 방 삭제
+    @Override
+    public boolean deleteMessage(Long msgId, Long empId) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("msgId", msgId);
+        paramMap.put("empId", empId);
+
+        int result = imDao.deleteMessage(paramMap);
+        return result > 0;
+    }
+
 
 }

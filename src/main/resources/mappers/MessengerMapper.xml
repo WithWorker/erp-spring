@@ -3,17 +3,75 @@
 
 <mapper namespace="com.erp.backend.model.InterMessengerDao">
 
-    <!-- ✅ 메시지 전송 -->
-    <insert id="insertMessage">
-        INSERT INTO messenger
-            (sender_id, receiver_id, content, send_time, read_status)
-        VALUES
-            (#{senderId}, #{receiverId}, #{content}, NOW(), 0)
+    <!-- ✅ 메시지 전송 ==> 테스트 완료 -->
+    <insert id="sendMessage" parameterType="com.erp.backend.model.MessengerVO" useGeneratedKeys="true" keyProperty="messengerId">
+        INSERT INTO messenger (sender_id, receiver_id, content, send_time, read_status, file_path)
+        VALUES (#{senderId}, #{receiverId}, #{content}, NOW(), 0, #{filePath});
     </insert>
 
-    <!-- ✅ 전체 부서 조회 -->
+    <!-- ✅ 메시지 전달 (원본 메시지를 복사하여 새 메시지 생성) ==> 테스트 완료 -->
+    <insert id="deliverMessage" parameterType="com.erp.backend.model.MessengerVO" useGeneratedKeys="true" keyProperty="messengerId">
+        INSERT INTO messenger (sender_id, receiver_id, content, send_time, read_status, file_path)
+        VALUES (#{senderId}, #{receiverId}, #{content}, NOW(), 0, #{filePath});
+    </insert>
+
+    <!-- ✅ 직원 존재 여부 확인 ==> 메시지 전송 및 전달하기 위한 필요한 것-->
+    <select id="isEmployeeExists" parameterType="long" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM employee WHERE emp_id = #{empId}
+        )
+    </select>
+
+    <!-- ✅ 메시지 존재 여부 확인 ==> 메시지 전달하기 위한 필요한 것 -->
+    <select id="isMessageExists" resultType="int">
+        SELECT COUNT(*) FROM messenger WHERE messenger_id = #{msgId}
+    </select>
+
+    <!-- ✅ 특정 메시지를 가져오기 ==> 메시지 전달할 때 msgId와 일치하는 메시지 내용 가져오기 -->
+    <select id="getMessageById" parameterType="long" resultType="com.erp.backend.model.MessengerVO">
+        SELECT messenger_id, sender_id, receiver_id, content, file_path, send_time, read_status
+        FROM messenger
+        WHERE messenger_id = #{msgId};
+    </select>
+
+    <!-- ✅ 전체 부서 조회 ==> 테스트 완료 -->
     <select id="selectDept" resultType="map">
-        SELECT department_id, name FROM department
+        SELECT department_id AS deptId, name AS deptName
+        FROM department
+        ORDER BY name ASC;
+    </select>
+
+    <!-- ✅ 특정 부서 내 직원 조회 ==> 테스트 완료 -->
+    <select id="selectDeptPerson" parameterType="map" resultType="map">
+        SELECT
+            e.emp_id AS empId,
+            e.name AS empName,
+            e.email AS empEmail,
+            e.phone AS empPhone,
+            e.img_url AS empImg,
+            d.name AS department,
+            p.name AS position
+        FROM employee e
+            LEFT JOIN department d ON e.department_id = d.department_id
+            LEFT JOIN position p ON e.position_id = p.position_id
+        WHERE e.department_id = CAST(#{deptId} AS UNSIGNED)
+        ORDER BY e.name ASC;
+    </select>
+
+    <!-- ✅ 특정 직원 정보 조회 ==> 테스트 완료 -->
+    <select id="selectChosenEmp" parameterType="map" resultType="map">
+        SELECT
+            e.emp_id AS empId,
+            e.name AS empName,
+            e.email AS empEmail,
+            e.phone AS empPhone,
+            e.img_url AS empImg,
+            d.name AS department,
+            p.name AS position
+        FROM employee e
+            LEFT JOIN department d ON e.department_id = d.department_id
+            LEFT JOIN position p ON e.position_id = p.position_id
+        WHERE e.emp_id = CAST(#{empId} AS UNSIGNED);
     </select>
 
     <!-- ✅ 보낸 메시지 조회 ==> 테스트 완료 -->
@@ -115,19 +173,28 @@
           AND read_status = 0;
     </update>
 
-    <!-- ✅ 첨부파일 추가 -->
-    <update id="updateFilePath" parameterType="map">
-        UPDATE messenger
-        SET file_path = #{filePath}
-        WHERE messenger_id = #{messengerId};
-    </update>
+    <!-- ✅ 첨부파일 저장 ==> 테스트 완료 -->
+    <insert id="insertFile" parameterType="com.erp.backend.model.FileVO">
+        INSERT INTO messenger_file (messenger_id, file_name, file_path, file_size, file_type, upload_time)
+        VALUES (#{messengerId}, #{fileName}, #{filePath}, #{fileSize}, #{fileType}, NOW());
+    </insert>
 
-    <!-- ✅ 첨부파일 조회 -->
+    <!-- ✅ 첨부파일 조회 ==> 테스트 완료 -->
     <select id="selectMsgFile" resultType="com.erp.backend.model.FileVO">
-        SELECT m.messenger_id, m.file_path
-        FROM messenger m
-        WHERE (m.sender_id = #{empId} OR m.receiver_id = #{empId})
-          AND m.messenger_id = #{msgId};
+        SELECT
+            f.file_id,
+            f.messenger_id,
+            f.file_name,
+            f.file_path,
+            f.file_size,
+            f.file_type,
+            f.upload_time,
+            m.sender_id,
+            m.receiver_id,
+            m.send_time
+        FROM messenger_file f
+                 JOIN messenger m ON f.messenger_id = m.messenger_id
+        WHERE f.messenger_id = #{msgId};
     </select>
 
     <!-- ✅ 메시지 발송을 위한 사람 조회 ==> 테스트 완료 -->
@@ -145,5 +212,12 @@
             LEFT JOIN position p ON e.position_id = p.position_id
         WHERE e.emp_id = #{receiverId};
     </select>
+
+    <!-- ✅ 특정 메시지 삭제 ==> 테스트 완료 -->
+    <delete id="deleteMessage" parameterType="map">
+        DELETE FROM messenger
+        WHERE messenger_id = #{msgId}
+          AND (sender_id = #{empId} OR receiver_id = #{empId});
+    </delete>
 
 </mapper>

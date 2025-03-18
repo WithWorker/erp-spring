@@ -13,7 +13,6 @@ public class FileVO {
     private String fileType;    // 파일 유형 (예: "pdf", "jpg", "png" 등)
     private long fileSize;      // 파일 크기 (바이트 단위)
     private Long messengerId;    // 해당 파일이 포함된 메시지 ID (messenger 테이블 참조)
-    private Long uploaderId;     // 파일 업로더(보낸 사람) ID (employee 테이블 참조)
     private LocalDateTime uploadTime; // 파일 업로드 시간
 
 }
