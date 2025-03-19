@@ -35,15 +35,22 @@ public class InfoController {
 
     //근태 조회
     @PostMapping("/attendance/{empId}")
-    public AttendanceDto attendance(@PathVariable(value = "empId") Long empId, @RequestBody String date) {
-        // 날짜 문자열에서 따옴표 제거
-        String cleanDate = date.replace("\"", "");
+    public List<AttendanceDto> getMonthlyAttendance(
+            @PathVariable("empId") Long empId,
+            @RequestBody Map<String, String> requestBody) {
 
-        // 날짜를 LocalDate로 변환
-        LocalDate localDate = LocalDate.parse(cleanDate, DateTimeFormatter.ISO_DATE);
+        // JSON에서 year, month 추출
+        String year = requestBody.get("year");
+        String month = requestBody.get("month");
 
-        // 변환된 날짜를 사용하여 서비스 호출
-        return infoService.attendance(empId, localDate.toString());
+        if (year == null || month == null) {
+            throw new IllegalArgumentException("연도와 월 정보가 필요합니다.");
+        }
+
+        // YYYY-MM 형식으로 변환
+        String yearMonth = year + "-" + month;
+
+        return infoService.getMonthlyAttendance(empId, yearMonth);
     }
 
     //출근 기록

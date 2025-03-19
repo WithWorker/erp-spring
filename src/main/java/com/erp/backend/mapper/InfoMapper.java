@@ -4,6 +4,7 @@ import com.erp.backend.dto.AttendanceDto;
 import com.erp.backend.dto.MemberDto;
 import com.erp.backend.dto.PaymentDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface InfoMapper {
     List<PaymentDto> getPaymentHistory(Long empId, int year, int month);
 
     //근태 조회
-    AttendanceDto attendance(Long empId, String date);
+    List<AttendanceDto> getMonthlyAttendance(Long empId, String yearMonth);
 
     //출근 확인
     boolean hasTodayCheckIn(Long empId);

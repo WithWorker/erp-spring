@@ -25,8 +25,8 @@ public class InfoService {
     }
 
     //근태 조회
-    public AttendanceDto attendance(Long empId, String date) {
-        return infoMapper.attendance(empId, date);
+    public List<AttendanceDto> getMonthlyAttendance(Long empId, String yearMonth) {
+        return infoMapper.getMonthlyAttendance(empId, yearMonth);
     }
 
     //출근 기록
