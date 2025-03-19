@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface InterAlarmService {
 
-    void addAlarm(Map<String, String> map);
+    // 알람 추가
+    void addAlarm(Map<String, String> alarmData);
 
     // 알람 조회
     List<AlarmVO> getAlarmList(Long empId);

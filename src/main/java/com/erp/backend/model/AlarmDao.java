@@ -25,30 +25,29 @@ public class AlarmDao implements InterAlarmDao {
         return sqlsession.update("updateAlarmReadStatus", Map.of("alarmId", alarmId, "empId", empId));
     }
 
-    // AOP 알람추가하기
+    // 알람 추가하기
     @Override
-    public void addAlarm(String sql) {
-        sqlsession.insert("insertAlarm", sql);
+    public void addAlarm(AlarmVO alarm) {
+        sqlsession.insert("addAlarm", alarm);
     }
 
     // 알람 조회하기
     @Override
     public List<AlarmVO> getAlarmList(Long empId) {
-        List<AlarmVO> alarmList = sqlsession.selectList("selectAlarm", empId);
-        return alarmList;
+        return sqlsession.selectList("getAlarmList", empId);
     }
 
     // 지난 알람 조회
     @Override
     public List<AlarmVO> getPastAlarmList(Long empId) {
-        List<AlarmVO> alarmList = sqlsession.selectList("selectPastAlarm", empId);
+        List<AlarmVO> alarmList = sqlsession.selectList("getPastAlarmList", empId);
         return alarmList;
     }
 
     // 모든 알람 읽기
     @Override
     public void readAllAlarm(Long empId) {
-        sqlsession.update("updateAllAlarm", empId);
+        sqlsession.update("readAllAlarm", empId);
 
     }
 

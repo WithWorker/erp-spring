@@ -14,7 +14,7 @@ public interface InterAlarmDao {
     int readAlarm(Long alarmId, Long empId);
 
     // 알람 추가
-    void addAlarm(String sql);
+    void addAlarm(AlarmVO alarm);
 
     // 알람 조회
     List<AlarmVO> getAlarmList(Long empId);
