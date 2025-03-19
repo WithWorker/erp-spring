@@ -19,55 +19,55 @@ import lombok.extern.log4j.Log4j2;
 public class ApprovalService {
     private final ApprovalMapper approvalMapper;
 
-    //결재 목록 조회 (by 신청자)
+    // 결재 목록 조회 (by 신청자)
     public List<ApprovalDto> getApplicant(Integer applicantId) {
         log.info("service-getApplicant");
         return approvalMapper.getApplicant(applicantId);
     }
 
-    //결재 대기 목록 조회 (by 신청자)
+    // 결재 대기 목록 조회 (by 신청자)
     public List<ApprovalDto> getApplicantPending(Integer applicantId) {
         log.info("service-getApplicantPending");
         return approvalMapper.getApplicantPending(applicantId);
     }
 
-    //결재 승인,반려 목록 조회 (by 신청자)
+    // 결재 승인,반려 목록 조회 (by 신청자)
     public List<ApprovalDto> getApplicantApproved(Integer applicantId) {
         log.info("service-getApplicantApproved");
         return approvalMapper.getApplicantApproved(applicantId);
     }
 
-    //결재 목록 조회 (by 승인자)
+    // 결재 목록 조회 (by 승인자)
     public List<ApprovalDto> getApprover(Integer approverId) {
         log.info("service-getApprover");
         return approvalMapper.getApprover(approverId);
     }
 
-    //결재 목록 조회 (by 상태)
+    // 결재 목록 조회 (by 상태)
     public List<ApprovalDto> getApprovedList(Integer statusId) {
         log.info("service-getApprovedList");
         return approvalMapper.getApprovedList(statusId);
     }
 
-    //결재 상세보기
+    // 결재 상세보기
     public ApprovalDto readApproval(Integer approvalId) {
         log.info("service-readApproval");
         return approvalMapper.readApproval(approvalId);
     }
 
-    //승인자 검색
+    // 승인자 검색
     public List<MemberDto> searchApprover(String keyword) {
         log.info("service-searchApprover");
         return approvalMapper.searchApprover(keyword);
     }   
 
-    //승인자 조직도 
+    // 승인자 조직도 
     public List<MemberDto> getOrganization() {
         log.info("service-getOrganization");
         return approvalMapper.getOrganization();
     }
 
-    //결재 등록
+    // 결재 등록
     @Transactional
     public void addApproval(ApprovalDto approvalDto) {
         log.info("service-addApproval");
@@ -84,7 +84,7 @@ public class ApprovalService {
         }
     }
 
-    //결재 상태 변경
+    // 결재 상태 변경
     @Transactional 
     public void updateStatus(ApprovalDto approvalDto) {
         log.info("service-updateApproval");
@@ -106,10 +106,13 @@ public class ApprovalService {
         // 모든 승인자가 승인(2)인지 확인
         boolean allApproversApproved = currentApprovers.stream()
                                     .allMatch(approver -> approver.getApproverStatusId() == 2);
-
+        // 한명의 승인자가 반려(3)인지 확인
+        boolean oneApproverRejected = currentApprovers.stream()
+                                    .anyMatch(approver -> approver.getApproverStatusId() == 3);
+        
         if (allApproversApproved) {
             log.info("모든 승인자가 승인 상태(2)입니다. approval.statusId를 2로 변경합니다.");
-            // 승인자 모두 상태가 2라면 approval의 status_id를 2로 변경
+            // 승인자 모두 상태가 2이면 approval의 status_id 2로 변경
             approvalDto.setStatusId(2);  // 상태를 승인 상태로 설정
             approvalMapper.updateApprovalStatus(approvalDto);  // approval의 상태 변경
 
@@ -117,14 +120,20 @@ public class ApprovalService {
     
             // 상태가 2로 변경되었으므로 캘린더에 자동으로 등록
             approvalMapper.insertCalendarFromApproval(approvalDto);
-        }else {
-            log.info("아직 모든 승인자가 승인 상태가 아님. approval.statusId 변경 없음.");
+        }else if (oneApproverRejected) {
+            log.info("한명의 승인자가 반려 상태(3)입니다. approval.statusId를 3로 변경합니다.");
+            // 승인자 한명이라도 상태가 3이면 approval의 status_id 3으로 변경
+            approvalDto.setStatusId(3);  // 상태를 반려 상태로 변경
+            approvalMapper.updateApprovalStatus(approvalDto);  // approval의 상태 변경
+        }
+        else {
+            log.info("아직 모든 승인자 승인, 한명이라도 반려 상태가 아님. approval.statusId 변경 없음.");
         }
         
         log.info("=== service-updateApproval 종료 ===");
     }
 
-    //결재 삭제
+    // 결재 삭제
     @Transactional
     public int deleteApproval(Integer approvalId) {
         int result = -1;
