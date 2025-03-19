@@ -7,6 +7,8 @@ import com.erp.backend.service.InfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -16,9 +18,9 @@ public class InfoController {
     private final InfoService infoService;
 
     //프로필 조회
-    @GetMapping("/profile/{empId}")
-    public MemberDto profile(@PathVariable(value = "empId") Long empId) {
-        return infoService.profile(empId);
+    @PostMapping("/profile")
+    public MemberDto profile(@RequestBody MemberDto memberDto) {
+        return infoService.profile(memberDto);
     }
 
     //급여 조회
@@ -32,9 +34,16 @@ public class InfoController {
     }
 
     //근태 조회
-    @GetMapping("/attendance/{empId}")
-    public AttendanceDto attendance(@PathVariable(value = "empId") Long empId) {
-        return infoService.attendance(empId);
+    @PostMapping("/attendance/{empId}")
+    public AttendanceDto attendance(@PathVariable(value = "empId") Long empId, @RequestBody String date) {
+        // 날짜 문자열에서 따옴표 제거
+        String cleanDate = date.replace("\"", "");
+
+        // 날짜를 LocalDate로 변환
+        LocalDate localDate = LocalDate.parse(cleanDate, DateTimeFormatter.ISO_DATE);
+
+        // 변환된 날짜를 사용하여 서비스 호출
+        return infoService.attendance(empId, localDate.toString());
     }
 
     //출근 기록

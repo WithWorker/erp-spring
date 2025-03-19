@@ -11,13 +11,13 @@ import java.util.List;
 public interface InfoMapper {
 
     //프로필 조회
-    MemberDto profile(Long empId);
+    MemberDto profile(MemberDto memberDto);
 
     //급여 조회
     List<PaymentDto> getPaymentHistory(Long empId, int year, int month);
 
     //근태 조회
-    AttendanceDto attendance(Long empId);
+    AttendanceDto attendance(Long empId, String date);
 
     //출근 확인
     boolean hasTodayCheckIn(Long empId);

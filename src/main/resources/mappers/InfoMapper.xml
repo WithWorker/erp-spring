@@ -3,8 +3,8 @@
 <mapper namespace="com.erp.backend.mapper.InfoMapper">
 
     <!-- 프로필 조회 -->
-    <select id="profile" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
-        SELECT e.emp_id, e.name, e.email, e.phone, e.img_url,
+    <select id="profile" parameterType="com.erp.backend.dto.MemberDto" resultType="com.erp.backend.dto.MemberDto">
+        SELECT e.emp_id, e.name, e.email, e.phone, e.img_url, e.hire_date,
                d.department_id AS departmentId, d.name AS departmentName,
                p.position_id AS positionId, p.name AS positionName
         FROM employee e
@@ -24,13 +24,13 @@
     </select>
 
     <!-- 근태 조회 -->
-    <select id="attendance" parameterType="java.lang.Long" resultType="com.erp.backend.dto.AttendanceDto">
+    <select id="attendance" parameterType="map" resultType="com.erp.backend.dto.AttendanceDto">
         SELECT emp_id,
-               DATE_FORMAT(in_time, '%H:%i') AS in_time,
-               DATE_FORMAT(out_time, '%H:%i') AS out_time
+        DATE_FORMAT(in_time, '%H:%i') AS in_time,
+        DATE_FORMAT(out_time, '%H:%i') AS out_time
         FROM attendance
         WHERE emp_id = #{empId}
-        AND DATE(in_time) = CURDATE()
+        AND DATE_FORMAT(in_time, '%Y-%m-%d') = #{date} <!-- 날짜만 비교 -->
     </select>
 
     <!-- 출근 확인 -->

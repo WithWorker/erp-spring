@@ -15,8 +15,8 @@ public class InfoService {
     private final InfoMapper infoMapper;
 
     //프로필 조회
-    public MemberDto profile(Long empId) {
-        return infoMapper.profile(empId);
+    public MemberDto profile(MemberDto memberDto) {
+        return infoMapper.profile(memberDto);
     }
 
     //급여 조회
@@ -25,8 +25,8 @@ public class InfoService {
     }
 
     //근태 조회
-    public AttendanceDto attendance(Long empId) {
-        return infoMapper.attendance(empId);
+    public AttendanceDto attendance(Long empId, String date) {
+        return infoMapper.attendance(empId, date);
     }
 
     //출근 기록
