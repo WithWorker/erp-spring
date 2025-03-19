@@ -41,14 +41,14 @@ public class InfoController {
     @PostMapping("/attendance/in/{empId}")
     public String checkIn(@PathVariable(value = "empId") Long empId) {
         infoService.checkIn(empId);
-        return "출근 시간이 기록되었습니다.";
+        return "출근 성공";
     }
 
     //퇴근 기록
     @PutMapping("/attendance/out/{empId}")
     public String checkOut(@PathVariable(value = "empId") Long empId) {
         infoService.checkOut(empId);
-        return "퇴근 시간이 기록되었습니다.";
+        return "퇴근 성공";
     }
 }
 

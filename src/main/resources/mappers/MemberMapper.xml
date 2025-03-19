@@ -132,7 +132,7 @@
 
     <!-- 퇴사 -->
     <update id="resignMember" parameterType="java.lang.Long">
-        UPDATE employee SET member_role = NULL, resign_date = NOW() WHERE emp_id = #{empId}
+        UPDATE employee SET member_role = 'SUSPENDED', resign_date = NOW() WHERE emp_id = #{empId}
     </update>
 
     <!-- 비밀번호 재설정 -->
