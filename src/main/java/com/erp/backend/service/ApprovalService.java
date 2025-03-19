@@ -1,5 +1,6 @@
 package com.erp.backend.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,16 +86,26 @@ public class ApprovalService {
     }
 
     // 결재 상태 변경
-    @Transactional 
+    @Transactional
     public void updateStatus(ApprovalDto approvalDto) {
         log.info("service-updateApproval");
+        
+        // approvers가 null인 경우 빈 리스트로 초기화
+        List<MemberDto> approvers = approvalDto.getApprovers();
+        if (approvers == null) {
+            approvers = new ArrayList<>();
+        }
+    
         // 승인자의 상태 업데이트
-        for (MemberDto approver : approvalDto.getApprovers()) {
+        for (MemberDto approver : approvers) {
             log.info("승인자 ID: {}, 현재 상태: {}", approver.getEmpId(), approver.getApproverStatusId());
-            approvalDto.setApproverId(approver.getEmpId().intValue());  // 각 승인자 ID 설정
-            approvalDto.setApproverStatusId(approver.getApproverStatusId()); // 각 승인자 상태 설정
+            
+            // 각 승인자 상태를 업데이트
+            approvalDto.setApproverId(approver.getEmpId().intValue());
+            approvalDto.setApproverStatusId(approver.getApproverStatusId()); // 승인자 상태 설정
             approvalMapper.updateApproverStatus(approvalDto);  // 승인자 상태 업데이트
         }
+    
         // DB에서 최신 승인자 상태를 조회
         List<MemberDto> currentApprovers = approvalMapper.readApproval(approvalDto.getApprovalId()).getApprovers();
         
@@ -105,33 +116,33 @@ public class ApprovalService {
         
         // 모든 승인자가 승인(2)인지 확인
         boolean allApproversApproved = currentApprovers.stream()
-                                    .allMatch(approver -> approver.getApproverStatusId() == 2);
+                                        .allMatch(approver -> approver.getApproverStatusId() == 2);
         // 한명의 승인자가 반려(3)인지 확인
         boolean oneApproverRejected = currentApprovers.stream()
-                                    .anyMatch(approver -> approver.getApproverStatusId() == 3);
+                                        .anyMatch(approver -> approver.getApproverStatusId() == 3);
         
         if (allApproversApproved) {
             log.info("모든 승인자가 승인 상태(2)입니다. approval.statusId를 2로 변경합니다.");
             // 승인자 모두 상태가 2이면 approval의 status_id 2로 변경
             approvalDto.setStatusId(2);  // 상태를 승인 상태로 설정
             approvalMapper.updateApprovalStatus(approvalDto);  // approval의 상태 변경
-
-            log.info("approval.statusId가 2로 업데이트됨 (approvalId: {})", approvalDto.getApprovalId());
     
+            log.info("approval.statusId가 2로 업데이트됨 (approvalId: {})", approvalDto.getApprovalId());
+        
             // 상태가 2로 변경되었으므로 캘린더에 자동으로 등록
             approvalMapper.insertCalendarFromApproval(approvalDto);
-        }else if (oneApproverRejected) {
+        } else if (oneApproverRejected) {
             log.info("한명의 승인자가 반려 상태(3)입니다. approval.statusId를 3로 변경합니다.");
             // 승인자 한명이라도 상태가 3이면 approval의 status_id 3으로 변경
             approvalDto.setStatusId(3);  // 상태를 반려 상태로 변경
             approvalMapper.updateApprovalStatus(approvalDto);  // approval의 상태 변경
-        }
-        else {
+        } else {
             log.info("아직 모든 승인자 승인, 한명이라도 반려 상태가 아님. approval.statusId 변경 없음.");
         }
         
         log.info("=== service-updateApproval 종료 ===");
     }
+    
 
     // 결재 삭제
     @Transactional
