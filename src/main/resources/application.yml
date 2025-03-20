@@ -1,5 +1,6 @@
 server:
   port: 7777
+
 spring:
   output:
     ansi:
@@ -31,3 +32,14 @@ mybatis:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:/mappers/**/*.xml
   config-location: classpath:/mybatis-config.xml
+
+  logging:
+  level:
+    root: info
+    org.springframework: info
+    org.mybatis: debug
+    jdbc.sqlonly: debug
+    jdbc.sqltiming: debug
+    jdbc.audit: debug
+    jdbc.resultset: debug
+    jdbc.resultsettable: debug

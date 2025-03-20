@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.backend.mapper.ApprovalMapper">
+
+  <resultMap id="memberResultMap" type="com.erp.backend.dto.MemberDto">
+    <id property="empId" column="emp_id"/>
+    <result property="name" column="name"/>
+    <result property="imgUrl" column="img_url"/>
+    <result property="departmentName" column="department_name"/>
+    <result property="positionName" column="position_name"/>
+  </resultMap>
+
+
+  <resultMap id="approvalResultMap" type="com.erp.backend.dto.ApprovalDto">
+    <id property="approvalId" column="approval_id" />
+    <id property="typeId" column="type_id" />
+    <result property="startDate" column="start_date" />
+    <result property="endDate" column="end_date" />
+    <result property="title" column="title" />
+    <result property="content" column="content" />
+    <result property="applicantId" column="applicant_id" />
+    <result property="statusId" column="status_id" />
+    <result property="calendarId" column="calendar_id" />
+    <result property="typeName" column="type_name" />
+    <result property="statusName" column="status_name" />
+
+    <!-- 신청자 (Applicant) -->
+    <association property="applicant" javaType="com.erp.backend.dto.MemberDto">
+      <id property="empId" column="applicant_id" />
+      <result property="name" column="applicant_name" />
+      <result property="departmentName" column="department_name" />
+      <result property="positionName" column="position_name" />
+    </association>
+    <!-- 승인자 (Approvers) -->
+    <collection property="approvers" javaType="java.util.List" ofType="com.erp.backend.dto.MemberDto">
+      <id property="empId" column="approver_id" />
+      <result property="name" column="approver_name" />
+      <result property="approverStatusId" column="approver_status_id" />
+      <result property="approverStatusName" column="approver_status_name" /> 
+      <result property="departmentName" column="approver_department_name" />
+      <result property="positionName" column="approver_position_name" />
+    </collection>
+  </resultMap>
+
+  <resultMap id="calendarResultMap" type="com.erp.backend.dto.CalendarDto">
+    <id property="calendarId" column="calendar_id"/>
+    <result property="title" column="title"/>
+    <result property="startDate" column="start_date"/>
+    <result property="endDate" column="end_date"/>
+</resultMap>
+
+  <!-- 결재 신청 전체 목록 : 신청자 (최종 상태 표시) -->
+  <select id="getApplicant" resultMap="approvalResultMap">
+    SELECT
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name
+    FROM approval a
+    JOIN employee app ON a.applicant_id = app.emp_id  
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approval_status s ON a.status_id = s.status_id
+    WHERE a.applicant_id = #{applicantId}
+    ORDER BY a.approval_id desc
+  </select>
+  
+  <!-- 결재 신청 목록 : 신청자 (대기 표시) -->
+  <select id="getApplicantPending" resultMap="approvalResultMap">
+    SELECT
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name, 
+    d.name as department_name, p.name as position_name
+    FROM approval a
+    JOIN employee app ON a.applicant_id = app.emp_id  
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approval_status s ON a.status_id = s.status_id
+    LEFT JOIN department d ON app.department_id = d.department_id  
+    LEFT JOIN position p ON p.position_id = app.position_id  
+    WHERE a.applicant_id = #{applicantId}
+    AND s.status_id = 1
+    ORDER BY a.approval_id desc
+  </select>
+
+  <!-- 결재 신청 목록 : 신청자 (승인,반려 표시) -->
+  <select id="getApplicantApproved" resultMap="approvalResultMap">
+    SELECT
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name, 
+    d.name as department_name, p.name as position_name
+    FROM approval a
+    JOIN employee app ON a.applicant_id = app.emp_id  
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approval_status s ON a.status_id = s.status_id
+    LEFT JOIN department d ON app.department_id = d.department_id
+    LEFT JOIN position p ON p.position_id=app.position_id
+    WHERE a.applicant_id = #{applicantId}
+    AND s.status_id IN (2, 3)
+    ORDER BY a.approval_id desc
+  </select>
+
+  <!-- 결재 확인 목록 : 승인자 (최종 상태 표시) -->
+  <select id="getApprover" resultMap="approvalResultMap">
+    SELECT
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id,
+    app.name AS applicant_name, d.name as department_name, p.name as position_name,
+    t.type_name, s1.status_name, s2.status_name as approver_status_name
+    FROM approver v
+    JOIN approval a ON v.approval_id = a.approval_id
+    JOIN employee app ON a.applicant_id = app.emp_id  
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approval_status s1 ON a.status_id = s1.status_id
+    JOIN approval_status s2 ON v.approver_status_id = s2.status_id
+    LEFT JOIN department d ON app.department_id = d.department_id
+    LEFT JOIN position p ON p.position_id=app.position_id
+    WHERE v.approver_id = #{approverId}
+    ORDER BY a.approval_id desc
+  </select>
+
+  <!-- 결재 상태(대기, 반려, 승인) 목록 (최종 상태 표시) -->
+  <select id="getApprovedList" resultMap="approvalResultMap">
+    SELECT
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s.status_name
+    FROM approval a
+    JOIN employee app ON a.applicant_id = app.emp_id  
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approval_status s ON a.status_id = s.status_id
+    WHERE a.status_id = #{statusId}
+    ORDER BY a.approval_id desc
+  </select>
+
+  <!-- 결재 상세 조회 (확인자 상태 표시)-->
+  <select id="readApproval" resultMap="approvalResultMap">
+    SELECT
+    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+    app.name AS applicant_name, t.type_name, s1.status_name, 
+    d1.name as department_name, p1.name as position_name, 
+    d2.name as approver_department_name, p2.name as approver_position_name,
+    v.approver_id, apr.name AS approver_name,
+    v.approver_status_id,
+    s2.status_name AS approver_status_name
+    FROM approval a
+    JOIN employee app ON a.applicant_id = app.emp_id  
+    JOIN approval_type t ON a.type_id = t.type_id
+    JOIN approver v ON a.approval_id = v.approval_id  
+    JOIN employee apr ON v.approver_id = apr.emp_id  
+    LEFT JOIN department d1 ON app.department_id = d1.department_id
+    LEFT JOIN department d2 ON apr.department_id = d2.department_id
+    LEFT JOIN position p1 ON app.position_id=p1.position_id
+    LEFT JOIN position p2 ON apr.position_id=p2.position_id
+    JOIN approval_status s1 ON a.status_id = s1.status_id
+    JOIN approval_status s2 ON v.approver_status_id = s2.status_id  
+    WHERE a.approval_id = #{approvalId}
+    ORDER BY 
+      CASE 
+        WHEN p2.position_id = 4 THEN 1
+        WHEN p2.position_id = 2 THEN 2
+        WHEN p2.position_id = 5 THEN 3
+        WHEN p2.position_id = 1 THEN 4
+        WHEN p2.position_id = 3 THEN 5
+        WHEN p2.position_id = 6 THEN 6
+        ELSE 7
+      END;
+  </select>
+
+  <!-- 승인자 검색 -->
+  <select id = "searchApprover" resultMap="memberResultMap">
+    SELECT e.emp_id, e.name, e.img_url, d.name as department_name, p.name as position_name
+    FROM employee e
+    LEFT JOIN department d on e.department_id = d.department_id 
+    LEFT JOIN position p on e.position_id = p.position_id
+    WHERE e.name LIKE CONCAT('%', #{empName}, '%')
+    ORDER BY 
+      CASE 
+        WHEN p.position_id = 4 THEN 1
+        WHEN p.position_id = 2 THEN 2
+        WHEN p.position_id = 5 THEN 3
+        WHEN p.position_id = 1 THEN 4
+        WHEN p.position_id = 3 THEN 5
+        WHEN p.position_id = 6 THEN 6
+        ELSE 7
+      END;
+  </select>
+
+  <!-- 승인자 조직도 -->
+  <select id="getOrganization" resultMap="memberResultMap">
+  SELECT 
+    e.emp_id, e.name, 
+    d.name AS department_name, 
+    p.name AS position_name
+  FROM employee e
+  LEFT JOIN department d ON e.department_id = d.department_id
+  LEFT JOIN position p ON e.position_id = p.position_id
+  WHERE p.position_id IN (1, 3, 5, 6)
+  ORDER BY 
+    d.department_id, 
+    CASE 
+        WHEN p.position_id = 6 THEN 1
+        WHEN p.position_id = 3 THEN 2
+        WHEN p.position_id = 1 THEN 3
+        WHEN p.position_id = 5 THEN 4
+        ELSE 5
+    END;
+  </select>
+
+
+  <!-- 결재 등록 : 신청자 -->
+  <insert id="addApproval" parameterType="com.erp.backend.dto.ApprovalDto" useGeneratedKeys="true" keyProperty="approvalId">
+    INSERT INTO approval(type_id, start_date, end_date, title, content, applicant_id)
+    VALUES (#{typeId}, #{startDate}, #{endDate}, #{title}, #{content}, #{applicantId})
+  </insert>
+  <!-- 결재 승인자 등록 -->
+  <insert id = "addApprovers" parameterType="com.erp.backend.dto.ApprovalDto">
+    INSERT INTO approver(approval_id, approver_id)
+    VALUES
+      <foreach collection="approvers" item="approverId" separator=",">
+          (#{approvalId}, #{approverId})
+      </foreach>
+  </insert>
+
+  <!-- 결재 상태 수정 : 승인자 -->
+  <update id="updateApproverStatus" parameterType="com.erp.backend.dto.ApprovalDto">
+    UPDATE approver
+    SET approver_status_id = #{approverStatusId}
+    WHERE approval_id = #{approvalId} 
+    AND approver_id = #{approverId}
+  </update>
+  <!-- approver의 모든 승인자가 승인하면 approval의 최종 결재 상태 승인으로 변경 -->
+  <update id="updateApprovalStatus" parameterType="com.erp.backend.dto.ApprovalDto">
+    UPDATE approval
+    SET status_id = #{statusId}
+    WHERE approval_id = #{approvalId}
+</update>
+  <!-- status_id가 2인 경우에만 calendar 테이블에 추가 -->
+  <insert id="insertCalendarFromApproval" parameterType="com.erp.backend.dto.ApprovalDto">
+    INSERT INTO calendar (title, content, start_date, end_date, applicant_id, approval_id)
+    SELECT title, content, start_date, end_date, applicant_id, approval_id
+    FROM approval
+    WHERE approval_id = #{approvalId}
+</insert>
+  
+  <!-- 결재 삭제 : 신청자 -->
+  <delete id="deleteApprovers" parameterType="Integer">
+      DELETE FROM approver WHERE approval_id = #{approvalId};
+  </delete>
+  <delete id="deleteApproval" parameterType="Integer">
+      DELETE FROM approval WHERE approval_id = #{approvalId};
+  </delete>
+</mapper>

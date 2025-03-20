@@ -6,6 +6,13 @@ build/
 !**/src/test/**/build/
 *.env
 
+# Node modules
+/node_modules/
+
+# Package files
+/package.json
+/package-lock.json
+
 ### STS ###
 .apt_generated
 .classpath

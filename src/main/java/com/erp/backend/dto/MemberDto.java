@@ -27,4 +27,8 @@ public class MemberDto {
     private LocalDate resignDate;
     private Integer baseSalary;
     private Integer departmentBonus;
+    // approver 승인 상태 추가
+    private Integer approverStatusId;
+    private String approverStatusName;
+    private String approverDepartmentName;
 }

@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendanceDto {
+public class SalaryBonusHistoryDto {
     private Long empId;
-    private String date;   // 날짜 필드 추가 (월 단위 조회용)
-    private String inTime;
-    private String outTime;
+    private LocalDate paymentDate;
+    private Integer amount;
+    private String type; // 'salary' or 'bonus'
 }

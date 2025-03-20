@@ -1,5 +1,7 @@
 package com.erp.backend.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendanceDto {
-    private Long empId;
-    private String date;   // 날짜 필드 추가 (월 단위 조회용)
-    private String inTime;
-    private String outTime;
+public class DepartmentWithEmployeesDto {
+    private String departmentName;
+    private List<MemberDto> employees;
 }
