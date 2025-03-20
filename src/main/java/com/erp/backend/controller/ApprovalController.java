@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.erp.backend.dto.ApprovalDto;
+import com.erp.backend.dto.DepartmentWithEmployeesDto;
 import com.erp.backend.dto.MemberDto;
 import com.erp.backend.service.ApprovalService;
 
@@ -78,7 +79,7 @@ public class ApprovalController {
     // 승인자 조직도
     // http://localhost:7777/approval/organization
     @GetMapping("/approval/organization")
-    public List<MemberDto> getOrganization(){
+    public List<DepartmentWithEmployeesDto> getOrganization(){
         return approvalService.getOrganization();
     }
 

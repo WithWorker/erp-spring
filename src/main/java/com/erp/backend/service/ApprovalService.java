@@ -1,13 +1,14 @@
 package com.erp.backend.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.erp.backend.dto.ApprovalDto;
+import com.erp.backend.dto.DepartmentWithEmployeesDto;
 import com.erp.backend.dto.MemberDto;
 import com.erp.backend.mapper.ApprovalMapper;
 
@@ -63,9 +64,20 @@ public class ApprovalService {
     }   
 
     // 승인자 조직도 
-    public List<MemberDto> getOrganization() {
+    public List<DepartmentWithEmployeesDto> getOrganization() {
         log.info("service-getOrganization");
-        return approvalMapper.getOrganization();
+
+        // 기존의 리스트를 받아옵니다
+        List<MemberDto> memberList = approvalMapper.getOrganization();
+
+        // 부서별로 직원들을 그룹화
+        Map<String, List<MemberDto>> groupedByDepartment = memberList.stream()
+            .collect(Collectors.groupingBy(MemberDto::getDepartmentName));
+
+        // 부서별로 그룹화된 데이터를 리스트로 변환
+        return groupedByDepartment.entrySet().stream()
+            .map(entry -> new DepartmentWithEmployeesDto(entry.getKey(), entry.getValue()))
+            .collect(Collectors.toList());
     }
 
     // 결재 등록
