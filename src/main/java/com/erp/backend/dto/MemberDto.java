@@ -2,6 +2,8 @@ package com.erp.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +23,6 @@ public class MemberDto {
     private String departmentName;
     private Long positionId;
     private String positionName;
-    private MemberRole memberRole;
     private Integer baseSalary;
     private Integer bonus;
 
