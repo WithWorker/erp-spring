@@ -215,7 +215,8 @@
   <update id="updateApproverStatus" parameterType="com.erp.backend.dto.ApprovalDto">
     UPDATE approver
     SET approver_status_id = #{approverStatusId}
-    WHERE approval_id = #{approvalId} AND approver_id = #{approverId}
+    WHERE approval_id = #{approvalId} 
+    AND approver_id = #{approverId}
   </update>
   <!-- approver의 모든 승인자가 승인하면 approval의 최종 결재 상태 승인으로 변경 -->
   <update id="updateApprovalStatus" parameterType="com.erp.backend.dto.ApprovalDto">
