@@ -1,6 +1,7 @@
 server:
   port: 7777
 
+
 spring:
   output:
     ansi:
