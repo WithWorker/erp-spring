@@ -1,9 +1,8 @@
-package com.erp.backend.service;
+package com.erp.backend.security;
 
 import com.erp.backend.dto.MemberDto;
 import com.erp.backend.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MemberDetailsService implements UserDetailsService {
+public class EmpDetailsService implements UserDetailsService {
     private final MemberMapper memberMapper;
 
     @Override
@@ -22,9 +21,11 @@ public class MemberDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
 
-        return User.withUsername(member.getEmail())
-                .password(member.getPassword())
-                .roles(member.getMemberRole().toString())
-                .build();
+        return new CustomUserDetails(
+                member.getEmail(),
+                member.getPassword(),
+                member.getMemberRole().name(),
+                member.getEmpId()
+        );
     }
 }

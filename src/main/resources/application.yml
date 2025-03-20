@@ -6,10 +6,17 @@ spring:
   output:
     ansi:
       enabled: always
-      
+# 파일 업로드
+  file-upload:
+    upload-dir: upload
+# 시큐리티
+  jwt:
+    secret: bWluc2Vva21pbnNlb2ttaW5zZW9rbWluc2Vva21pbnNlb2s=
+    expiration: 3600000
+# 데이터베이스
   datasource:
     hikari:
-      jdbc-url: jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      jdbc-url: jdbc:mysql://localhost:3306/erp_db?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
       username: ${DB_USERNAME}
       password: ${DB_PASSWORD}
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,7 +28,6 @@ spring:
       pool-name: MyHikariPool
       auto-commit: true
       connection-test-query: SELECT 1
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
