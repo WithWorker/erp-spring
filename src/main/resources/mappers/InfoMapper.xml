@@ -26,12 +26,12 @@
     <!-- 근태 조회 -->
     <select id="getMonthlyAttendance" parameterType="map" resultType="com.erp.backend.dto.AttendanceDto">
         SELECT emp_id,
-        DATE_FORMAT(in_time, '%Y-%m-%d') AS date, <!-- 날짜 추가 -->
+        DATE_FORMAT(in_time, '%Y-%m-%d') AS date,
         DATE_FORMAT(in_time, '%H:%i') AS in_time,
         DATE_FORMAT(out_time, '%H:%i') AS out_time
         FROM attendance
         WHERE emp_id = #{empId}
-        AND DATE_FORMAT(in_time, '%Y-%m') = #{yearMonth} <!-- 연-월 비교 -->
+        AND DATE_FORMAT(in_time, '%Y-%m') = #{yearMonth}
         ORDER BY in_time ASC
     </select>
 
