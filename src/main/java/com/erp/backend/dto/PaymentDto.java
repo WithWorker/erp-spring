@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendanceDto {
+public class PaymentDto {
     private Long empId;
-    private String date;   // 날짜 필드 추가 (월 단위 조회용)
-    private String inTime;
-    private String outTime;
+    private int year;
+    private int month;
+    private Integer amount;
+    private PaymentType type; // SALARY or BONUS
 }
+
