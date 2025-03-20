@@ -88,8 +88,6 @@ public class ApprovalService {
     // 결재 상태 변경
     @Transactional
     public void updateStatus(ApprovalDto approvalDto) {
-        log.info("=== updateStatus 시작 ===");
-        
         log.info("승인자 ID: {}, 변경할 상태: {}", approvalDto.getApproverId(), approvalDto.getApproverStatusId());
 
         // 승인자 상태 업데이트
@@ -97,7 +95,6 @@ public class ApprovalService {
 
         // 최신 승인자 상태 목록 조회
         List<MemberDto> currentApprovers = approvalMapper.readApproval(approvalDto.getApprovalId()).getApprovers();
-
         log.info("현재 승인자 상태 목록 (DB 최신 데이터):");
         for (MemberDto approver : currentApprovers) {
             log.info("승인자 ID: {}, 상태: {}", approver.getEmpId(), approver.getApproverStatusId());
@@ -114,9 +111,7 @@ public class ApprovalService {
             log.info("모든 승인자가 승인 상태(2)입니다. approval.statusId를 2로 변경합니다.");
             approvalDto.setStatusId(2);  // 상태를 승인 상태로 설정
             approvalMapper.updateApprovalStatus(approvalDto);
-
             log.info("approval.statusId가 2로 업데이트됨 (approvalId: {})", approvalDto.getApprovalId());
-
             // 상태가 2로 변경되었으므로 캘린더에 자동으로 등록
             approvalMapper.insertCalendarFromApproval(approvalDto);
         } else if (oneApproverRejected) {
@@ -126,8 +121,6 @@ public class ApprovalService {
         } else {
             log.info("아직 모든 승인자가 승인, 한명이라도 반려 상태가 아님. approval.statusId 변경 없음.");
         }
-
-        log.info("=== updateStatus 종료 ===");
     }
 
     // 결재 삭제
