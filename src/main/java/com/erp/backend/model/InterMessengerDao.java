@@ -1,0 +1,68 @@
+package com.erp.backend.model;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
+@Mapper
+public interface InterMessengerDao {
+
+    // 전체 부서 조회
+    List<Map<String, Object>> getDept();
+
+    // 부서 직원 조회
+    List<Map<String, Object>> getDeptPerson(Map<String, Object> map);
+
+    // 선택 직원 가져오기
+    List<Map<String, Object>> getChosenEmp(Long empId);
+
+    // 메신저 보내기
+    void sendMessage(MessengerVO msgvo);
+
+    // 메시지 전달 기능
+    void deliverMessage(MessengerVO newMessage);
+
+    // senderId 또는 receiverId가 employee 테이블에 존재하는지 확인
+    boolean isEmployeeExists(Long empId);
+
+    // 메시지 존재 여부 확인
+    boolean isMessageExists(Long msgId);
+
+    // 기존 메시지를 가져오는 메서드 추가
+    MessengerVO getMessageById(Long msgId);
+
+    // 보낸 메시지 리스트 조회
+    List<Map<String, Object>> getSendMsg(Map<String, Object> paramMap);
+
+    // 받은 메시지 리스트 조회
+    List<Map<String, Object>> getReceivedMsg(Map<String, Object> paramMap);
+
+    // 메신저 내용 조회(보낸 메신저, 받은 메신저)
+    Map<String, Object> getMsgContent(Map<String, Object> paramMap);
+    Map<String, Object> getMsgContent2(Map<String, Object> paramMap);
+
+    // 안읽은 메신저 읽기
+    void updateAllMsg(Map<String, Object> paramMap);
+
+    // 메신저 첨부파일 조회
+    List<FileVO> getMsgFile(Long msgId);
+
+    // 첨부파일 추가
+    void addFile(FileVO fileVO);
+
+    // 메신저 방 조회 (1:1, 단체)
+    int getTotalMsg(Map<String, String> map);
+
+    // 메신저 발송을 위한 사람 이름 조회
+    Map<String, Object> getEmpName(Map<String, Object> paramMap);
+
+    // 안읽은 메신저 개수 조회
+    int getUnreadMsg(Map<String, Object> paramMap);
+
+    // 메시지 방 삭제
+    int deleteMessage(Map<String, Object> paramMap);
+
+
+}
