@@ -50,4 +50,3 @@ public class ApprovalDto {
 
     private Integer approverStatusId;  
 }
-
