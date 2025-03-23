@@ -58,8 +58,8 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
                 //필터 인가
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/user/**").authenticated()
-                        .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.toString())
+                        .requestMatchers("/user/**").hasAnyRole(MemberRole.USER.name(), MemberRole.ADMIN.name())
+                        .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
                         .anyRequest().permitAll())
                 //필터 추가
                 .addFilterBefore(new JwtFilter(jwtUtil), AuthenticationFilter.class)
