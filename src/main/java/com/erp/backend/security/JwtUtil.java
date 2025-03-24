@@ -1,6 +1,5 @@
 package com.erp.backend.security;
 
-import com.erp.backend.dto.MemberRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +25,15 @@ public class JwtUtil {
     }
 
     //토큰 생성
-    public String createToken(String email, String role, Long empId) {
+    public String createToken(Long empId, String email, String role) {
         long now = System.currentTimeMillis();
 
         return Jwts.builder()
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + tokenExpiration))
+                .claim("empId", empId)
                 .claim("email", email)
                 .claim("role", role)
-                .claim("empId", empId)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -47,13 +46,12 @@ public class JwtUtil {
         return parseClaims(token).get("email", String.class);
     }
 
-    public MemberRole getRole(String token) {
-        String roleStr = parseClaims(token).get("role", String.class);
-        return MemberRole.valueOf(roleStr);
+    public String getRole(String token) {
+        return parseClaims(token).get("role", String.class);
     }
 
-    public List<SimpleGrantedAuthority> getAuthorities(MemberRole role) {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    public List<SimpleGrantedAuthority> getAuthorities(String role) {
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
     }
 
     //유효성 검사

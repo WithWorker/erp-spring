@@ -1,4 +1,3 @@
-
 package com.erp.backend.config;
 
 import com.erp.backend.dto.MemberRole;
@@ -60,9 +59,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/user/**").hasAnyRole(MemberRole.USER.name(), MemberRole.ADMIN.name())
                         .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
-                        .anyRequest().permitAll())
+                        .anyRequest().permitAll()
+                        )
                 //필터 추가
-                .addFilterBefore(new JwtFilter(jwtUtil), AuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(new CustomLogoutFilter(), LogoutFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
