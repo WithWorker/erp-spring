@@ -16,13 +16,13 @@ public class InfoController {
     private final InfoService infoService;
 
     //프로필 조회
-    @PostMapping("/profile")
+    @PostMapping("/user/profile")
     public MemberDto profile(@RequestBody MemberDto memberDto) {
         return infoService.profile(memberDto);
     }
 
     //급여 조회
-    @PostMapping("/paymentHistory/{empId}")
+    @PostMapping("/user/paymentHistory/{empId}")
     public List<PaymentDto> getPaymentHistory(
             @PathVariable Long empId,
             @RequestBody Map<String, Integer> request) {
@@ -32,7 +32,7 @@ public class InfoController {
     }
 
     //근태 조회
-    @PostMapping("/attendance/{empId}")
+    @PostMapping("/user/attendance/{empId}")
     public List<AttendanceDto> getMonthlyAttendance(
             @PathVariable("empId") Long empId,
             @RequestBody Map<String, String> requestBody) {
@@ -52,14 +52,14 @@ public class InfoController {
     }
 
     //출근 기록
-    @PostMapping("/attendance/in/{empId}")
+    @PostMapping("/user/attendance/in/{empId}")
     public String checkIn(@PathVariable(value = "empId") Long empId) {
         infoService.checkIn(empId);
         return "출근 성공";
     }
 
     //퇴근 기록
-    @PutMapping("/attendance/out/{empId}")
+    @PutMapping("/user/attendance/out/{empId}")
     public String checkOut(@PathVariable(value = "empId") Long empId) {
         infoService.checkOut(empId);
         return "퇴근 성공";
