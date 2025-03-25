@@ -29,63 +29,63 @@ public class ApprovalController {
 
     // 결재 신청 목록 : 신청자
     // http://localhost:7777/approval/applicant/{applicantId}
-    @GetMapping("/approval/applicant/{applicantId}")
+    @GetMapping("/user/approval/applicant/{applicantId}")
     public List<ApprovalDto> getApplicant(@PathVariable Integer applicantId){
         return approvalService.getApplicant(applicantId);
     }
     
     // 결재 신청 목록(대기) : 신청자
     // http://localhost:7777/approval/applicantPending/{applicantId}
-    @GetMapping("/approval/applicantPending/{applicantId}")
+    @GetMapping("/user/approval/applicantPending/{applicantId}")
     public List<ApprovalDto> getApplicantPending(@PathVariable Integer applicantId){
         return approvalService.getApplicantPending(applicantId);
     }
     
     // 결재 신청 목록(승인,반려) : 신청자
     // http://localhost:7777/approval/applicantApproved/{applicantId}
-    @GetMapping("/approval/applicantApproved/{applicantId}")
+    @GetMapping("/user/approval/applicantApproved/{applicantId}")
     public List<ApprovalDto> getApplicantApproved(@PathVariable Integer applicantId){
         return approvalService.getApplicantApproved(applicantId);
     }
 
     // 결재 확인 목록 : 승인자 
     // http://localhost:7777/approval/approver/{approverId}
-    @GetMapping("/approval/approver/{approverId}")
+    @GetMapping("/user/approval/approver/{approverId}")
     public List<ApprovalDto> getApprover(@PathVariable Integer approverId){
         return approvalService.getApprover(approverId);
     }
 
     // 결재 상태 목록 
     // http://localhost:7777/approval/approved/{statusId}
-    @GetMapping("/approval/approved/{statusId}")
+    @GetMapping("/user/approval/approved/{statusId}")
     public List<ApprovalDto> getApprovedList(@PathVariable Integer statusId){
         return approvalService.getApprovedList(statusId);
     }
 
     // 결재 상세 조회 
     // http://localhost:7777/approval/{approvalId}
-    @GetMapping("/approval/{approvalId}")
+    @GetMapping("/user/approval/{approvalId}")
     public ApprovalDto readApproval(@PathVariable Integer approvalId){
         return approvalService.readApproval(approvalId);
     }
 
     // 승인자 검색
     // http://localhost:7777/approval/search/{keyword}
-    @GetMapping("/approval/search/{keyword}")
+    @GetMapping("/user/approval/search/{keyword}")
     public List<MemberDto> searchApprover(@PathVariable String keyword){
         return approvalService.searchApprover(keyword);
     }
     
     // 승인자 조직도
     // http://localhost:7777/approval/organization
-    @GetMapping("/approval/organization")
+    @GetMapping("/user/approval/organization")
     public List<DepartmentWithEmployeesDto> getOrganization(){
         return approvalService.getOrganization();
     }
 
     // 결재 등록 : 신청자 
     // http://localhost:7777/approval/add
-    @PostMapping("/approval/add")
+    @PostMapping("/user/approval/add")
 	public ResponseEntity<Map<String, Object>> addApproval(@RequestBody ApprovalDto approvalDto) {
         log.info("Received ApprovalDto: {}", approvalDto);
 
@@ -102,7 +102,7 @@ public class ApprovalController {
 
     // 결재 수정(status) : 승인자 
     // http://localhost:7777/approval/edit/{approvalId}
-    @PutMapping("/approval/edit/{approvalId}")
+    @PutMapping("/user/approval/edit/{approvalId}")
 	public ResponseEntity<String> updateStatus(@PathVariable Integer approvalId, @RequestBody ApprovalDto approvalDto) {
         approvalDto.setApprovalId(approvalId);
         approvalService.updateStatus(approvalDto);
@@ -111,7 +111,7 @@ public class ApprovalController {
     
     // 결재 삭제 : 신청자 
     // http://localhost:7777/approval/{approvalId}
-    @DeleteMapping("/approval/{approvalId}")
+    @DeleteMapping("/user/approval/{approvalId}")
 	public ResponseEntity<String> deleteApproval(@PathVariable Integer approvalId) {
 		approvalService.deleteApproval(approvalId);
 		return ResponseEntity.ok("결재 삭제");
