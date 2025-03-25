@@ -15,7 +15,7 @@ public class MemberController {
     private final MemberService memberService;
 
     //전체조회
-    @GetMapping("/employees")
+    @GetMapping("/user/employees")
     public List<MemberDto> findAll() {
         return memberService.findAll();
     }
@@ -39,7 +39,7 @@ public class MemberController {
     }
 
     //직원등록
-    @PostMapping("/join")
+    @PostMapping("/admin/join")
     public ResponseEntity<String> insertMember(@RequestBody MemberDto memberDto) {
         try {
             memberService.insertMember(memberDto);

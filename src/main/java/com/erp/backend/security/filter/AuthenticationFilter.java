@@ -45,7 +45,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         Long empId = ((CustomUserDetails) authResult.getPrincipal()).getEmpId();
         String email = authResult.getName();
-        String role = authResult.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
+        String role = authResult.getAuthorities().iterator().next().getAuthority();
 
         String token = jwtUtil.createToken(empId, email, role);
         response.setHeader("Authorization", "Bearer " + token);

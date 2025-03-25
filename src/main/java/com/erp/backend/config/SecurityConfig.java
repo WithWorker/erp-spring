@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/user/**").hasAnyRole(MemberRole.USER.name(), MemberRole.ADMIN.name())
                         .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
-                        .anyRequest().permitAll()
+                        .requestMatchers("/upload/**").permitAll()
                         )
                 //필터 추가
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
