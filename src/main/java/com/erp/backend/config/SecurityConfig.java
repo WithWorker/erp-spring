@@ -61,7 +61,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.toString())
                         .requestMatchers("/uploads/**").permitAll() // 첨부파일 관련 추가
-                        .requestMatchers("/messenger/file/download").permitAll()
+                        .requestMatchers("/user/messenger/file/download").permitAll()
                         .anyRequest().permitAll())
                 //필터 추가
                 .addFilterBefore(new JwtFilter(jwtUtil), AuthenticationFilter.class)
