@@ -3,18 +3,36 @@ package com.erp.backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class MemberDto {
     private Long empId;
     private String name;
     private String email;
     private String password;
+    private String repassword;
     private String phone;
     private String imgUrl;
-    private String dept;
-    private String position;
+    private Long departmentId;
+    private String departmentName;
+    private Long positionId;
+    private String positionName;
     private MemberRole memberRole;
+    private LocalDate hireDate;
+    private LocalDate resignDate;
+    private Integer baseSalary;
+    private Integer departmentBonus;
+    private String address;
+    private String residentNumber;
+    private String accountNumber;
+
+    //approver 승인 상태
+    private Integer approverStatusId;
+    private String approverStatusName;
+    private String approverDepartmentName;
 }

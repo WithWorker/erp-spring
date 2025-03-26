@@ -1,15 +1,169 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.backend.mapper.MemberMapper">
 
-    <mapper namespace="com.erp.backend.mapper.MemberMapper">
+    <!-- 전체조회 -->
+    <select id="findAll" resultMap="memberResult">
+        SELECT e.*, d.name AS department_name, p.name AS position_name
+        FROM employee e
+        LEFT JOIN department d ON e.department_id = d.department_id
+        LEFT JOIN position p ON e.position_id = p.position_id
+        <where>
+            <if test="role == 'USER'">
+                AND e.resign_date IS NULL
+            </if>
+            AND e.member_role != 'ADMIN'
+        </where>
+        ORDER BY e.resign_date IS NOT NULL, e.resign_date ASC, e.emp_id ASC;
+    </select>
 
-        <select id="findByEmail" parameterType="string" resultType="com.erp.backend.dto.MemberDto">
-            SELECT * FROM employee WHERE email = #{email}
-        </select>
+    <resultMap id="memberResult" type="com.erp.backend.dto.MemberDto">
+        <result property="empId" column="emp_id" />
+        <result property="name" column="name" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+        <result property="phone" column="phone" />
+        <result property="imgUrl" column="img_url" />
+        <result property="departmentId" column="department_id" />
+        <result property="departmentName" column="department_name" />
+        <result property="positionId" column="position_id" />
+        <result property="positionName" column="position_name" />
+        <result property="memberRole" column="member_role" />
+        <result property="hireDate" column="hire_date" />
+        <result property="resignDate" column="resign_date" />
+        <result property="address" column="address" />
+        <result property="residentNumber" column="resident_number" />
+        <result property="accountNumber" column="account_number" />
+    </resultMap>
 
-        <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
-            INSERT INTO employee (emp_id, name, email, password, phone, img_url, department_id, position_id, member_role)
-            VALUES (#{empId}, #{name}, #{email}, #{password}, #{phone}, #{imgUrl}, #{department_id}, #{position_id}, #{memberRole})
-        </insert>
+    <!-- 전체조회 (by 부서id) -->
+    <select id="findAllByDept" resultMap="memberResult">
+        SELECT e.*, d.name AS department_name, p.name AS position_name
+        FROM employee e
+        LEFT JOIN department d ON e.department_id = d.department_id
+        LEFT JOIN position p ON e.position_id = p.position_id
+        <where>
+            <if test="role == 'USER'">
+                AND e.resign_date IS NULL
+            </if>
+            <if test="departmentId != null">
+                AND e.department_id = #{departmentId}
+            </if>
+        </where>
+        ORDER BY e.resign_date IS NOT NULL, e.resign_date ASC, e.emp_id ASC;
+    </select>
 
-    </mapper>
+    <!-- 전체조회 (by 이름) -->
+    <select id="findByName" resultMap="memberResult">
+        SELECT e.*, d.name AS department_name, p.name AS position_name
+        FROM employee e
+        LEFT JOIN department d ON e.department_id = d.department_id
+        LEFT JOIN position p ON e.position_id = p.position_id
+        <where>
+            <if test="role == 'USER'">
+                AND e.resign_date IS NULL
+            </if>
+            AND e.member_role != 'ADMIN'
+            <if test="name != null">
+                AND e.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+        </where>
+        ORDER BY e.resign_date IS NOT NULL, e.resign_date ASC, e.emp_id ASC;
+    </select>
+
+    <!-- 직원조회 (by 직원id) -->
+    <select id="findById" parameterType="java.lang.Long" resultType="com.erp.backend.dto.MemberDto">
+        SELECT e.*, d.name AS department_name, p.name AS position_name
+        FROM employee e
+                LEFT JOIN department d ON e.department_id = d.department_id
+                LEFT JOIN position p ON e.position_id = p.position_id
+        WHERE e.emp_id = #{empId}
+    </select>
+
+    <!-- 직원조회 (by 이메일) -->
+    <select id="findByEmail" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
+        SELECT * FROM employee WHERE email = #{email}
+    </select>
+
+    <!-- 직원조회 (by phone) -->
+    <select id="findByPhone" parameterType="java.lang.String" resultType="com.erp.backend.dto.MemberDto">
+        SELECT * FROM employee WHERE phone = #{phone}
+    </select>
+
+    <!-- 직원등록 -->
+    <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
+        INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, base_salary, member_role, hire_date, address, resident_number, account_number)
+        VALUES (
+                   #{name},
+                   #{email},
+                   #{password},
+                   #{phone},
+                   #{imgUrl},
+                   #{departmentId},
+                   #{positionId},
+                   (SELECT salary FROM position_salary WHERE position_id = #{positionId}),
+                   #{memberRole},
+                   NOW(),
+                   #{address},
+                   #{residentNumber},
+                   #{accountNumber}
+               )
+    </insert>
+
+    <!-- 직원수정 -->
+    <update id="updateMember">
+        UPDATE employee SET
+                            name = #{name},
+                            email = #{email},
+                            password = #{password},
+                            phone = #{phone},
+                            img_url = #{imgUrl},
+                            department_id = #{departmentId},
+                            position_id = #{positionId},
+                            member_role = #{memberRole},
+                            base_salary = #{baseSalary},
+                            address = #{address},
+                            resident_number = #{residentNumber},
+                            account_number = #{accountNumber}
+        WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 부서이동 -->
+    <update id="updateDepartment" parameterType="com.erp.backend.dto.MemberDto">
+        UPDATE employee SET department_id = #{departmentId} WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 직급변경 -->
+    <update id="updatePosition" parameterType="com.erp.backend.dto.MemberDto">
+        UPDATE employee SET position_id = #{positionId} WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 퇴사 -->
+    <update id="resignMember" parameterType="java.lang.Long">
+        UPDATE employee SET member_role = 'SUSPENDED', resign_date = NOW() WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 비밀번호 재설정 -->
+    <update id="updatePassword" parameterType="com.erp.backend.dto.MemberDto">
+        UPDATE employee SET password = #{password} WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 직원삭제 -->
+    <delete id="deleteMember" parameterType="java.lang.Long">
+        DELETE FROM employee WHERE emp_id = #{empId}
+    </delete>
+
+    <!-- 기본급 조회 -->
+    <select id="getSalaryByEmpId" resultType="java.lang.Integer">
+        SELECT base_salary FROM employee WHERE emp_id = #{empId}
+    </select>
+
+    <!-- 성과급 조회 -->
+    <select id="getBonusByEmpId" resultType="java.lang.Integer">
+        SELECT db.bonus
+        FROM employee e
+                 JOIN department_bonus db ON e.department_id = db.department_id
+        WHERE e.emp_id = #{empId}
+    </select>
+
+</mapper>
