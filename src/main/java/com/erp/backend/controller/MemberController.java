@@ -1,4 +1,3 @@
-
 package com.erp.backend.controller;
 
 import com.erp.backend.dto.MemberDto;
@@ -16,31 +15,31 @@ public class MemberController {
     private final MemberService memberService;
 
     //전체조회
-    @GetMapping("/employees")
+    @GetMapping("/user/employees")
     public List<MemberDto> findAll() {
         return memberService.findAll();
     }
 
     //전체조회 (by 부서id)
-    @GetMapping("/dept/{departmentId}")
+    @GetMapping("/user/dept/{departmentId}")
     public List<MemberDto> findAllByDept(@PathVariable(value = "departmentId") Long departmentId) {
         return memberService.findAllByDept(departmentId);
     }
 
     //전체조회 (by 이름)
-    @PostMapping("/name")
+    @PostMapping("/user/name")
     public List<MemberDto> findByName(@RequestBody MemberDto memberDto) {
         return memberService.findByName(memberDto.getName());
     }
 
     //직원조회 (by 직원id)
-    @GetMapping("/emp/{empId}")
+    @GetMapping("/admin/emp/{empId}")
     public MemberDto findById(@PathVariable(value = "empId") Long empId) {
         return memberService.findById(empId);
     }
 
     //직원등록
-    @PostMapping("/join")
+    @PostMapping("/admin/join")
     public ResponseEntity<String> insertMember(@RequestBody MemberDto memberDto) {
         try {
             memberService.insertMember(memberDto);
@@ -51,7 +50,7 @@ public class MemberController {
     }
 
     //직원수정
-    @PutMapping("/update/{empId}")
+    @PutMapping("/admin/update/{empId}")
     public String updateMember(@PathVariable(value = "empId") Long empId, @RequestBody Map<String, Object> updateInfo) {
         MemberDto memberDto = memberService.findById(empId);
 
@@ -98,7 +97,7 @@ public class MemberController {
     }
 
     //퇴사
-    @PutMapping("/resign/{empId}")
+    @PutMapping("/admin/resign/{empId}")
     public String resignMember(@PathVariable(value = "empId") Long empId) {
         memberService.resignMember(empId);
         return "success";
@@ -116,14 +115,14 @@ public class MemberController {
     }
 
     //직원삭제
-    @DeleteMapping("/delete/{empId}")
+    @DeleteMapping("/admin/delete/{empId}")
     public String deleteMember(@PathVariable(value = "empId") Long empId) {
         memberService.deleteMember(empId);
         return "success";
     }
 
     //성과급 조회
-    @GetMapping("/bonus/{empId}")
+    @GetMapping("/admin/bonus/{empId}")
     public ResponseEntity<Integer> getBonus(@PathVariable Long empId) {
         Integer bonus = memberService.getBonusByEmpId(empId);
         return ResponseEntity.ok(bonus);

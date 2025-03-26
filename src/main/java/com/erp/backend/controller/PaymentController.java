@@ -21,7 +21,7 @@ public class PaymentController {
     }
 
     //급여내역 저장
-    @PostMapping("/savePayment/{empId}")
+    @PostMapping("/admin/savePayment/{empId}")
     public ResponseEntity<String> insertPaymentHistory(@PathVariable Long empId, @RequestBody PaymentDto paymentDto) {
         paymentDto.setEmpId(empId);
         paymentService.insertPaymentHistory(paymentDto);

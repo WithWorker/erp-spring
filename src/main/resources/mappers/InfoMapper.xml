@@ -4,7 +4,7 @@
 
     <!-- 프로필 조회 -->
     <select id="profile" parameterType="com.erp.backend.dto.MemberDto" resultType="com.erp.backend.dto.MemberDto">
-        SELECT e.emp_id, e.name, e.email, e.phone, e.img_url, e.hire_date,
+        SELECT e.emp_id, e.name, e.email, e.phone, e.img_url, e.hire_date, e.address, e.resident_number, e.account_number,
                d.department_id AS departmentId, d.name AS departmentName,
                p.position_id AS positionId, p.name AS positionName
         FROM employee e

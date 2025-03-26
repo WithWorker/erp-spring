@@ -31,6 +31,9 @@
         <result property="memberRole" column="member_role" />
         <result property="hireDate" column="hire_date" />
         <result property="resignDate" column="resign_date" />
+        <result property="address" column="address" />
+        <result property="residentNumber" column="resident_number" />
+        <result property="accountNumber" column="account_number" />
     </resultMap>
 
     <!-- 전체조회 (by 부서id) -->
@@ -89,7 +92,7 @@
 
     <!-- 직원등록 -->
     <insert id="insertMember" parameterType="com.erp.backend.dto.MemberDto">
-        INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, base_salary, member_role, hire_date)
+        INSERT INTO employee (name, email, password, phone, img_url, department_id, position_id, base_salary, member_role, hire_date, address, resident_number, account_number)
         VALUES (
                    #{name},
                    #{email},
@@ -100,10 +103,12 @@
                    #{positionId},
                    (SELECT salary FROM position_salary WHERE position_id = #{positionId}),
                    #{memberRole},
-                   NOW()
+                   NOW(),
+                   #{address},
+                   #{residentNumber},
+                   #{accountNumber}
                )
     </insert>
-
 
     <!-- 직원수정 -->
     <update id="updateMember">
@@ -116,7 +121,10 @@
                             department_id = #{departmentId},
                             position_id = #{positionId},
                             member_role = #{memberRole},
-                            base_salary = #{baseSalary}
+                            base_salary = #{baseSalary},
+                            address = #{address},
+                            resident_number = #{residentNumber},
+                            account_number = #{accountNumber}
         WHERE emp_id = #{empId}
     </update>
 
