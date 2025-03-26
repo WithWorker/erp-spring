@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CalendarDto {
   private Integer calendarId;
 
-  @JsonProperty("start_date") // JSON 키와 매핑
+  @JsonProperty("start_date")
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private LocalDate startDate;
 
