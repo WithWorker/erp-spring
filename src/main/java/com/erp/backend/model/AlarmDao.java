@@ -57,5 +57,4 @@ public class AlarmDao implements InterAlarmDao {
         String n = sqlsession.selectOne("getUnreadAlarm", empId);
         return n;
     }
-
 }
