@@ -35,4 +35,5 @@ public class MemberDto {
     private Integer approverStatusId;
     private String approverStatusName;
     private String approverDepartmentName;
+    private String approverImgUrl;
 }
