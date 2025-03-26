@@ -1,11 +1,13 @@
 package com.erp.backend.model;
 
+import com.erp.backend.dto.GroupMessageDTO;
 import jakarta.annotation.Resource;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +56,7 @@ public class MessengerDao implements InterMessengerDao {
 
     // sender or receiver 존재 확인
     @Override
-    public boolean isEmployeeExists(Long empId) {
+    public int isEmployeeExists(Long empId) {
         return sqlsession.selectOne("isEmployeeExists", empId);
     }
 
@@ -136,4 +138,60 @@ public class MessengerDao implements InterMessengerDao {
     public int deleteMessage(Map<String, Object> paramMap) {
         return sqlsession.delete("deleteMessage", paramMap);
     }
+
+    //
+    @Override
+    public void addRoomParticipant(Map<String, Object> participantParams) {
+        sqlsession.insert("addRoomParticipant", participantParams);
+    }
+
+    public int createMessengerRoom(Map<String, Object> roomParams) {
+        return sqlsession.insert("createMessengerRoom", roomParams);
+    }
+
+    // 방 참여자 조회
+    @Override
+    public List<Map<String, Object>> selectRoomParticipants(int roomId) {
+        return sqlsession.selectList("selectRoomParticipants", roomId);
+    }
+
+    // 방 삭제 관련
+    @Override
+    public int deleteMessagesByRoomId(int roomId) {
+        return sqlsession.delete("deleteMessagesByRoomId", roomId);
+    }
+
+    @Override
+    public int deleteRoomParticipants(int roomId) {
+        return sqlsession.delete("deleteRoomParticipants", roomId);
+    }
+
+    @Override
+    public int deleteMessengerRoom(int roomId) {
+        return sqlsession.delete("deleteMessengerRoom", roomId);
+    }
+
+    // 단체 방 조회
+    @Override
+    public List<Map<String, Object>> selectGroupRooms(Long empId) {
+        return sqlsession.selectList("selectGroupRooms", empId);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectMessagesByRoomId(int roomId) {
+        return sqlsession.selectList("selectMessagesByRoomId", roomId);
+    }
+
+    // 단체 방 첨부파일
+    @Override
+    public void sendGroupMessage(GroupMessageDTO groupMsg) {
+        sqlsession.insert("sendGroupMessage", groupMsg);
+    }
+
+    // 메시지 읽음 상태 업데이트
+    @Override
+    public void updateMessagesReadStatus(Map<String, Object> paramMap) {
+        sqlsession.update("updateMessagesReadStatus", paramMap);
+    }
+
 }

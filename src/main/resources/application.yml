@@ -1,11 +1,24 @@
 server:
   port: 7777
 
+
 spring:
+  # 파일 크기
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   output:
     ansi:
       enabled: always
-
+# 파일 업로드
+  file-upload:
+    upload-dir: upload
+# 시큐리티
+  jwt:
+    secret: bWluc2Vva21pbnNlb2ttaW5zZW9rbWluc2Vva21pbnNlb2s=
+    expiration: 3600000
+# 데이터베이스
   datasource:
     hikari:
       jdbc-url: jdbc:mysql://localhost:3306/erp_db?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
@@ -20,16 +33,13 @@ spring:
       pool-name: MyHikariPool
       auto-commit: true
       connection-test-query: SELECT 1
-
 mybatis:
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
   mapper-locations: classpath:/mappers/**/*.xml
   config-location: classpath:/mybatis-config.xml
 
-
-logging:
+  logging:
   level:
     root: info
     org.springframework: info
