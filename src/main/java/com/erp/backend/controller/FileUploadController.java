@@ -12,7 +12,7 @@ import java.io.IOException;
 public class FileUploadController {
     private final FileUploadService fileUploadService;
 
-    @PostMapping("/upload")
+    @PostMapping("/admin/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             return fileUploadService.uploadImage(file);

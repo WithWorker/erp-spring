@@ -1,5 +1,6 @@
 package com.erp.backend.security.filter;
 
+import com.erp.backend.security.CustomUserDetails;
 import com.erp.backend.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,10 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -44,7 +47,14 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private Authentication createAuth(String token) {
+        Long empId = jwtUtil.getEmpId(token);
         String email = jwtUtil.getEmail(token);
-        return new UsernamePasswordAuthenticationToken(email, null, jwtUtil.getAuthorities(jwtUtil.getRole(token)));
+        String role = jwtUtil.getRole(token);
+        List<SimpleGrantedAuthority> auth = jwtUtil.getAuthorities(role);
+
+        CustomUserDetails principal = new CustomUserDetails(empId, email, "", auth);
+        return new UsernamePasswordAuthenticationToken(
+                principal, null, principal.getAuthorities()
+        );
     }
 }
