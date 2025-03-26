@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/messenger")
+@RequestMapping("/kkh/messenger")
 public class MessengerController {
 
     @Autowired
