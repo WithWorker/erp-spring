@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MessengerVO {
+    private Integer roomId;         // 단체 메시지
     private Long messengerId;       // 메시지 고유 ID (Primary Key 역할)
     private String content;        // 메시지 내용
     private Long senderId;          // 보낸 사람의 ID (employee 테이블 참조)

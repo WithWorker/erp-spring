@@ -60,6 +60,8 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").hasAnyRole(MemberRole.USER.name(), MemberRole.ADMIN.name())
                         .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
                         .requestMatchers("/upload/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/user/messenger/file/download").permitAll()
                         )
                 //필터 추가
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)

@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import com.erp.backend.dto.GroupMessageDTO;
 
 @Mapper
 public interface InterMessengerDao {
@@ -25,7 +26,7 @@ public interface InterMessengerDao {
     void deliverMessage(MessengerVO newMessage);
 
     // senderId 또는 receiverId가 employee 테이블에 존재하는지 확인
-    boolean isEmployeeExists(Long empId);
+    int isEmployeeExists(Long empId);
 
     // 메시지 존재 여부 확인
     boolean isMessageExists(Long msgId);
@@ -64,5 +65,30 @@ public interface InterMessengerDao {
     // 메시지 방 삭제
     int deleteMessage(Map<String, Object> paramMap);
 
+    // [추가] 메신저 룸 생성
+    int createMessengerRoom(Map<String, Object> roomParams);
+
+    // [추가] 메신저 룸 참여자 추가
+    void addRoomParticipant(Map<String, Object> participantParams);
+
+    // 방 참여자 조회
+    List<Map<String, Object>> selectRoomParticipants(int roomId);
+
+    // 방 삭제 관련
+    int deleteMessagesByRoomId(int roomId);
+    int deleteRoomParticipants(int roomId);
+    int deleteMessengerRoom(int roomId);
+
+    // 단체 방 조회
+    List<Map<String, Object>> selectGroupRooms(Long empId);
+
+    // 단체 방 내용 조회
+    List<Map<String, Object>> selectMessagesByRoomId(int roomId);
+
+    // 단체 방 첨부파일
+    void sendGroupMessage(GroupMessageDTO groupMsg);
+
+    // 메시지 읽음 상태 업데이트
+    void updateMessagesReadStatus(Map<String, Object> paramMap);
 
 }
