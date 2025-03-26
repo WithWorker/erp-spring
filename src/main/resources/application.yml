@@ -1,6 +1,12 @@
 server:
   port: 7777
+
 spring:
+  # 파일 크기
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   output:
     ansi:
       enabled: always
