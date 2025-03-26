@@ -78,16 +78,16 @@ public class ApprovalService {
             .collect(Collectors.toList());
   }
 
+  // 결재 등록
   @Transactional
   public void addApproval(ApprovalDto approvalDto) {
     log.info("service-addApproval");
     // 1. 결재 신청 등록
     approvalMapper.addApproval(approvalDto);
     // 2. 생성된 approvalId를 사용하여 승인자 등록
-    if (approvalDto.getApprovers() != null &&
-            !approvalDto.getApprovers().isEmpty()) {
-      List<Integer> approverIds = approvalDto
-              .getApprovers().stream()
+    if (approvalDto.getApprovers() != 
+    null && !approvalDto.getApprovers().isEmpty()) {
+      List<Integer> approverIds = approvalDto.getApprovers().stream()
               .map(approver -> approver.getEmpId().intValue())
               .collect(Collectors.toList());
       approvalMapper.addApprovers(approvalDto.getApprovalId(), approverIds);

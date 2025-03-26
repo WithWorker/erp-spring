@@ -33,7 +33,7 @@ public class MemberController {
     }
 
     //직원조회 (by 직원id)
-    @GetMapping("/admin/emp/{empId}")
+    @GetMapping("/user/emp/{empId}")
     public MemberDto findById(@PathVariable(value = "empId") Long empId) {
         return memberService.findById(empId);
     }
