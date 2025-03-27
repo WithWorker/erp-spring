@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.backend.mapper.InfoMapper">
+
+    <!-- 프로필 조회 -->
+    <select id="profile" parameterType="com.erp.backend.dto.MemberDto" resultType="com.erp.backend.dto.MemberDto">
+        SELECT e.emp_id, e.name, e.email, e.phone, e.img_url, e.hire_date, e.address, e.resident_number, e.account_number,
+               d.department_id AS departmentId, d.name AS departmentName,
+               p.position_id AS positionId, p.name AS positionName
+        FROM employee e
+                 LEFT JOIN department d ON e.department_id = d.department_id
+                 LEFT JOIN position p ON e.position_id = p.position_id
+        WHERE e.emp_id = #{empId}
+    </select>
+
+    <!-- 급여 조회 -->
+    <select id="getPaymentHistory" resultType="com.erp.backend.dto.PaymentDto">
+        SELECT emp_id, payment_date, amount, type
+        FROM payment_history
+        WHERE emp_id = #{empId}
+            AND YEAR(payment_date) = #{year}
+          AND MONTH(payment_date) = #{month}
+        ORDER BY payment_date DESC;
+    </select>
+
+    <!-- 근태 조회 -->
+    <select id="getMonthlyAttendance" parameterType="map" resultType="com.erp.backend.dto.AttendanceDto">
+        SELECT emp_id,
+        DATE_FORMAT(in_time, '%Y-%m-%d') AS date,
+        DATE_FORMAT(in_time, '%H:%i') AS in_time,
+        DATE_FORMAT(out_time, '%H:%i') AS out_time
+        FROM attendance
+        WHERE emp_id = #{empId}
+        AND DATE_FORMAT(in_time, '%Y-%m') = #{yearMonth}
+        ORDER BY in_time ASC
+    </select>
+
+
+    <!-- 출근 확인 -->
+    <select id="hasTodayCheckIn" parameterType="java.lang.Long" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM attendance
+        WHERE emp_id = #{empId}
+        AND DATE(in_time) = CURDATE()
+    </select>
+
+    <!-- 출근 업데이트 -->
+    <update id="updateTodayCheckIn" parameterType="java.lang.Long">
+        UPDATE attendance
+        SET in_time = NOW()
+        WHERE emp_id = #{empId}
+        AND DATE(in_time) = CURDATE()
+    </update>
+
+    <!-- 출근 기록 -->
+    <insert id="insertCheckIn" parameterType="java.lang.Long">
+        INSERT INTO attendance (emp_id, in_time)
+        VALUES (#{empId}, NOW())
+    </insert>
+
+    <!-- 퇴근 기록 -->
+    <update id="updateCheckOut" parameterType="java.lang.Long">
+        UPDATE attendance
+        SET out_time = NOW()
+        WHERE emp_id = #{empId}
+        ORDER BY in_time DESC
+        LIMIT 1
+    </update>
+
+</mapper>
