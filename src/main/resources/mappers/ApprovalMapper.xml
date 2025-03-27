@@ -5,11 +5,9 @@
   <resultMap id="memberResultMap" type="com.erp.backend.dto.MemberDto">
     <id property="empId" column="emp_id"/>
     <result property="name" column="name"/>
-    <result property="imgUrl" column="img_url"/>
     <result property="departmentName" column="department_name"/>
     <result property="positionName" column="position_name"/>
   </resultMap>
-
 
   <resultMap id="approvalResultMap" type="com.erp.backend.dto.ApprovalDto">
     <id property="approvalId" column="approval_id" />
@@ -39,6 +37,7 @@
       <result property="approverStatusName" column="approver_status_name" /> 
       <result property="departmentName" column="approver_department_name" />
       <result property="positionName" column="approver_position_name" />
+      <result property="approverImgUrl" column="approver_img_url"/>
     </collection>
   </resultMap>
 
@@ -130,13 +129,13 @@
   <!-- 결재 상세 조회 (확인자 상태 표시)-->
   <select id="readApproval" resultMap="approvalResultMap">
     SELECT
-    a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
-    app.name AS applicant_name, t.type_name, s1.status_name, 
-    d1.name as department_name, p1.name as position_name, 
-    d2.name as approver_department_name, p2.name as approver_position_name,
-    v.approver_id, apr.name AS approver_name,
-    v.approver_status_id,
-    s2.status_name AS approver_status_name
+      a.approval_id, a.title, a.content, a.start_date, a.end_date, a.applicant_id, 
+      app.name AS applicant_name, t.type_name, s1.status_name, 
+      d1.name as department_name, p1.name as position_name, 
+      d2.name as approver_department_name, p2.name as approver_position_name,
+      v.approver_id, apr.name AS approver_name, apr.img_url AS approver_img_url, 
+      v.approver_status_id, 
+      s2.status_name AS approver_status_name
     FROM approval a
     JOIN employee app ON a.applicant_id = app.emp_id  
     JOIN approval_type t ON a.type_id = t.type_id
@@ -144,8 +143,8 @@
     JOIN employee apr ON v.approver_id = apr.emp_id  
     LEFT JOIN department d1 ON app.department_id = d1.department_id
     LEFT JOIN department d2 ON apr.department_id = d2.department_id
-    LEFT JOIN position p1 ON app.position_id=p1.position_id
-    LEFT JOIN position p2 ON apr.position_id=p2.position_id
+    LEFT JOIN position p1 ON app.position_id = p1.position_id
+    LEFT JOIN position p2 ON apr.position_id = p2.position_id
     JOIN approval_status s1 ON a.status_id = s1.status_id
     JOIN approval_status s2 ON v.approver_status_id = s2.status_id  
     WHERE a.approval_id = #{approvalId}

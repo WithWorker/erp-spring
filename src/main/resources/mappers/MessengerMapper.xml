@@ -5,8 +5,14 @@
 
     <!-- ✅ 메시지 전송 ==> 테스트 완료 -->
     <insert id="sendMessage" parameterType="com.erp.backend.model.MessengerVO" useGeneratedKeys="true" keyProperty="messengerId">
-        INSERT INTO messenger (sender_id, receiver_id, content, send_time, read_status, file_path)
-        VALUES (#{senderId}, #{receiverId}, #{content}, NOW(), 0, #{filePath});
+        INSERT INTO messenger (sender_id, receiver_id, content, send_time, read_status, file_path, room_id)
+        VALUES (#{senderId}, #{receiverId}, #{content}, NOW(), 0, #{filePath}, #{roomId});
+    </insert>
+
+    <!-- 단체 방 메시지 전송 -->
+    <insert id="sendGroupMessage" parameterType="com.erp.backend.dto.GroupMessageDTO" useGeneratedKeys="true" keyProperty="messengerId">
+        INSERT INTO messenger (sender_id, room_id, content, send_time, read_status, file_path)
+        VALUES (#{senderId}, #{roomId}, #{content}, NOW(), 0, #{filePath});
     </insert>
 
     <!-- ✅ 메시지 전달 (원본 메시지를 복사하여 새 메시지 생성) ==> 테스트 완료 -->
@@ -16,7 +22,7 @@
     </insert>
 
     <!-- ✅ 직원 존재 여부 확인 ==> 메시지 전송 및 전달하기 위한 필요한 것-->
-    <select id="isEmployeeExists" parameterType="long" resultType="boolean">
+    <select id="isEmployeeExists" parameterType="long" resultType="int">
         SELECT EXISTS (
             SELECT 1 FROM employee WHERE emp_id = #{empId}
         )
@@ -77,22 +83,19 @@
     <!-- ✅ 보낸 메시지 조회 ==> 테스트 완료 -->
     <select id="selectSendMsg" parameterType="map" resultType="map">
         SELECT
-            m.messenger_id, m.content, m.send_time, m.read_status,
-            s.emp_id AS sender_id, s.name AS sender_name, s.email AS sender_email,
-            s.phone AS sender_phone, s.img_url AS sender_img,
-            sd.name AS sender_department, sp.name AS sender_position,
-            r.emp_id AS receiver_id, r.name AS receiver_name, r.email AS receiver_email,
-            r.phone AS receiver_phone, r.img_url AS receiver_img,
-            rd.name AS receiver_department, rp.name AS receiver_position,
-            ma.is_read AS alarm_read
+            m.messenger_id,
+            m.content,
+            m.send_time,
+            m.read_status,
+            m.room_id,
+            m.file_path AS filePath,
+            s.emp_id AS sender_id,
+            s.name AS sender_name,
+            r.emp_id AS receiver_id,
+            r.name AS receiver_name
         FROM messenger m
                  JOIN employee s ON m.sender_id = s.emp_id
-                 LEFT JOIN department sd ON s.department_id = sd.department_id
-                 LEFT JOIN position sp ON s.position_id = sp.position_id
                  JOIN employee r ON m.receiver_id = r.emp_id
-                 LEFT JOIN department rd ON r.department_id = rd.department_id
-                 LEFT JOIN position rp ON r.position_id = rp.position_id
-                 LEFT JOIN messenger_alarm ma ON ma.messenger_id = m.messenger_id
         WHERE m.sender_id = CAST(#{senderId} AS UNSIGNED)
         ORDER BY m.send_time DESC;
     </select>
@@ -100,24 +103,21 @@
     <!-- ✅ 받은 메시지 조회 ==> 테스트 완료 -->
     <select id="selectReceivedMsg" parameterType="map" resultType="map">
         SELECT
-            m.messenger_id, m.content, m.send_time, m.read_status,
-            r.emp_id AS receiver_id, r.name AS receiver_name, r.email AS receiver_email,
-            r.phone AS receiver_phone, r.img_url AS receiver_img,
-            rd.name AS receiver_department, rp.name AS receiver_position,
-            s.emp_id AS sender_id, s.name AS sender_name, s.email AS sender_email,
-            s.phone AS sender_phone, s.img_url AS sender_img,
-            sd.name AS sender_department, sp.name AS sender_position,
-            ma.is_read AS alarm_read
+        m.messenger_id,
+        m.content,
+        m.send_time,
+        m.read_status,
+        m.room_id,  <!-- 단체 식별용 -->
+        m.file_path AS filePath,
+        s.emp_id AS sender_id,
+        s.name AS sender_name,
+        r.emp_id AS receiver_id,
+        r.name AS receiver_name
         FROM messenger m
-                 JOIN employee r ON m.receiver_id = r.emp_id
-                 LEFT JOIN department rd ON r.department_id = rd.department_id
-                 LEFT JOIN position rp ON r.position_id = rp.position_id
-                 JOIN employee s ON m.sender_id = s.emp_id
-                 LEFT JOIN department sd ON s.department_id = sd.department_id
-                 LEFT JOIN position sp ON s.position_id = sp.position_id
-                 LEFT JOIN messenger_alarm ma ON ma.messenger_id = m.messenger_id
-        WHERE m.receiver_id = CAST(#{receiverId} AS UNSIGNED)
-        ORDER BY m.send_time DESC;
+        JOIN employee s ON m.sender_id = s.emp_id
+        JOIN employee r ON m.receiver_id = r.emp_id
+        WHERE m.receiver_id = #{receiverId}
+        ORDER BY m.send_time DESC
     </select>
 
     <!-- ✅ 보낸 메시지 내용 ==> 테스트 완료 -->
@@ -151,10 +151,21 @@
 
     <!-- ✅ 안 읽은 메시지 개수 조회 ==> 테스트 완료 -->
     <select id="selectUnreadMsg" parameterType="map" resultType="int">
-        SELECT COUNT(*) AS unread_count
-        FROM messenger m
-        WHERE m.receiver_id = CAST(#{empId} AS UNSIGNED)
-          AND m.read_status = 0;
+        SELECT IFNULL(SUM(unreadCount),0) FROM (
+        -- 1:1 메시지 unread 계산 (receiver_id가 있고, 아직 읽지 않은 경우)
+        SELECT COUNT(*) AS unreadCount
+        FROM messenger
+        WHERE receiver_id = CAST(#{empId} AS UNSIGNED)
+        AND room_id IS NULL
+        AND read_status = 0
+        UNION ALL
+        -- 단체 메시지 unread 계산 (단체 메시지는 receiver_id가 없으므로, 현재 사용자가 발신자가 아닌 메시지)
+        SELECT COUNT(*) AS unreadCount
+        FROM messenger
+        WHERE room_id IS NOT NULL
+        AND sender_id != CAST(#{empId} AS UNSIGNED)
+        AND read_status = 0
+        ) t;
     </select>
 
     <!-- ✅ 전체 메시지 방 개수 ==> 테스트 완료 -->
@@ -216,8 +227,91 @@
     <!-- ✅ 특정 메시지 삭제 ==> 테스트 완료 -->
     <delete id="deleteMessage" parameterType="map">
         DELETE FROM messenger
-        WHERE messenger_id = #{msgId}
-          AND (sender_id = #{empId} OR receiver_id = #{empId});
+        WHERE
+           -- 단체 대화 (room_id가 null이 아니고 0도 아닌 경우)
+            (room_id = #{roomId} AND #{roomId} != 0)
+           OR
+           -- 1:1 대화 (room_id가 null이거나 0이고, sender/receiver가 empId-otherEmpId 조합)
+            (
+                (room_id IS NULL OR room_id = 0 OR #{roomId} = 0)
+                    AND (
+                    (sender_id = #{empId} AND receiver_id = #{otherEmpId})
+                        OR (sender_id = #{otherEmpId} AND receiver_id = #{empId})
+                    )
+                );
     </delete>
+
+    <!-- 메신저 룸 참여자 추가 -->
+    <insert id="addRoomParticipant" parameterType="map">
+        INSERT INTO messenger_room_participants (room_id, emp_id)
+        VALUES (#{roomId}, #{empId});
+    </insert>
+
+    <!-- 메신저 룸 생성 -->
+    <insert id="createMessengerRoom" parameterType="map" useGeneratedKeys="true" keyProperty="roomId">
+        INSERT INTO messenger_room (room_name, created_at)
+        VALUES (#{roomName}, NOW());
+    </insert>
+
+    <!-- 방 참여자 조회 -->
+    <select id="selectRoomParticipants" parameterType="int" resultType="map">
+        SELECT
+            rmp.room_id,
+            rmp.emp_id,
+            e.name AS empName
+        FROM messenger_room_participants rmp
+                 JOIN employee e ON rmp.emp_id = e.emp_id
+        WHERE rmp.room_id = #{roomId};
+    </select>
+
+    <!-- 방에 속한 메시지 삭제 -->
+    <delete id="deleteMessagesByRoomId" parameterType="int">
+        DELETE FROM messenger WHERE room_id = #{roomId}
+    </delete>
+
+    <!-- 대화방 참여자 삭제 -->
+    <delete id="deleteRoomParticipants" parameterType="int">
+        DELETE FROM messenger_room_participants WHERE room_id = #{roomId}
+    </delete>
+
+    <!-- 대화방 정보 삭제 -->
+    <delete id="deleteMessengerRoom" parameterType="int">
+        DELETE FROM messenger_room WHERE room_id = #{roomId}
+    </delete>
+
+    <!-- 단체 대화방 조회 -->
+    <select id="selectGroupRooms" parameterType="long" resultType="map">
+        SELECT mr.room_id AS roomId, mr.room_name AS roomName,
+               GROUP_CONCAT(e.name) AS participants
+        FROM messenger_room mr
+                 JOIN messenger_room_participants mrp ON mr.room_id = mrp.room_id
+                 JOIN employee e ON mrp.emp_id = e.emp_id
+        WHERE mrp.emp_id = #{empId}
+        GROUP BY mr.room_id
+    </select>
+
+    <!-- 단체 방 내용 조회 -->
+    <select id="selectMessagesByRoomId" parameterType="int" resultType="map">
+        SELECT
+            m.messenger_id,
+            m.sender_id,
+            e.name AS sender_name,
+            m.content,
+            m.send_time,
+            m.room_id,
+            m.file_path AS filePath
+        FROM messenger m
+                 JOIN employee e ON m.sender_id = e.emp_id
+        WHERE m.room_id = #{roomId}
+        ORDER BY m.send_time ASC
+    </select>
+
+    <update id="updateMessagesReadStatus">
+        UPDATE messenger
+        SET read_status = 1
+        WHERE receiver_id = #{empId}
+          AND room_id = #{roomId}
+          AND read_status = 0;
+    </update>
 
 </mapper>
