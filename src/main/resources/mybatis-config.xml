@@ -10,7 +10,6 @@
         <mapper resource="mappers/PaymentMapper.xml" />
         <mapper resource="mappers/CalendarMapper.xml"/>
         <mapper resource="mappers/ApprovalMapper.xml"/>
-        <mapper resource="mappers/AlarmMapper.xml" />
         <mapper resource="mappers/MessengerMapper.xml" />
     </mappers>
 </configuration>
