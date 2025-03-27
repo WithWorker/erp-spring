@@ -22,7 +22,6 @@ public class MessengerDao implements InterMessengerDao {
     @Override
     public List<Map<String, Object>> getDept() {
         List<Map<String, Object>> result = sqlsession.selectList("selectDept");
-        System.out.println("✅ 부서 조회 결과: " + result);
         return result != null ? result : Collections.emptyList();
     }
 
@@ -30,7 +29,6 @@ public class MessengerDao implements InterMessengerDao {
     @Override
     public List<Map<String, Object>> getDeptPerson(Map<String, Object> map) {
         List<Map<String, Object>> result = sqlsession.selectList("selectDeptPerson", map);
-        System.out.println("✅ 부서 직원 조회 결과: " + result);
         return result != null ? result : Collections.emptyList();
     }
 
@@ -38,7 +36,6 @@ public class MessengerDao implements InterMessengerDao {
     @Override
     public List<Map<String, Object>> getChosenEmp(Long empId) {
         List<Map<String, Object>> result = sqlsession.selectList("selectChosenEmp", Map.of("empId", empId));
-        System.out.println("✅ 선택된 직원 조회 결과: " + result);
         return result != null ? result : Collections.emptyList();
     }
 

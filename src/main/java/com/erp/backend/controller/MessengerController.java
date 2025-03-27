@@ -34,25 +34,6 @@ public class MessengerController {
     @Autowired
     private MessengerService ms;
 
-    /*
-    // 세션 기반 로그인 사용자 ID 반환 ==> JWT 기반으로 변경할 것!!
-    private Long getLoginEmpId(HttpSession session) {
-        MemberDto user = (MemberDto) session.getAttribute("user");
-        if(user == null) {
-            throw new RuntimeException("로그인이 필요합니다");
-        }
-        return user.getEmpId();
-    }
-    */
-
-    // Test
-    @GetMapping("")
-    public ResponseEntity<Map<String, Object>> messengertest() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("message", "test");
-        return ResponseEntity.ok(result);
-    }
-
     // 전체 부서 조회
     @GetMapping("/dept")
     public ResponseEntity<List<Map<String, Object>>> getDept() {
@@ -62,23 +43,21 @@ public class MessengerController {
     // 특정 부서 내 직원 조회
     @GetMapping("/dept/person")
     public ResponseEntity<List<Map<String, Object>>> getDeptPerson(@RequestParam Long deptId) {
-        System.out.println("🔍 부서 직원 조회 요청: deptId=" + deptId);
         return ResponseEntity.ok(ms.getDeptPerson(Map.of("deptId", String.valueOf(deptId))));
     }
 
     // 선택 직원 조회
     @GetMapping("/dept/person/chosen")
     public ResponseEntity<List<Map<String, Object>>> getChosenEmp(@RequestParam Long empId) {
-        System.out.println("🔍 선택된 직원 조회 요청: empId=" + empId);
         return ResponseEntity.ok(ms.getChosenEmp(empId));
     }
 
-    // 메시지 전송 (1:1 포함)
+    // 메시지 전송
     @PostMapping("/message/send")
     public ResponseEntity<Map<String, Object>> sendMessage(@RequestBody MessengerVO msgvo) {
         ms.sendMessage(msgvo);
         Map<String, Object> result = new HashMap<>();
-        result.put("message", "✅ 메시지가 성공적으로 전송되었습니다.");
+        result.put("message", "메시지가 성공적으로 전송되었습니다.");
         result.put("msgId", msgvo.getMessengerId());
         return ResponseEntity.ok(result);
     }
@@ -90,11 +69,11 @@ public class MessengerController {
                 groupMsg.getReceiverIds() == null ||
                 groupMsg.getReceiverIds().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "❌ senderId 또는 receiverIds가 필요합니다.");
+                    "senderId 또는 receiverIds가 필요합니다.");
         }
         int roomId = ms.sendGroupMessage(groupMsg);
         Map<String, Object> result = new HashMap<>();
-        result.put("message", "✅ 단체 메시지가 성공적으로 전송되었습니다.");
+        result.put("message", "단체 메시지가 성공적으로 전송되었습니다.");
         result.put("roomId", roomId);
         result.put("messengerId", groupMsg.getMessengerId());
 
@@ -111,7 +90,7 @@ public class MessengerController {
         // 기존 메시지 가져오기
         MessengerVO originalMessage = ms.getMessageById(msgId);
         if (originalMessage == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "❌ 전달할 메시지가 존재하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "전달할 메시지가 존재하지 않습니다.");
         }
 
         // 새로운 메시지 객체 생성 (기존 메시지 내용 유지)
@@ -123,7 +102,7 @@ public class MessengerController {
 
         ms.deliverMessage(originalMessage, newMessage);
         Map<String, Object> result = new HashMap<>();
-        result.put("message", "✅ 메시지 전달 완료!");
+        result.put("message", "메시지 전달 완료!");
         return ResponseEntity.ok(result);
     }
 
@@ -161,7 +140,7 @@ public class MessengerController {
         }
         ms.updateAllMsg(empId);
         Map<String, Object> result = new HashMap<>();
-        result.put("message", "✅ 모든 메시지가 읽음 처리되었습니다.");
+        result.put("message", "모든 메시지가 읽음 처리되었습니다.");
         return ResponseEntity.ok(result);
     }
 
@@ -174,7 +153,7 @@ public class MessengerController {
         }
         ms.addFile(filevo);
         Map<String,Object> result = new HashMap<>();
-        result.put("message", "✅ 첨부파일이 추가되었습니다.");
+        result.put("message", "첨부파일이 추가되었습니다.");
         return ResponseEntity.ok(result);
     }
 
@@ -206,7 +185,7 @@ public class MessengerController {
     @GetMapping("/message/unread/count")
     public ResponseEntity<Map<String, Object>> getUnreadMsg(@RequestParam(required = false) Long empId) {
         if (empId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "❌ empId가 필요합니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "empId가 필요합니다.");
         }
         int unreadCount = ms.getUnreadMsg(empId);
         Map<String, Object> result = new HashMap<>();
@@ -276,7 +255,6 @@ public class MessengerController {
     // 방 참여자 추가
     @PostMapping("/room/participant/add")
     public ResponseEntity<Map<String, Object>> addRoomParticipant(@RequestBody Map<String, Object> participantData) {
-        // participantData 예: { "roomId": 123, "empId": 1 }
         ms.addRoomParticipant(participantData);
         // addRoomParticipant가 내부에서 DB insert를 수행
         Map<String, Object> result = new HashMap<>();
@@ -287,7 +265,7 @@ public class MessengerController {
     // 단체 대화방 조회
     @GetMapping("/room/list")
     public ResponseEntity<List<Map<String, Object>>> getRoomList(@RequestParam Long empId) {
-        // MessengerService에 getGroupRoomList(empId) 메서드를 구현합니다.
+        // MessengerService에 getGroupRoomList(empId) 메서드를 구현
         List<Map<String, Object>> rooms = ms.getGroupRoomList(empId);
         return ResponseEntity.ok(rooms);
     }
@@ -308,15 +286,13 @@ public class MessengerController {
     @PostMapping("/file/upload")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         try {
-            String uploadDir = "D:/erp_fileupload/"; // ✅ 윈도우 경로
+            String uploadDir = "D:/erp_fileupload/";
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs(); // 폴더 없으면 생성
-
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
             File target = new File(uploadDir + fileName);
             file.transferTo(target);
-
-            return ResponseEntity.ok("/uploads/" + fileName); // 프론트에서 이 경로로 접근
+            return ResponseEntity.ok("/uploads/" + fileName);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업로드 실패: " + e.getMessage());
         }
@@ -327,17 +303,14 @@ public class MessengerController {
     public ResponseEntity<Resource> downloadFile(@RequestParam String filename) throws IOException {
         String uploadDir = "D:/erp_fileupload/";
         File file = new File(uploadDir + filename);
-
         if (!file.exists()) {
             return ResponseEntity.notFound().build();
         }
-
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-
         String encodedFilename = URLEncoder.encode(filename, "UTF-8").replaceAll("\\+", "%20");
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFilename) // ✅ 핵심!
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFilename)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .contentLength(file.length())
                 .body(resource);

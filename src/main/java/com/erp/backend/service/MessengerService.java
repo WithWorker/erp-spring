@@ -48,26 +48,26 @@ public class MessengerService implements InterMessengerService {
     @Override
     public void sendMessage(MessengerVO msgvo) {
         if (msgvo == null || msgvo.getSenderId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "❌ senderId가 필요합니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "senderId가 필요합니다.");
         }
         // roomId가 있으면 단체 대화로 간주
         boolean isGroupChat = (msgvo.getRoomId() != null && msgvo.getRoomId() > 0);
 
         if (!isGroupChat) { // 1:1 대화일 때만 receiverId 검사
             if (msgvo.getReceiverId() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "❌ receiverId가 필요합니다.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "receiverId가 필요합니다.");
             }
             int senderExists = imDao.isEmployeeExists(msgvo.getSenderId());
             int receiverExists = imDao.isEmployeeExists(msgvo.getReceiverId());
             if (senderExists != 1 || receiverExists != 1) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "🚨 데이터 무결성 오류: senderId 또는 receiverId가 employee 테이블에 존재하지 않습니다.");
+                        "데이터 무결성 오류: senderId 또는 receiverId가 employee 테이블에 존재하지 않습니다.");
             }
         } else { // 단체 대화인 경우, senderId만 검사
             int senderExists = imDao.isEmployeeExists(msgvo.getSenderId());
             if (senderExists != 1) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "🚨 데이터 무결성 오류: senderId가 employee 테이블에 존재하지 않습니다.");
+                        "데이터 무결성 오류: senderId가 employee 테이블에 존재하지 않습니다.");
             }
         }
 
@@ -75,7 +75,7 @@ public class MessengerService implements InterMessengerService {
             imDao.sendMessage(msgvo);
             System.out.println("✅ 메시지 전송 완료: msgId=" + msgvo.getMessengerId());
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "🚨 서버 오류 발생: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생: " + e.getMessage());
         }
     }
 
@@ -83,22 +83,22 @@ public class MessengerService implements InterMessengerService {
     @Override
     public void deliverMessage(MessengerVO originalMessage, MessengerVO newMessage) {
         if (originalMessage == null || newMessage == null) {
-            throw new IllegalArgumentException("❌ 전달할 메시지 정보가 필요합니다.");
+            throw new IllegalArgumentException("전달할 메시지 정보가 필요합니다.");
         }
         int senderExists = imDao.isEmployeeExists(newMessage.getSenderId());
         int receiverExists = imDao.isEmployeeExists(newMessage.getReceiverId());
         if (senderExists != 1 || receiverExists != 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "🚨 데이터 무결성 오류: senderId 또는 receiverId가 employee 테이블에 존재하지 않습니다.");
+                    "데이터 무결성 오류: senderId 또는 receiverId가 employee 테이블에 존재하지 않습니다.");
         }
         if (!imDao.isMessageExists(originalMessage.getMessengerId())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "❌ 전달할 메시지가 존재하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "전달할 메시지가 존재하지 않습니다.");
         }
         try {
             imDao.sendMessage(newMessage);
             System.out.println("✅ 메시지 전달 완료: msgId=" + newMessage.getMessengerId());
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "🚨 메시지 전달 실패: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "메시지 전달 실패: " + e.getMessage());
         }
     }
 
@@ -127,16 +127,13 @@ public class MessengerService implements InterMessengerService {
         paramMap.put("messageId", msgId);
         paramMap.put("senderId", senderId);
 
-        System.out.println("🔍 실행할 쿼리 파라미터: " + paramMap);
-
         Map<String, Object> result = imDao.getMsgContent(paramMap);
 
         if (result == null || result.isEmpty()) {
-            System.out.println("🚨 MyBatis에서 결과 없음! msgId: " + msgId + ", senderId: " + senderId);
+            System.out.println("MyBatis에서 결과 없음! msgId: " + msgId + ", senderId: " + senderId);
             return Collections.emptyMap();
         }
 
-        System.out.println("✅ 조회 결과: " + result);
         return result;
     }
 
@@ -146,16 +143,13 @@ public class MessengerService implements InterMessengerService {
         paramMap.put("messageId", msgId);
         paramMap.put("receiverId", receiverId);
 
-        System.out.println("🔍 실행할 쿼리 파라미터: " + paramMap);
-
         Map<String, Object> result = imDao.getMsgContent2(paramMap);
 
         if (result == null || result.isEmpty()) {
-            System.out.println("🚨 MyBatis에서 결과 없음! msgId: " + msgId + ", receiverId: " + receiverId);
+            System.out.println("MyBatis에서 결과 없음! msgId: " + msgId + ", receiverId: " + receiverId);
             return Collections.emptyMap();
         }
 
-        System.out.println("✅ 조회 결과: " + result);
         return result;
     }
 
@@ -163,7 +157,7 @@ public class MessengerService implements InterMessengerService {
     @Override
     public void updateAllMsg(Long empId) {
         if (empId == null) {
-            throw new IllegalArgumentException("❌ empId가 NULL입니다.");
+            throw new IllegalArgumentException("empId가 NULL입니다.");
         }
 
         Map<String, Object> paramMap = new HashMap<>();
@@ -176,31 +170,26 @@ public class MessengerService implements InterMessengerService {
     @Override
     public void addFile(FileVO fileVO) {
         if (fileVO.getMessengerId() == null || fileVO.getFilePath() == null) {
-            throw new IllegalArgumentException("❌ MessengerId와 filePath는 필수입니다.");
+            throw new IllegalArgumentException("MessengerId와 filePath는 필수입니다.");
         }
-
         // 파일명 추출 (경로에서 마지막 "/" 이후 값)
         String fileName = fileVO.getFilePath().substring(fileVO.getFilePath().lastIndexOf("/") + 1);
         fileVO.setFileName(fileName);
 
         imDao.addFile(fileVO);
-        System.out.println("✅ 파일 추가 완료: " + fileVO);
     }
 
     // 첨부파일 조회
     @Override
     public List<FileVO> getMsgFile(Long msgId) {
         if (msgId == null) {
-            throw new IllegalArgumentException("❌ msgId가 필요합니다.");
+            throw new IllegalArgumentException("msgId가 필요합니다.");
         }
 
         List<FileVO> fileList = imDao.getMsgFile(msgId);
         if (fileList == null || fileList.isEmpty()) {
-            System.out.println("🚨 첨부파일 없음! msgId=" + msgId);
             return List.of();
         }
-
-        System.out.println("✅ 조회된 파일 목록: " + fileList);
         return fileList;
     }
 
@@ -216,16 +205,12 @@ public class MessengerService implements InterMessengerService {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("receiverId", receiverId);
 
-        System.out.println("🔍 수신자 조회 실행: " + paramMap);
-
         Map<String, Object> result = imDao.getEmpName(paramMap);
 
         if (result == null || result.isEmpty()) {
-            System.out.println("🚨 조회 결과 없음! receiverId: " + receiverId);
+            System.out.println("조회 결과 없음! receiverId: " + receiverId);
             return Collections.emptyMap();
         }
-
-        System.out.println("✅ 수신자 정보 조회 성공: " + result);
         return result;
     }
 
@@ -249,7 +234,7 @@ public class MessengerService implements InterMessengerService {
     // 단체 메시지 전송 (GroupMessageDTO를 받아 각 수신자에게 단일 메시지 전송)
     @Override
     public int sendGroupMessage(GroupMessageDTO groupMsg) {
-        // ✅ 1. roomId 없으면 방 생성
+        // roomId 없으면 방 생성
         if (groupMsg.getRoomId() == null || groupMsg.getRoomId() == 0) {
             // 방 생성
             Map<String, Object> roomParams = new HashMap<>();
@@ -258,7 +243,7 @@ public class MessengerService implements InterMessengerService {
             int roomId = ((BigInteger) roomParams.get("roomId")).intValue();
             groupMsg.setRoomId(roomId);
 
-            // ✅ 2. 참여자 등록 (중복 제거)
+            // 참여자 등록 (중복 제거)
             Set<Long> uniqueIds = new HashSet<>(groupMsg.getReceiverIds());
             uniqueIds.add(groupMsg.getSenderId()); // 보낸 사람도 포함
 
@@ -270,7 +255,7 @@ public class MessengerService implements InterMessengerService {
             }
         }
 
-        // ✅ 3. 메시지 저장
+        // 메시지 저장
         MessengerVO msgvo = new MessengerVO();
         msgvo.setSenderId(groupMsg.getSenderId());
         msgvo.setReceiverId(null); // 단체는 receiverId 없음
@@ -285,15 +270,15 @@ public class MessengerService implements InterMessengerService {
 
     @Override
     public int createMessengerRoom(Map<String, Object> roomParams) {
-        // DAO의 createMessengerRoom 메서드를 호출합니다.
-        // roomParams에 방 이름 등 필요한 값이 포함되어 있어야 하며,
-        // useGeneratedKeys="true"로 roomId가 roomParams에 설정됩니다.
+        // DAO의 createMessengerRoom 메서드를 호출
+        // roomParams에 방 이름 등 필요한 값이 포함
+        // useGeneratedKeys="true"로 roomId가 roomParams에 설정
         return imDao.createMessengerRoom(roomParams);
     }
 
     @Override
     public void addRoomParticipant(Map<String, Object> participantParams) {
-        // DAO의 addRoomParticipant 메서드를 호출합니다.
+        // DAO의 addRoomParticipant 메서드를 호출
         imDao.addRoomParticipant(participantParams);
     }
 
@@ -308,11 +293,11 @@ public class MessengerService implements InterMessengerService {
     @Transactional
     public boolean deleteChatRoom(int roomId) {
         try {
-            // 1) 해당 방의 메시지 삭제
+            // 해당 방의 메시지 삭제
             imDao.deleteMessagesByRoomId(roomId);
-            // 2) 해당 방의 참여자 삭제
+            // 해당 방의 참여자 삭제
             imDao.deleteRoomParticipants(roomId);
-            // 3) 대화방 정보 삭제
+            // 대화방 정보 삭제
             int deletedRooms = imDao.deleteMessengerRoom(roomId);
             return deletedRooms > 0;
         } catch (Exception e) {

@@ -1,4 +1,3 @@
-
 package com.erp.backend.config;
 
 import com.erp.backend.dto.MemberRole;
@@ -58,13 +57,14 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
                 //필터 인가
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/user/**").authenticated()
-                        .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.toString())
-                        .requestMatchers("/uploads/**").permitAll() // 첨부파일 관련 추가
-                        .requestMatchers("/user/messenger/file/download").permitAll()
-                        .anyRequest().permitAll())
+                        .requestMatchers("/user/**").hasAnyRole(MemberRole.USER.name(), MemberRole.ADMIN.name())
+                        .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
+                        .requestMatchers("/upload/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/user/messenger/file/download").permitAll() // 메신저에서 파일 다운로드 허가
+                        )
                 //필터 추가
-                .addFilterBefore(new JwtFilter(jwtUtil), AuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(new CustomLogoutFilter(), LogoutFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

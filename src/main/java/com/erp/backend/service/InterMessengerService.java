@@ -61,10 +61,10 @@ public interface InterMessengerService {
     // 메시지 방 삭제
     boolean deleteMessage(Long roomId, Long empId, Long otherEmpId);
 
-    // [추가] 단체 메시지용 메신저 룸 생성
+    // 단체 메시지용 메신저 룸 생성
     int createMessengerRoom(Map<String, Object> roomParams);
 
-    // [추가] 단체 메시지용 메신저 룸 참여자 추가
+    // 단체 메시지용 메신저 룸 참여자 추가
     void addRoomParticipant(Map<String, Object> participantParams);
 
     // 방 참여자 조회
