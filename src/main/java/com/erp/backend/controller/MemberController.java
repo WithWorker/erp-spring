@@ -52,6 +52,8 @@ public class MemberController {
     //직원수정
     @PutMapping("/admin/update/{empId}")
     public String updateMember(@PathVariable(value = "empId") Long empId, @RequestBody Map<String, Object> updateInfo) {
+        // 로그로 updateInfo 확인
+        System.out.println("Update Info: " + updateInfo);
         MemberDto memberDto = memberService.findById(empId);
 
         if (updateInfo.containsKey("name")) {
@@ -74,6 +76,20 @@ public class MemberController {
         if (updateInfo.containsKey("baseSalary")) {
             Object salObj = updateInfo.get("baseSalary");
             memberDto.setBaseSalary(salObj != null ? ((Number) salObj).intValue() : null);
+        }
+        if (updateInfo.containsKey("address")) {
+            Object addressObj = updateInfo.get("address");
+            memberDto.setAddress(addressObj != null ? (String) addressObj : null);
+        }
+
+        if (updateInfo.containsKey("residentNumber")) {
+            Object residentNumberObj = updateInfo.get("residentNumber");
+            memberDto.setResidentNumber(residentNumberObj != null ? (String) residentNumberObj : null);
+        }
+
+        if (updateInfo.containsKey("accountNumber")) {
+            Object accountNumberObj = updateInfo.get("accountNumber");
+            memberDto.setAccountNumber(accountNumberObj != null ? (String) accountNumberObj : null);
         }
 
         memberService.updateMember(memberDto);
