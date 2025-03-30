@@ -1,11 +1,9 @@
 package com.erp.backend.controller;
 
-import com.erp.backend.dto.MemberDto;
 import com.erp.backend.dto.GroupMessageDTO;
 import com.erp.backend.model.FileVO;
 import com.erp.backend.model.MessengerVO;
 import com.erp.backend.service.MessengerService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -62,14 +60,12 @@ public class MessengerController {
     // 특정 부서 내 직원 조회
     @GetMapping("/dept/person")
     public ResponseEntity<List<Map<String, Object>>> getDeptPerson(@RequestParam Long deptId) {
-        System.out.println("🔍 부서 직원 조회 요청: deptId=" + deptId);
         return ResponseEntity.ok(ms.getDeptPerson(Map.of("deptId", String.valueOf(deptId))));
     }
 
     // 선택 직원 조회
     @GetMapping("/dept/person/chosen")
     public ResponseEntity<List<Map<String, Object>>> getChosenEmp(@RequestParam Long empId) {
-        System.out.println("🔍 선택된 직원 조회 요청: empId=" + empId);
         return ResponseEntity.ok(ms.getChosenEmp(empId));
     }
 
@@ -308,7 +304,7 @@ public class MessengerController {
     @PostMapping("/file/upload")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         try {
-            String uploadDir = "D:/erp_fileupload/"; // ✅ 윈도우 경로
+            String uploadDir = "C:/erp_fileupload/"; // ✅ 윈도우 경로
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs(); // 폴더 없으면 생성
 
@@ -325,7 +321,7 @@ public class MessengerController {
     // 첨부파일 다운로드
     @GetMapping("/file/download")
     public ResponseEntity<Resource> downloadFile(@RequestParam String filename) throws IOException {
-        String uploadDir = "D:/erp_fileupload/";
+        String uploadDir = "C:/erp_fileupload/";
         File file = new File(uploadDir + filename);
 
         if (!file.exists()) {

@@ -2,7 +2,6 @@ package com.erp.backend.model;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import com.erp.backend.dto.GroupMessageDTO;

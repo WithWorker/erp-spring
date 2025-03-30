@@ -52,22 +52,21 @@ public class SecurityConfig {
         authFilter.setFilterProcessesUrl("/login");
 
         http.csrf((auth) -> auth.disable())
-                .cors(cors -> cors.configurationSource(corsSource()))
-                .formLogin((auth) -> auth.disable())
-                .httpBasic((auth) -> auth.disable())
-                //필터 인가
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/user/**").hasAnyRole(MemberRole.USER.name(), MemberRole.ADMIN.name())
-                        .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
-                        .requestMatchers("/upload/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/user/messenger/file/download").permitAll()
-                        )
-                //필터 추가
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAt(new CustomLogoutFilter(), LogoutFilter.class)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .cors(cors -> cors.configurationSource(corsSource()))
+            .formLogin((auth) -> auth.disable())
+            .httpBasic((auth) -> auth.disable())
+            //필터 인가
+            .authorizeHttpRequests((requests) -> requests
+                    .requestMatchers("/user/**").hasAnyRole(MemberRole.USER.name(), MemberRole.ADMIN.name())
+                    .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
+                    .requestMatchers("/find/**").permitAll()
+                    .requestMatchers("/upload/**").permitAll()
+                    )
+            //필터 추가
+            .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAt(new CustomLogoutFilter(), LogoutFilter.class)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }

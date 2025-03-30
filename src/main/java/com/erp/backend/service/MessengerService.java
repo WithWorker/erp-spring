@@ -6,14 +6,12 @@ import com.erp.backend.model.InterMessengerDao;
 import com.erp.backend.model.MessengerVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service

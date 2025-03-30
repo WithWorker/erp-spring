@@ -52,8 +52,6 @@ public class MemberController {
     //직원수정
     @PutMapping("/admin/update/{empId}")
     public String updateMember(@PathVariable(value = "empId") Long empId, @RequestBody Map<String, Object> updateInfo) {
-        // 로그로 updateInfo 확인
-        System.out.println("Update Info: " + updateInfo);
         MemberDto memberDto = memberService.findById(empId);
 
         if (updateInfo.containsKey("name")) {

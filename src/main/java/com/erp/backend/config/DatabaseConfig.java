@@ -1,4 +1,4 @@
-package com.erp.backend;
+package com.erp.backend.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

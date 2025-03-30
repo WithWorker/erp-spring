@@ -3,7 +3,7 @@
 
 <mapper namespace="com.erp.backend.model.InterMessengerDao">
 
-    <!-- ✅ 메시지 전송 ==> 테스트 완료 -->
+    <!-- 메시지 전송 -->
     <insert id="sendMessage" parameterType="com.erp.backend.model.MessengerVO" useGeneratedKeys="true" keyProperty="messengerId">
         INSERT INTO messenger (sender_id, receiver_id, content, send_time, read_status, file_path, room_id)
         VALUES (#{senderId}, #{receiverId}, #{content}, NOW(), 0, #{filePath}, #{roomId});
@@ -15,39 +15,39 @@
         VALUES (#{senderId}, #{roomId}, #{content}, NOW(), 0, #{filePath});
     </insert>
 
-    <!-- ✅ 메시지 전달 (원본 메시지를 복사하여 새 메시지 생성) ==> 테스트 완료 -->
+    <!-- 메시지 전달 (원본 메시지를 복사하여 새 메시지 생성) -->
     <insert id="deliverMessage" parameterType="com.erp.backend.model.MessengerVO" useGeneratedKeys="true" keyProperty="messengerId">
         INSERT INTO messenger (sender_id, receiver_id, content, send_time, read_status, file_path)
         VALUES (#{senderId}, #{receiverId}, #{content}, NOW(), 0, #{filePath});
     </insert>
 
-    <!-- ✅ 직원 존재 여부 확인 ==> 메시지 전송 및 전달하기 위한 필요한 것-->
+    <!-- 직원 존재 여부 확인 ==> 메시지 전송 및 전달하기 위한 필요한 것-->
     <select id="isEmployeeExists" parameterType="long" resultType="int">
         SELECT EXISTS (
             SELECT 1 FROM employee WHERE emp_id = #{empId}
         )
     </select>
 
-    <!-- ✅ 메시지 존재 여부 확인 ==> 메시지 전달하기 위한 필요한 것 -->
+    <!-- 메시지 존재 여부 확인 ==> 메시지 전달하기 위한 필요한 것 -->
     <select id="isMessageExists" resultType="int">
         SELECT COUNT(*) FROM messenger WHERE messenger_id = #{msgId}
     </select>
 
-    <!-- ✅ 특정 메시지를 가져오기 ==> 메시지 전달할 때 msgId와 일치하는 메시지 내용 가져오기 -->
+    <!-- 특정 메시지를 가져오기 ==> 메시지 전달할 때 msgId와 일치하는 메시지 내용 가져오기 -->
     <select id="getMessageById" parameterType="long" resultType="com.erp.backend.model.MessengerVO">
         SELECT messenger_id, sender_id, receiver_id, content, file_path, send_time, read_status
         FROM messenger
         WHERE messenger_id = #{msgId};
     </select>
 
-    <!-- ✅ 전체 부서 조회 ==> 테스트 완료 -->
+    <!-- 전체 부서 조회 -->
     <select id="selectDept" resultType="map">
         SELECT department_id AS deptId, name AS deptName
         FROM department
         ORDER BY name ASC;
     </select>
 
-    <!-- ✅ 특정 부서 내 직원 조회 ==> 테스트 완료 -->
+    <!-- 특정 부서 내 직원 조회 -->
     <select id="selectDeptPerson" parameterType="map" resultType="map">
         SELECT
             e.emp_id AS empId,
@@ -64,7 +64,7 @@
         ORDER BY e.name ASC;
     </select>
 
-    <!-- ✅ 특정 직원 정보 조회 ==> 테스트 완료 -->
+    <!-- 특정 직원 정보 조회 -->
     <select id="selectChosenEmp" parameterType="map" resultType="map">
         SELECT
             e.emp_id AS empId,
@@ -80,7 +80,7 @@
         WHERE e.emp_id = CAST(#{empId} AS UNSIGNED);
     </select>
 
-    <!-- ✅ 보낸 메시지 조회 ==> 테스트 완료 -->
+    <!-- 보낸 메시지 조회 -->
     <select id="selectSendMsg" parameterType="map" resultType="map">
         SELECT
             m.messenger_id,
@@ -100,7 +100,7 @@
         ORDER BY m.send_time DESC;
     </select>
 
-    <!-- ✅ 받은 메시지 조회 ==> 테스트 완료 -->
+    <!-- 받은 메시지 조회 -->
     <select id="selectReceivedMsg" parameterType="map" resultType="map">
         SELECT
         m.messenger_id,
@@ -120,7 +120,7 @@
         ORDER BY m.send_time DESC
     </select>
 
-    <!-- ✅ 보낸 메시지 내용 ==> 테스트 완료 -->
+    <!-- 보낸 메시지 내용 -->
     <select id="selectMsgContent" parameterType="map" resultType="map">
         SELECT
             m.messenger_id, m.content, m.read_status, m.file_attached, m.send_time,
@@ -134,7 +134,7 @@
           AND m.sender_id = CAST(#{senderId} AS UNSIGNED);
     </select>
 
-    <!-- ✅ 받은 메시지 내용 ==> 테스트 완료 -->
+    <!-- 받은 메시지 내용 -->
     <select id="selectMsgContent2" parameterType="map" resultType="map">
         SELECT
             m.messenger_id, m.content, m.read_status, m.file_attached, m.send_time,
@@ -149,7 +149,7 @@
         AND m.receiver_id = CAST(#{receiverId} AS UNSIGNED);
     </select>
 
-    <!-- ✅ 안 읽은 메시지 개수 조회 ==> 테스트 완료 -->
+    <!-- 안 읽은 메시지 개수 조회 -->
     <select id="selectUnreadMsg" parameterType="map" resultType="int">
         SELECT IFNULL(SUM(unreadCount),0) FROM (
         -- 1:1 메시지 unread 계산 (receiver_id가 있고, 아직 읽지 않은 경우)
@@ -168,7 +168,7 @@
         ) t;
     </select>
 
-    <!-- ✅ 전체 메시지 방 개수 ==> 테스트 완료 -->
+    <!-- 전체 메시지 방 개수 -->
     <select id="selectTotalMsg" resultType="int">
         SELECT COUNT(DISTINCT m.messenger_id) AS room_count
         FROM messenger m
@@ -176,7 +176,7 @@
            OR m.receiver_id = CAST(#{empId} AS UNSIGNED);
     </select>
 
-    <!-- ✅ 모든 메시지 읽음 처리 ==> 테스트 완료-->
+    <!-- 모든 메시지 읽음 처리 -->
     <update id="updateAllMsg">
         UPDATE messenger
         SET read_status = 1
@@ -184,13 +184,13 @@
           AND read_status = 0;
     </update>
 
-    <!-- ✅ 첨부파일 저장 ==> 테스트 완료 -->
+    <!-- 첨부파일 저장 -->
     <insert id="insertFile" parameterType="com.erp.backend.model.FileVO">
         INSERT INTO messenger_file (messenger_id, file_name, file_path, file_size, file_type, upload_time)
         VALUES (#{messengerId}, #{fileName}, #{filePath}, #{fileSize}, #{fileType}, NOW());
     </insert>
 
-    <!-- ✅ 첨부파일 조회 ==> 테스트 완료 -->
+    <!-- 첨부파일 조회 -->
     <select id="selectMsgFile" resultType="com.erp.backend.model.FileVO">
         SELECT
             f.file_id,
@@ -208,7 +208,7 @@
         WHERE f.messenger_id = #{msgId};
     </select>
 
-    <!-- ✅ 메시지 발송을 위한 사람 조회 ==> 테스트 완료 -->
+    <!-- 메시지 발송을 위한 사람 조회 -->
     <select id="selectEmpName" resultType="string">
         SELECT
             e.emp_id AS empId,
@@ -224,7 +224,7 @@
         WHERE e.emp_id = #{receiverId};
     </select>
 
-    <!-- ✅ 특정 메시지 삭제 ==> 테스트 완료 -->
+    <!-- 특정 메시지 삭제 -->
     <delete id="deleteMessage" parameterType="map">
         DELETE FROM messenger
         WHERE
