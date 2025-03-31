@@ -71,7 +71,6 @@ public class MessengerService implements InterMessengerService {
 
         try {
             imDao.sendMessage(msgvo);
-            System.out.println("✅ 메시지 전송 완료: msgId=" + msgvo.getMessengerId());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "🚨 서버 오류 발생: " + e.getMessage());
         }

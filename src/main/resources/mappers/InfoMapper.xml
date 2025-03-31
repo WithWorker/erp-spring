@@ -20,7 +20,7 @@
         WHERE emp_id = #{empId}
             AND YEAR(payment_date) = #{year}
           AND MONTH(payment_date) = #{month}
-        ORDER BY payment_date DESC;
+        ORDER BY payment_date DESC
     </select>
 
     <!-- 근태 조회 -->
@@ -32,9 +32,8 @@
         FROM attendance
         WHERE emp_id = #{empId}
         AND DATE_FORMAT(in_time, '%Y-%m') = #{yearMonth}
-        ORDER BY in_time ASC
+        ORDER BY in_time DESC
     </select>
-
 
     <!-- 출근 확인 -->
     <select id="hasTodayCheckIn" parameterType="java.lang.Long" resultType="boolean">
